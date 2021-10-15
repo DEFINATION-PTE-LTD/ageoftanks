@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1953259897 &8574412962073106934
+TerrainLayer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: layer_Ground_Cliff_ALBGround_Cliff_NM8118f53a86be62f4
+  m_DiffuseTexture: {fileID: 2800000, guid: ee72686bf3f034e4d9ad1f30c465c8a3, type: 3}
+  m_NormalMapTexture: {fileID: 2800000, guid: c08deb7f169651843a7b2a8625a30a7c, type: 3}
+  m_MaskMapTexture: {fileID: 0}
+  m_TileSize: {x: 34, y: 34}
+  m_TileOffset: {x: 0, y: 0}
+  m_Specular: {r: 0, g: 0, b: 0, a: 0}
+  m_Metallic: 0
+  m_Smoothness: 0
+  m_NormalScale: 1
+  m_DiffuseRemapMin: {x: 0, y: 0, z: 0, w: 0}
+  m_DiffuseRemapMax: {x: 1, y: 1, z: 1, w: 1}
+  m_MaskMapRemapMin: {x: 0, y: 0, z: 0, w: 0}
+  m_MaskMapRemapMax: {x: 1, y: 1, z: 1, w: 1}

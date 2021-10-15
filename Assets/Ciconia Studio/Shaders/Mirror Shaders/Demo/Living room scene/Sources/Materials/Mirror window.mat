@@ -1,0 +1,134 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!21 &2100000
+Material:
+  serializedVersion: 6
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: Mirror window
+  m_Shader: {fileID: 4800000, guid: 5b2d9f79524ba1d4c945aa5f9bb20f0c, type: 3}
+  m_ShaderKeywords: _ACTIVEDIRTMASKBW_ON _ENABLECUBEMAP_ON _SCREENBLENDINGMODE_ON
+    _SCREENOVERLEY_ON _USEDIRTMAPASGLOSSMAP_ON _USEDIRTMAPASTRANSPARENCYMAP_ON
+  m_LightmapFlags: 5
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - _BumpMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Cubemap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _DetailAlbedoMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _DetailMask:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _DetailNormalMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _DirtMapBW:
+        m_Texture: {fileID: 2800000, guid: 173b3ed481a2f2846a8299db27fa087a, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _EmissionMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MainTex:
+        m_Texture: {fileID: 2800000, guid: 35497615503c8fc4794f74af0aa0b0f5, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MetallicGlossMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _OcclusionMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _ParallaxMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _ReflectionTex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - __Cubemap:
+        m_Texture: {fileID: 8900000, guid: 844fd92ddae38db43ba6f197e5815e2d, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - __Diffusemap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - __Reflectionmask:
+        m_Texture: {fileID: 2800000, guid: 173b3ed481a2f2846a8299db27fa087a, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _node_1756:
+        m_Texture: {fileID: 2800000, guid: 173b3ed481a2f2846a8299db27fa087a, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _node_4643:
+        m_Texture: {fileID: 2800000, guid: ecb676ac01e5fef4cb86acaa69edd867, type: 3}
+        m_Scale: {x: 2, y: 2}
+        m_Offset: {x: 0, y: 0}
+    m_Floats:
+    - _ActiveDirtmaskBW: 1
+    - _BlurReflection: 0
+    - _BumpScale: 1
+    - _ColorToDiffuse: 0
+    - _CubemapBlur: 0
+    - _CubemapEdges: 0.719
+    - _CubemapIntensity: 4.16
+    - _CubemapRotation: 1
+    - _Cutoff: 0.5
+    - _DetailNormalMapScale: 1
+    - _DiffusetowhiteMirrorBrightness: 0
+    - _DstBlend: 0
+    - _EnableCubemap: 1
+    - _FresnelStrength: 3.23
+    - _Glossiness: 0.689
+    - _Intensity: 0.086
+    - _InvertDirtMap: 0
+    - _InvertReflectionMask: 0
+    - _InvertReflectionMask_copy: 0
+    - _InvertTransparencyMask: 0
+    - _MaskIntensity: 0.579
+    - _MaskSpread: 0
+    - _Metallic: 0
+    - _Mode: 0
+    - _ModeScreenOffOverlayOn: 0
+    - _OcclusionStrength: 1
+    - _Parallax: 0.02
+    - _ScreenBlendingmode: 1
+    - _ScreenOverley: 1
+    - _SpecularIntensity1: 0.15
+    - _SrcBlend: 1
+    - _Transparency: 0.5
+    - _UVSec: 0
+    - _UseDirtmapasGlossmap: 0.5
+    - _UseDirtmapasTransparencymap: 1
+    - _ZWrite: 1
+    - __Transparency: 0.482
+    m_Colors:
+    - _Color: {r: 1, g: 1, b: 1, a: 1}
+    - _ColorTint: {r: 1, g: 1, b: 1, a: 1}
+    - _DirtTint: {r: 1, g: 1, b: 1, a: 1}
+    - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
+    - _SpecColor: {r: 1, g: 1, b: 1, a: 1}

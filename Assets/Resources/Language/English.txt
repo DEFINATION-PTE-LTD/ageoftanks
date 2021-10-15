@@ -1,0 +1,108 @@
+000001:InitialTank
+000002:SeedChariot
+000003:ScorpionTank
+000004:PrismTank
+000005:ApocalypseTank
+000006:MirageTank
+000007:GhostTank
+000008:Piercing
+000009:Batter
+000010:Thump
+000011:Combustion
+000012:Assault
+000013:HolyShield
+000014:Counterattack
+000015:Heavyarm
+000016:Rebirth
+000017:Reinforcement
+000018:Damage of 50% of total stamina
+000019:Two consecutive attacks
+000020:2.5 times damage
+000021:10% of the total HP of continuous damage per round
+000022:Attack power increased by 30 % at the beginning
+000023:One attack doesn't work
+000024:50% chance to dodge and deal 50% counterattack damage
+000025:Damage reduced by half in three attacks
+000026:Resurrect once and restore 20% health
+000027:Start HP increased by 30%
+000028:Free
+000029:Win
+000030:Lose
+000031:Music
+000032:Acoustics
+000033:On
+000034:Off
+000035:KingTank
+000036:Score
+000037:Charge
+100001:Age of Tanks
+100002:My Tank
+100003:Equipment
+100004:Even Battlefield
+100005:Open Warfare
+100006:Battle record
+100007:Get token faild, plase try again
+100008:Invalid User
+100009:Please confirm your tank to fight
+100010:Display the last 50 records
+100011:Please choose the combat tank from my tanks
+200002:Attack
+200003:Defense
+200004:Effect
+300001:Locked
+300002:Attack
+300003:HP
+300004:Critical Rate
+300005:Select
+300006:Permission not granted
+300007:Please select the tank to fight
+300008:Setup succeeded
+300009:Failed to obtain tank list, trying to retrieve it again
+300010:Energy
+300011:Energy depletion
+400001:Battlefield
+400002:Even Battlefield
+400003:Open Warfare
+400004:King Duels
+400005:Saint  Duels
+400006:Contend for hegemony  Duels
+400007:Battlefield
+400008:Practice Skirmish
+400009:No TKO staked
+400010:100 / 500 / 1000 TKO
+500001:Please select your equipments
+500002:Maximum Items
+500003:Your Selection
+500004:Optional equipment
+500005:Attack
+500006:Defense
+500007:Start
+600001:Matching Your Opponent
+600002:It takes about  60 seconds
+600003:Cancel
+600004:Match Successful
+700001:Command Portal
+700002:PlayerA
+700003:PlayerB
+700004:Ready
+700005:Rounds
+700006:Setup equipment
+700007:Drag it to the equipment slot of the corresponding round
+700008:Click equipment cancel
+700009:Confirm
+700010:Countdown
+800001:Go Fighting
+800002:HP
+800003:ATK
+800004:Critical
+800005:Atk invalid
+800006:Dodge
+800007:Beatback
+800008:Half the damage
+800009:Reborn
+800010:Piercing
+800011:Double hit
+800012:Thump
+800013:Combustion
+800014:Game Over
+800015:Return
