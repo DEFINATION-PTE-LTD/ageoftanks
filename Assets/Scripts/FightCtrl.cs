@@ -807,6 +807,7 @@ public class FightCtrl : MonoBehaviour
                         }
                         #endregion
 
+
                     }
                     //攻击是否为技能
                     if (isskill == false)
