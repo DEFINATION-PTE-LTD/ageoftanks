@@ -97,18 +97,39 @@ public static class CommonHelper
         }
         List<MeshRenderer> rend = new List<MeshRenderer>();
         Material mat = mats[GetRandom(0, 6)];
+        //不替换的
+        List<string> noReplace = new List<string>() {
+        "Tracks_R_Geom",
+        "Tracks_L_Geom",
+        "Tracks_FL_Geom",
+        "Tracks_RL_Geom",
+        "Tracks_FR_Geom",
+        "Tracks_RR_Geom",
+        "FX_Laser_Ray_Geom",
+        "RL_Track_Geom",
+        "RR_Track_Geom",
+           "FL_Track_Geom",
+        "FR_Track_Geom","FL_Wheel_Geom","FR_Wheel_Geom","RL_Wheel_Geom","RR_Wheel_Geom"
+        };
         foreach (MeshRenderer item in gameObject.transform.GetComponentsInChildren<MeshRenderer>())
         {
-            // rend.Add(item);
-            item.material = mat;
+            
+            if (noReplace.Contains(item.gameObject.name)==false)
+            {
+                // rend.Add(item);
+                item.material = mat;
+            }
         }
         
 
         List <SkinnedMeshRenderer> skinrend = new List<SkinnedMeshRenderer>(); 
         foreach (SkinnedMeshRenderer item in gameObject.transform.GetComponentsInChildren<SkinnedMeshRenderer>())
         {
-            // skinrend.Add(item);
-            item.material = mat;
+            if (noReplace.Contains(item.gameObject.name) == false)
+            {
+                // skinrend.Add(item);
+                item.material = mat;
+            }
         }
         //rend.enabled = true;
         //rend[0].materials[0] = mat;
@@ -122,6 +143,21 @@ public static class CommonHelper
         //Debug.Log(GetComponent<MeshRenderer>().material.mainTexture);
     }
 
+
+    /// <summary>
+    /// 给物体添加Mesh特效
+    /// </summary>
+    /// <param name="effectName">特效名称</param>
+    /// <param name="MeshObject">目标物体</param>
+    public static GameObject AddEffect(string effectName,GameObject MeshObject)
+    {
+        GameObject Effect = Resources.Load<GameObject>("Effects/" + effectName);
+        GameObject currentInstance = GameObject.Instantiate(Effect, MeshObject.transform,false);
+        PSMeshRendererUpdater psUpdater = currentInstance.GetComponent<PSMeshRendererUpdater>();
+        psUpdater.UpdateMeshEffect(MeshObject);
+        
+        return currentInstance;
+    }
 
     /// <summary>
     /// 获取子弹预制体
@@ -220,4 +256,8 @@ public static class CommonHelper
         int random = CommonHelper.GetRandom(1, 100);
         return random <= rate;
     }
+
+
+
+   
 }

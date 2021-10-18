@@ -135,6 +135,7 @@ public class FightCtrl : MonoBehaviour
             {
 
                 list.Add(tr.gameObject);
+                //CommonHelper.AddEffect("Effect"+CommonHelper.GetRandom(1,22), tr.gameObject);
             }
             
         }
@@ -1009,7 +1010,7 @@ public class FightCtrl : MonoBehaviour
 
         //Destroy(skill, 5f);
     }
-  
+
 
 
 }
