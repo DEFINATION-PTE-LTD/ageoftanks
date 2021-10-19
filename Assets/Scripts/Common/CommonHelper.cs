@@ -99,17 +99,12 @@ public static class CommonHelper
         Material mat = mats[GetRandom(0, 6)];
         //不替换的
         List<string> noReplace = new List<string>() {
-        "Tracks_R_Geom",
-        "Tracks_L_Geom",
-        "Tracks_FL_Geom",
-        "Tracks_RL_Geom",
-        "Tracks_FR_Geom",
-        "Tracks_RR_Geom",
-        "FX_Laser_Ray_Geom",
-        "RL_Track_Geom",
-        "RR_Track_Geom",
-           "FL_Track_Geom",
-        "FR_Track_Geom","FL_Wheel_Geom","FR_Wheel_Geom","RL_Wheel_Geom","RR_Wheel_Geom"
+            "Tracks_R_Geom","Tracks_L_Geom",
+            "Tracks_FL_Geom","Tracks_RL_Geom","Tracks_FR_Geom","Tracks_RR_Geom",
+            "FX_Laser_Ray_Geom",
+            "RL_Track_Geom","RR_Track_Geom",
+            "FL_Track_Geom","FR_Track_Geom",
+            "FL_Wheel_Geom","FR_Wheel_Geom","RL_Wheel_Geom","RR_Wheel_Geom"
         };
         foreach (MeshRenderer item in gameObject.transform.GetComponentsInChildren<MeshRenderer>())
         {

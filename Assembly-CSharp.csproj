@@ -130,6 +130,7 @@
     <Compile Include="Assets\Scripts\PackagingCtrl.cs" />
     <Compile Include="Assets\Scripts\ResourceCtrl.cs" />
     <Compile Include="Assets\Scripts\Skills\Attack\Batter.cs" />
+    <Compile Include="Assets\Scripts\Skills\Attack\Thump.cs" />
     <Compile Include="Assets\Scripts\Skills\Defense\AntiInjury.cs" />
     <Compile Include="Assets\Scripts\Skills\Defense\DeathSound.cs" />
     <Compile Include="Assets\Scripts\Skills\Defense\DefenseSkill.cs" />

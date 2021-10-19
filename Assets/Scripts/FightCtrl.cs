@@ -751,6 +751,16 @@ public class FightCtrl : MonoBehaviour
                                     }
                                 }
                                 break;
+                            case "thump":
+                                Thump thump = fightitem.Tank.GetComponent<Thump>();
+                                if (thump != null)
+                                {
+                                    thump.TargetTank = target.Tank;
+                                    thump.EffectAttack();
+
+                                    attack = attack * thump.Value;
+                                }
+                                break;
                         }
                     }
                     #endregion
@@ -942,12 +952,21 @@ public class FightCtrl : MonoBehaviour
             {
                 switch (fromItem.AttackSkill.Name.ToLower())
                 {
+                    //连击
                     case "batter":
                         Batter batter = fromItem.Tank.AddComponent<Batter>();
-                        batter.Value = 3;
+                        batter.Value = 3;//连续攻击3次
                         batter.Effected = 0;
                         batter.FromTank = fromItem.Tank;
                         break;
+                    //重击
+                    case "thump":
+                        Thump thump = fromItem.Tank.AddComponent<Thump>();
+                        thump.Value = 2; //2倍攻击
+                        thump.Effected = 0;
+                        thump.FromTank = fromItem.Tank;
+                        break;
+
                 }
             }
         }

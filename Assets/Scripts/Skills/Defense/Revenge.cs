@@ -36,7 +36,7 @@ public class Revenge : MonoBehaviour
     public bool Trigger()
     {
 
-        Vector3 oldScale = SkillEffect.transform.localScale;
+        Vector3 oldScale = SkillPrefab.transform.localScale;
         Vector3 newScale = new Vector3(1.5f, 1.5f, 1.5f);
         SkillEffect.transform.DOScale(newScale, 0.5f);
         StartCoroutine(CommonHelper.DelayToInvokeDo(() => {
