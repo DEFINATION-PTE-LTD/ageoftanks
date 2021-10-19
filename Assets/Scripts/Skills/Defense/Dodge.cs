@@ -44,6 +44,8 @@ public class Dodge : MonoBehaviour
             child.GetComponent<ParticleSystem>().Play();
 
             Effected++;
+
+
             return true;
         }
         else
