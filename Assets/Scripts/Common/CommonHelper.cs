@@ -257,7 +257,29 @@ public static class CommonHelper
         return random <= rate;
     }
 
+    /// <summary>
+    /// 获取物体的尺寸
+    /// </summary>
+    /// <param name="gameObject">物体对象</param>
+    /// <param name="withScale">是否为缩放后的尺寸</param>
+    /// <returns></returns>
+    public static Vector3 GetObjectSize(GameObject gameObject,bool withScale=true)
+    {
+        float xSize, ySize, zSize;
+        if (withScale == true)
+        {
+            xSize = gameObject.GetComponent<MeshFilter>().mesh.bounds.size.x * gameObject.transform.localScale.x;
+            ySize = gameObject.GetComponent<MeshFilter>().mesh.bounds.size.y * gameObject.transform.localScale.y;
+            zSize = gameObject.GetComponent<MeshFilter>().mesh.bounds.size.z * gameObject.transform.localScale.z;
+        }
+        else
+        {
+            xSize = gameObject.GetComponent<MeshFilter>().mesh.bounds.size.x;
+            ySize = gameObject.GetComponent<MeshFilter>().mesh.bounds.size.y;
+            zSize = gameObject.GetComponent<MeshFilter>().mesh.bounds.size.z;
+        }
 
-
+        return new Vector3(xSize, ySize, zSize);
+    }
    
 }

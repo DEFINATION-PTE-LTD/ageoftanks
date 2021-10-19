@@ -42,11 +42,6 @@ public class Dodge : MonoBehaviour
             GameObject child = SkillEffect.transform.Find("fx_Summoner_e").gameObject;
             child.SetActive(true);
             child.GetComponent<ParticleSystem>().Play();
-            //GameObject ef= CommonHelper.AddEffect("Effect10", Tank);
-            //StartCoroutine(CommonHelper.DelayToInvokeDo(() => {
-            //    ef.GetComponent<PSMeshRendererUpdater>().UpdateMeshEffect();
-            //    DestroyImmediate(ef);
-            //}, 3f));
 
             Effected++;
             return true;
