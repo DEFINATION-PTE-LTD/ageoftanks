@@ -45,7 +45,6 @@ public class Dodge : MonoBehaviour
 
             Effected++;
 
-
             return true;
         }
         else
