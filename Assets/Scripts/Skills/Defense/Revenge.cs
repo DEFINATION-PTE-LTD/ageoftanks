@@ -38,10 +38,12 @@ public class Revenge : MonoBehaviour
 
         Vector3 oldScale = SkillPrefab.transform.localScale;
         Vector3 newScale = new Vector3(1.5f, 1.5f, 1.5f);
-        SkillEffect.transform.DOScale(newScale, 0.5f);
-        StartCoroutine(CommonHelper.DelayToInvokeDo(() => {
-            SkillEffect.transform.DOScale(oldScale, 0.2f);
+        SkillEffect.transform.DOScale(newScale, 0.5f).SetEase(Ease.InOutExpo);
+        StartCoroutine(CommonHelper.DelayToInvokeDo(() =>
+        {
+            SkillEffect.transform.DOScale(oldScale, 0.2f).SetEase(Ease.InOutExpo);
         }, 1f));
+
         Effected++;
             
         return true;

@@ -39,9 +39,9 @@ public class Dodge : MonoBehaviour
     {
         if (CommonHelper.IsHit(Value * 100))
         {
-            GameObject child = SkillEffect.transform.Find("fx_Summoner_e").gameObject;
-            child.SetActive(true);
-            child.GetComponent<ParticleSystem>().Play();
+            //GameObject child = SkillEffect.transform.Find("fx_Summoner_e").gameObject;
+            //child.SetActive(true);
+            //child.GetComponent<ParticleSystem>().Play();
 
             Effected++;
 

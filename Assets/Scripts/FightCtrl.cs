@@ -96,7 +96,7 @@ public class FightCtrl : MonoBehaviour
         {
             GameObject bloodbar = UIPanel.transform.Find("bloodbar").gameObject;
             Transform bar = UIPanel.transform.Find("bloodbar_" + fightItem.Code);
-            bar.position = Camera.main.WorldToScreenPoint(fightItem.Tank.transform.position + new Vector3(0, 7, 0));
+            bar.position = Camera.main.WorldToScreenPoint(fightItem.Tank.transform.position + new Vector3(0,10, 0));
            
         }
 
@@ -423,7 +423,7 @@ public class FightCtrl : MonoBehaviour
     {
         GameObject txtblood = UIPanel.transform.Find("txt_blood").gameObject;
         GameObject newblood = Instantiate(txtblood, UIPanel.transform, false);
-        newblood.transform.position = Camera.main.WorldToScreenPoint(target.transform.position + new Vector3(0, 2, 0));
+        newblood.transform.position = Camera.main.WorldToScreenPoint(target.transform.position + new Vector3(0, CommonHelper.GetRandom(3,7), 0));
         Text val = newblood.transform.Find("txt_val").GetComponent<Text>();
         val.text =(type==0?"":"+")+ value.ToString();
         val.color = (type== 0 ? Color.white : Color.green); 
@@ -432,10 +432,10 @@ public class FightCtrl : MonoBehaviour
         {
             newblood.transform.Find("critimg").gameObject.SetActive(true);
         }
-        newblood.transform.DOMove(Camera.main.WorldToScreenPoint(target.transform.position + new Vector3(-0.5f, 8, 0)), 0.5f);
+        newblood.transform.DOMove(Camera.main.WorldToScreenPoint(target.transform.position + new Vector3(-0.5f, CommonHelper.GetRandom(12, 16), 0)), 0.5f);
         //newblood.transform.Find("txt_val").DOScale(new Vector3(1.5f, 1.5f, 1.5f), 0.5f);
         val.DOText((type == 0 ? "" : "+") + value.ToString(), 0.6f).OnComplete(() => {
-            newblood.transform.DOMove(Camera.main.WorldToScreenPoint(target.transform.position + new Vector3(0, 7, 0)), 0.5f);
+            newblood.transform.DOMove(Camera.main.WorldToScreenPoint(target.transform.position + new Vector3(0, CommonHelper.GetRandom(10, 12), 0)), 0.5f);
             newblood.transform.DOScale(new Vector3(0, 0,0), 0.5f).OnComplete(()=> {
                 Destroy(newblood);
             });
@@ -461,7 +461,7 @@ public class FightCtrl : MonoBehaviour
             slider.minValue = 0;
         }
 
-        bar.position = Camera.main.WorldToScreenPoint(fightItem.Tank.transform.position + new Vector3(0, 7, 0));
+        bar.position = Camera.main.WorldToScreenPoint(fightItem.Tank.transform.position + new Vector3(0, 10, 0));
         slider = bar.GetComponent<Slider>();
         slider.value = fightItem.Blood;
         if (slider.value <= slider.maxValue * 0.33)
@@ -615,7 +615,7 @@ public class FightCtrl : MonoBehaviour
            // List<FightOrder> targets = SetTarget(fightitem);
             if (targets.Count > 0)
             {
-                w.Shoot();
+                w.Shoot(fightitem.Tank);
                 //被攻击坦克普通攻击血量减少操作
                 for (int j = 0; j < targets.Count; j++)
                 {
@@ -623,7 +623,7 @@ public class FightCtrl : MonoBehaviour
 
 
                     bool iscrit = IsCrit(fightitem.CritRate);
-                    float attack = iscrit ? fightitem.Attack * 2 : fightitem.Attack;
+                    float attack =(int)Math.Round(iscrit ? fightitem.Attack * 2 : fightitem.Attack);
 
                     #region 防御技能触发判定
                     if (target.DefenseSkill != null)
@@ -649,7 +649,7 @@ public class FightCtrl : MonoBehaviour
                                     if (heavyArmor.Trigger() == true)
                                     {
                                         //伤害减少百分比
-                                        attack = (1 - heavyArmor.Value) * attack;
+                                        attack = (int)Math.Round((1 - heavyArmor.Value) * attack);
                                     }
                                 }
                                 break;
@@ -695,10 +695,11 @@ public class FightCtrl : MonoBehaviour
                                 AntiInjury antiinjury = target.Tank.GetComponent<AntiInjury>();
                                 if (antiinjury != null)
                                 {
+                                    antiinjury.AttackTank = fightitem.Tank;
                                     if (antiinjury.Trigger() == true)
                                     {
                                         //反伤
-                                        float replay_atk = attack * antiinjury.Value;
+                                        float replay_atk = (int)Math.Round(attack * antiinjury.Value);
                                         fightitem.Blood -= replay_atk;
                                         ShowBlood(fightitem.Tank, replay_atk, 0, false);
                                         RefreshBloodBar(fightitem);
@@ -758,7 +759,7 @@ public class FightCtrl : MonoBehaviour
                                     thump.TargetTank = target.Tank;
                                     thump.EffectAttack();
 
-                                    attack = attack * thump.Value;
+                                    attack = (int)Math.Round(attack * thump.Value);
                                 }
                                 break;
                         }
@@ -854,10 +855,10 @@ public class FightCtrl : MonoBehaviour
         val.color = Color.red;
         miss.SetActive(true);
 
-        miss.transform.DOMove(Camera.main.WorldToScreenPoint(target.Tank.transform.position + new Vector3(-0.5f, 8, 0)), 0.5f);
+        miss.transform.DOMove(Camera.main.WorldToScreenPoint(target.Tank.transform.position + new Vector3(-0.5f, CommonHelper.GetRandom(8,11), 0)), 0.5f);
         //newblood.transform.Find("txt_val").DOScale(new Vector3(1.5f, 1.5f, 1.5f), 0.5f);
         StartCoroutine(CommonHelper.DelayToInvokeDo(() => {
-            miss.transform.DOMove(Camera.main.WorldToScreenPoint(target.Tank.transform.position + new Vector3(0, 7, 0)), 0.5f);
+            miss.transform.DOMove(Camera.main.WorldToScreenPoint(target.Tank.transform.position + new Vector3(0, CommonHelper.GetRandom(6, 8), 0)), 0.5f);
             miss.transform.DOScale(new Vector3(0, 0, 0), 0.5f).OnComplete(() => {
                 Destroy(miss);
             });

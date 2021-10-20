@@ -331,7 +331,7 @@ public class Weapon : MonoBehaviour
     /// <summary>
     /// 射击,0.3秒
     /// </summary>
-    public void Shoot()
+    public void Shoot(GameObject parent=null)
     {
        
         foreach (WeaponObjectClass w in weapons)
@@ -354,14 +354,17 @@ public class Weapon : MonoBehaviour
                                 StartCoroutine(CommonHelper.DelayToInvokeDo(() =>
                                 {
                                     GameObject bullet = Instantiate(w.BulletPerfab);
+                                    if (parent != null) 
+                                    {
+                                        bullet.transform.SetParent(parent.transform, false);
+                                    }
                                     bullet.transform.forward = item.transform.forward;
                                     bullet.transform.position = item.transform.position;
                                     bullet.transform.GetComponent<Rigidbody>().AddForce(bullet.transform.forward * 60, ForceMode.Impulse);
-                                    //BulletBehavior bulletBehavior = bullet.AddComponent<BulletBehavior>();
                                     bullet.transform.DOMove(t.transform.position+new Vector3(0,2,0), 0.3f).OnUpdate(() => {
                                         bullet.transform.DOLookAt(t.transform.position + new Vector3(0, 2, 0), 0, AxisConstraint.Y);
                                     }).OnComplete(()=> {
-                                        Destroy(bullet,0.1f);
+                                        DestroyImmediate(bullet);
                                     });
                                   
 
@@ -381,6 +384,10 @@ public class Weapon : MonoBehaviour
                 {
 
                     GameObject bullet = Instantiate(w.BulletPerfab);
+                    if (parent != null)
+                    {
+                        bullet.transform.SetParent(parent.transform, false);
+                    }
                     bullet.transform.forward = item.transform.forward;
                     bullet.transform.position = item.transform.position;
                     bullet.transform.GetComponent<Rigidbody>().AddForce(bullet.transform.forward * 40, ForceMode.Impulse);

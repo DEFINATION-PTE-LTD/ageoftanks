@@ -14,7 +14,8 @@ public class AntiInjury : MonoBehaviour
 
     //技能预制体
     public GameObject SkillPrefab = null;
-
+    //攻击坦克
+    public GameObject AttackTank = null;
     //防御坦克
     public GameObject Tank = null;
     public GameObject SkillEffect = null;
@@ -35,10 +36,14 @@ public class AntiInjury : MonoBehaviour
     /// <returns></returns>
     public bool Trigger()
     {
-
-        GameObject child = SkillEffect.transform.Find("LightSlash").gameObject;
+        GameObject child = SkillEffect.transform.Find("fx_magic_lightning_ball_proj_withLightningTrail_blue").gameObject;
         child.SetActive(true);
         child.GetComponent<ParticleSystem>().Play();
+        child.transform.DOMove(AttackTank.transform.position, 0.5f).OnComplete(() => {
+            child.SetActive(false);
+            child.transform.localPosition = new Vector3(0, 0, 0);
+        });
+
         Effected++;
 
         return true;
