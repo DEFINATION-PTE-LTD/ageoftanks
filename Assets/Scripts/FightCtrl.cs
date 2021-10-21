@@ -855,10 +855,10 @@ public class FightCtrl : MonoBehaviour
         val.color = Color.red;
         miss.SetActive(true);
 
-        miss.transform.DOMove(Camera.main.WorldToScreenPoint(target.Tank.transform.position + new Vector3(-0.5f, CommonHelper.GetRandom(8,11), 0)), 0.5f);
+        miss.transform.DOMove(Camera.main.WorldToScreenPoint(target.Tank.transform.position + new Vector3(-0.5f, CommonHelper.GetRandom(11,16), 0)), 0.5f);
         //newblood.transform.Find("txt_val").DOScale(new Vector3(1.5f, 1.5f, 1.5f), 0.5f);
         StartCoroutine(CommonHelper.DelayToInvokeDo(() => {
-            miss.transform.DOMove(Camera.main.WorldToScreenPoint(target.Tank.transform.position + new Vector3(0, CommonHelper.GetRandom(6, 8), 0)), 0.5f);
+            miss.transform.DOMove(Camera.main.WorldToScreenPoint(target.Tank.transform.position + new Vector3(0, CommonHelper.GetRandom(8, 11), 0)), 0.5f);
             miss.transform.DOScale(new Vector3(0, 0, 0), 0.5f).OnComplete(() => {
                 Destroy(miss);
             });
@@ -866,7 +866,6 @@ public class FightCtrl : MonoBehaviour
     }
 
     
-
     //防御技能挂载
     void SetupDefenseSkills(FightOrder fromItem)
     {
