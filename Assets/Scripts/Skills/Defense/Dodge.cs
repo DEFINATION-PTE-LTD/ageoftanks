@@ -43,12 +43,20 @@ public class Dodge : MonoBehaviour
             //child.SetActive(true);
             //child.GetComponent<ParticleSystem>().Play();
 
+            //后退一步
+            Tank.transform.DOLocalMoveZ(-2, 0.3f).OnComplete(() => {
+                StartCoroutine(CommonHelper.DelayToInvokeDo(()=> {
+                    Tank.transform.DOLocalMoveZ(0, 0.3f);
+                },0.5f));
+            });
+
             Effected++;
 
             return true;
         }
         else
         {
+            
             return false;
         }
     }

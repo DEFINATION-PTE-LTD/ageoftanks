@@ -32,16 +32,20 @@ public class AntiInjury : MonoBehaviour
 
     /// <summary>
     /// 触发防御
-    /// </summary>
+    /// </summary> 
     /// <returns></returns>
     public bool Trigger()
     {
-        GameObject child = SkillEffect.transform.Find("fx_magic_lightning_ball_proj_withLightningTrail_blue").gameObject;
+        GameObject child = SkillEffect.transform.Find("fx_magic_lightning_falling_gold").gameObject;
         child.SetActive(true);
         child.GetComponent<ParticleSystem>().Play();
-        child.transform.DOMove(AttackTank.transform.position, 0.5f).OnComplete(() => {
-            child.SetActive(false);
-            child.transform.localPosition = new Vector3(0, 0, 0);
+
+        child.transform.DOMove(AttackTank.transform.position, 0.2f).OnComplete(() => {
+            StartCoroutine(CommonHelper.DelayToInvokeDo(() =>
+            {
+                child.SetActive(false);
+                child.transform.localPosition = new Vector3(0, 0, 0);
+            }, 2f));
         });
 
         Effected++;
