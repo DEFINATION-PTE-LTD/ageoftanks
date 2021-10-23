@@ -42,6 +42,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: 22_RFX_Fire_Campfire1
       objectReference: {fileID: 0}
+    - target: {fileID: 100020, guid: 26051e680ad29ed44bc041fa2052bee3, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 400020, guid: 26051e680ad29ed44bc041fa2052bee3, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0

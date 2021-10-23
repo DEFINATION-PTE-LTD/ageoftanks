@@ -57,7 +57,7 @@ public class HolyShield:MonoBehaviour
             Effected++;
             if (Effected == Total) 
             {
-                StartCoroutine(CommonHelper.DelayToInvokeDo(() => { DestroyImmediate(SkillEffect); }, 1f));
+                StartCoroutine(CommonHelper.DelayToInvokeDo(() => { DestroyImmediate(SkillEffect); }, 2f));
             }
             return true;
         }

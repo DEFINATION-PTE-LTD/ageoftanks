@@ -46,7 +46,7 @@ public class Revive : MonoBehaviour
             Effected++;
             if (Effected == Total)
             {
-               StartCoroutine(CommonHelper.DelayToInvokeDo(()=> { DestroyImmediate(SkillEffect); },1f));
+               StartCoroutine(CommonHelper.DelayToInvokeDo(()=> { DestroyImmediate(SkillEffect); },3f));
             }
             return true;
         }

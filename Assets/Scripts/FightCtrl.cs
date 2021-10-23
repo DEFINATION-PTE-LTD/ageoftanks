@@ -96,7 +96,7 @@ public class FightCtrl : MonoBehaviour
         {
             GameObject bloodbar = UIPanel.transform.Find("bloodbar").gameObject;
             Transform bar = UIPanel.transform.Find("bloodbar_" + fightItem.Code);
-            bar.position = Camera.main.WorldToScreenPoint(fightItem.Tank.transform.position + new Vector3(0,10, 0));
+            bar.position = Camera.main.WorldToScreenPoint(fightItem.Tank.transform.position + new Vector3(0, 13, 0));
            
         }
 
@@ -432,14 +432,13 @@ public class FightCtrl : MonoBehaviour
         {
             newblood.transform.Find("critimg").gameObject.SetActive(true);
         }
-        newblood.transform.DOMove(Camera.main.WorldToScreenPoint(target.transform.position + new Vector3(-0.5f, CommonHelper.GetRandom(12, 16), 0)), 0.5f);
-        //newblood.transform.Find("txt_val").DOScale(new Vector3(1.5f, 1.5f, 1.5f), 0.5f);
-        val.DOText((type == 0 ? "" : "+") + value.ToString(), 0.6f).OnComplete(() => {
-            newblood.transform.DOMove(Camera.main.WorldToScreenPoint(target.transform.position + new Vector3(0, CommonHelper.GetRandom(10, 12), 0)), 0.5f);
-            newblood.transform.DOScale(new Vector3(0, 0,0), 0.5f).OnComplete(()=> {
-                Destroy(newblood);
-            });
-        });
+        newblood.transform.DOMove(Camera.main.WorldToScreenPoint(target.transform.position + new Vector3(-0.5f, CommonHelper.GetRandom(17, 25), 0)), 0.5f);//上飘
+        newblood.transform.DOScale(new Vector3(1.2f, 1.2f, 1.2f), 0.5f).OnComplete(()=> {
+            val.DOColor(new Color(val.color.r, val.color.g, val.color.b, 0), 0.8f).OnComplete(() => {
+                DestroyImmediate(newblood);
+            }); //消失
+        });//字体放大
+        
     }
 
     /// <summary>
@@ -461,7 +460,7 @@ public class FightCtrl : MonoBehaviour
             slider.minValue = 0;
         }
 
-        bar.position = Camera.main.WorldToScreenPoint(fightItem.Tank.transform.position + new Vector3(0, 10, 0));
+       // bar.position = Camera.main.WorldToScreenPoint(fightItem.Tank.transform.position + new Vector3(0, 13, 0));
         slider = bar.GetComponent<Slider>();
         slider.value = fightItem.Blood;
         if (slider.value <= slider.maxValue * 0.33)
@@ -543,7 +542,7 @@ public class FightCtrl : MonoBehaviour
                     if (recover.Trigger() == true)
                     {
                         float maxBlood = fightitem.Player.Hero.Blood + fightitem.Player.TankList.Find(u => u.TankObject == fightitem.Tank).Blood;
-                        float addBlood = maxBlood * recover.Value;
+                        float addBlood = (int)Math.Round( maxBlood * recover.Value);
                         if (addBlood + fightitem.Blood > maxBlood)
                         {
                             fightitem.Blood = maxBlood;
@@ -855,14 +854,15 @@ public class FightCtrl : MonoBehaviour
         val.color = Color.red;
         miss.SetActive(true);
 
-        miss.transform.DOMove(Camera.main.WorldToScreenPoint(target.Tank.transform.position + new Vector3(-0.5f, CommonHelper.GetRandom(11,16), 0)), 0.5f);
-        //newblood.transform.Find("txt_val").DOScale(new Vector3(1.5f, 1.5f, 1.5f), 0.5f);
-        StartCoroutine(CommonHelper.DelayToInvokeDo(() => {
-            miss.transform.DOMove(Camera.main.WorldToScreenPoint(target.Tank.transform.position + new Vector3(0, CommonHelper.GetRandom(8, 11), 0)), 0.5f);
-            miss.transform.DOScale(new Vector3(0, 0, 0), 0.5f).OnComplete(() => {
-                Destroy(miss);
-            });
-        }, 0.6f));
+
+        miss.transform.DOMove(Camera.main.WorldToScreenPoint(target.Tank.transform.position + new Vector3(-0.5f, CommonHelper.GetRandom(16, 25), 0)), 0.5f);//上飘
+        miss.transform.DOScale(new Vector3(1.2f, 1.2f, 1.2f), 0.5f).OnComplete(() => {
+            val.DOColor(new Color(val.color.r, val.color.g, val.color.b, 0), 0.8f).OnComplete(() => {
+                DestroyImmediate(miss);
+            }); //消失
+        });//字体放大
+
+  
     }
 
     

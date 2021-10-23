@@ -36,13 +36,21 @@ public class Revenge : MonoBehaviour
     public bool Trigger()
     {
 
-        Vector3 oldScale = SkillPrefab.transform.localScale;
-        Vector3 newScale = new Vector3(1.5f, 1.5f, 1.5f);
-        SkillEffect.transform.DOScale(newScale, 0.5f).SetEase(Ease.InOutExpo);
+        GameObject child = SkillEffect.transform.Find("Magic shield 13").gameObject;
+        child.SetActive(true);
+        child.GetComponent<ParticleSystem>().Play();
         StartCoroutine(CommonHelper.DelayToInvokeDo(() =>
         {
-            SkillEffect.transform.DOScale(oldScale, 0.2f).SetEase(Ease.InOutExpo);
-        }, 1f));
+            child.SetActive(false);
+        }, 2f));
+
+        //Vector3 oldScale = SkillPrefab.transform.localScale;
+        //Vector3 newScale = new Vector3(1.5f, 1.5f, 1.5f);
+        //SkillEffect.transform.DOScale(newScale, 0.5f).SetEase(Ease.InOutExpo);
+        //StartCoroutine(CommonHelper.DelayToInvokeDo(() =>
+        //{
+        //    SkillEffect.transform.DOScale(oldScale, 0.2f).SetEase(Ease.InOutExpo);
+        //}, 1f));
 
         Effected++;
             
