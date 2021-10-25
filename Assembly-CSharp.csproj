@@ -121,6 +121,7 @@
     <Compile Include="Assets\Scripts\Common\PosCtrl.cs" />
     <Compile Include="Assets\Scripts\FightCtrl.cs" />
     <Compile Include="Assets\Scripts\Global.cs" />
+    <Compile Include="Assets\Scripts\Models\Buff.cs" />
     <Compile Include="Assets\Scripts\Models\FightOrder.cs" />
     <Compile Include="Assets\Scripts\Models\HeroProperty.cs" />
     <Compile Include="Assets\Scripts\Models\Player.cs" />
@@ -131,6 +132,8 @@
     <Compile Include="Assets\Scripts\PackagingCtrl.cs" />
     <Compile Include="Assets\Scripts\ResourceCtrl.cs" />
     <Compile Include="Assets\Scripts\Skills\Attack\Batter.cs" />
+    <Compile Include="Assets\Scripts\Skills\Attack\Combustion.cs" />
+    <Compile Include="Assets\Scripts\Skills\Attack\Piercing.cs" />
     <Compile Include="Assets\Scripts\Skills\Attack\Thump.cs" />
     <Compile Include="Assets\Scripts\Skills\Defense\AntiInjury.cs" />
     <Compile Include="Assets\Scripts\Skills\Defense\DeathSound.cs" />
@@ -214,6 +217,7 @@
     <None Include="Assets\Resources\Language\English.txt" />
     <None Include="Assets\Ciconia Studio\Shaders\Mirror Shaders\MirrorReflection FastMirror Deferred.shader" />
     <None Include="Assets\RFX_Resources\Prefabs\Fx\V2\V2_Change.txt" />
+    <None Include="Assets\Fonts\OFL.txt" />
     <None Include="Assets\Hovl Studio\Magic circles Vol 4\Shaders\BlendDistort.shader" />
     <None Include="Assets\KriptoFX\MeshEffect\Shaders\ME_DistortionPasses.cginc" />
     <None Include="Assets\Ciconia Studio\Shaders\Mirror Shaders\MirrorReflection Advanced Forward.shader" />

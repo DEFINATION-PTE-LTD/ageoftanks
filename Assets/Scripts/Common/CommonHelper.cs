@@ -80,23 +80,47 @@ public static class CommonHelper
     /// 材质球替换（换肤功能）
     /// </summary>
     /// <param name="gameObject"></param>
-    public static void ReplaceMaterial(GameObject gameObject)
+    public static void ReplaceMaterial(GameObject gameObject,string skinname)
     {
         //把材质球放到Resources文件夹下
-        List<Material> mats = new List<Material>();
-        mats.Add(Resources.Load<Material>("Materials/A_Spiders_Mat(red)"));
-        mats.Add(Resources.Load<Material>("Materials/A_Spiders_Mat(blue)"));
-        mats.Add(Resources.Load<Material>("Materials/A_Spiders_Mat(black)"));
-        mats.Add(Resources.Load<Material>("Materials/A_Spiders_Mat(yellow)"));
-        mats.Add(Resources.Load<Material>("Materials/A_Spiders_Mat(green)"));
-        mats.Add(Resources.Load<Material>("Materials/A_Spiders_Mat(rusty)"));
+        //List<Material> mats = new List<Material>();
+        //mats.Add(Resources.Load<Material>("Materials/A_Spiders_Mat(red)"));
+        //mats.Add(Resources.Load<Material>("Materials/A_Spiders_Mat(blue)"));
+        //mats.Add(Resources.Load<Material>("Materials/A_Spiders_Mat(black)"));
+        //mats.Add(Resources.Load<Material>("Materials/A_Spiders_Mat(yellow)"));
+        //mats.Add(Resources.Load<Material>("Materials/A_Spiders_Mat(green)"));
+        //mats.Add(Resources.Load<Material>("Materials/A_Spiders_Mat(rusty)"));
 
-        if (mats == null)
+        //if (mats == null)
+        //{
+        //    return;
+        //}
+        //List<MeshRenderer> rend = new List<MeshRenderer>();
+
+        Material mat;// = mats[GetRandom(0, 6)];
+        switch (skinname)
         {
-            return;
+            case "red":
+                 mat = Resources.Load<Material>("Materials/A_Spiders_Mat(red)");
+                break;
+            case "blue":
+                mat = Resources.Load<Material>("Materials/A_Spiders_Mat(blue)");
+                break;
+            case "black":
+                mat = Resources.Load<Material>("Materials/A_Spiders_Mat(black)");
+                break;
+            case "yellow":
+                mat = Resources.Load<Material>("Materials/A_Spiders_Mat(yellow)");
+                break;
+            case "green":
+                mat = Resources.Load<Material>("Materials/A_Spiders_Mat(green)");
+                break;
+            default:
+                mat = Resources.Load<Material>("Materials/A_Spiders_Mat(rusty)");
+                break;
         }
-        List<MeshRenderer> rend = new List<MeshRenderer>();
-        Material mat = mats[GetRandom(0, 6)];
+
+       
         //不替换的
         List<string> noReplace = new List<string>() {
             "Tracks_R_Geom","Tracks_L_Geom",
@@ -276,5 +300,31 @@ public static class CommonHelper
 
         return new Vector3(xSize, ySize, zSize);
     }
-   
+
+
+    //在对战中显示技能触发的图标
+    public static void ShowSkillIcon(GameObject gameObject,string skillName,GameObject UIObject)
+    {
+        GameObject skillimg = new GameObject();
+        
+        RawImage rawImage = skillimg.AddComponent<RawImage>();
+        skillimg.AddComponent<Outline>();
+        RectTransform rect = skillimg.GetComponent<RectTransform>();
+        rawImage.texture = LoadSkillImage(skillName);
+        skillimg.transform.SetParent(UIObject.transform, false);
+        rect.sizeDelta = new Vector2(25,25);
+
+        skillimg.transform.position = Camera.main.WorldToScreenPoint(gameObject.transform.position + new Vector3(0, 15, 0));
+
+        skillimg.transform.DOMove(Camera.main.WorldToScreenPoint(gameObject.transform.position + new Vector3(0, 17, -2)), 0.5f);//上飘
+        skillimg.transform.DOScale(new Vector3(1.2f, 1.2f, 1.2f), 0.3f).From(new Vector3(0,0,0)).OnComplete(() => {
+            vp_Timer.In(1f, () =>
+            {
+                UnityEngine.Object.DestroyImmediate(skillimg);
+            });
+            //消失
+        });//放大
+
+
+    }
 }

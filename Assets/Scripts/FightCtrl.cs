@@ -35,7 +35,7 @@ public class FightCtrl : MonoBehaviour
 
     //public int index = 0;
     public int CountDownTime = 5; //倒计时
-    public int Round = 1; //回合数
+    public int Round = 0; //回合数
     public int FightIndex = -1; //当前战斗方的下标
 
     private void Awake()
@@ -92,14 +92,15 @@ public class FightCtrl : MonoBehaviour
     void Update()
     {
         //AutoShoot();
-        foreach (FightOrder fightItem in OrderList)
-        {
-            GameObject bloodbar = UIPanel.transform.Find("bloodbar").gameObject;
-            Transform bar = UIPanel.transform.Find("bloodbar_" + fightItem.Code);
-            bar.position = Camera.main.WorldToScreenPoint(fightItem.Tank.transform.position + new Vector3(0, 13, 0));
-           
-        }
+       
+            foreach (FightOrder fightItem in OrderList)
+            {
+                GameObject bloodbar = UIPanel.transform.Find("bloodbar").gameObject;
+                Transform bar = UIPanel.transform.Find("bloodbar_" + fightItem.Code);
+                bar.position = Camera.main.WorldToScreenPoint(fightItem.Tank.transform.position + new Vector3(0, 13, 0));
 
+            }
+        
     }
 
   
@@ -135,7 +136,6 @@ public class FightCtrl : MonoBehaviour
             {
 
                 list.Add(tr.gameObject);
-                //CommonHelper.AddEffect("Effect"+CommonHelper.GetRandom(1,22), tr.gameObject);
             }
             
         }
@@ -157,14 +157,33 @@ public class FightCtrl : MonoBehaviour
         for (int i = 0; i < ResourceCtrl.Instance.SelectList.Count; i++)
         {
             TankProperty item = ResourceCtrl.Instance.SelectList[i];
+            GameObject tank =null; 
 
-            GameObject tank = Instantiate(list.Find(u => u.name == item.Code));
+            if (item.Code.CompareTo("00012") >= 0 && item.Code.CompareTo("00024") <= 0)
+            {
+                tank = Instantiate(list.Find(u => u.name == item.Code));
+                CommonHelper.ReplaceMaterial(tank, "black");
+            }
+            else if (item.Code.CompareTo("00025") >= 0 && item.Code.CompareTo("00036") <= 0)
+            {
+                tank = Instantiate(list.Find(u => u.name == (Convert.ToInt32(item.Code)-13).ToString().PadLeft(5,'0')));
+                CommonHelper.ReplaceMaterial(tank, "blue");
+            }
+            else if (item.Code.CompareTo("00037") >= 0 && item.Code.CompareTo("00049") <= 0)
+            {
+                tank = Instantiate(list.Find(u => u.name == (Convert.ToInt32(item.Code) - 25).ToString().PadLeft(5, '0')));
+                CommonHelper.ReplaceMaterial(tank, "yellow");
+            }
+            else if (item.Code.CompareTo("00050") >= 0 && item.Code.CompareTo("00062") <= 0)
+            {
+                tank = Instantiate(list.Find(u => u.name == (Convert.ToInt32(item.Code) - 38).ToString().PadLeft(5, '0')));
+                CommonHelper.ReplaceMaterial(tank, "red");
+            }
+
             tank.AddComponent<Weapon>();
             tank.SetActive(false);
             tank.transform.SetParent(PlayerA_Pos[i].transform.Find("Tank"), false);
-           
-            CommonHelper.ReplaceMaterial(tank);
-            
+
             item.TankObject = tank;
             PlayerA_Tanks.Add(tank);
         }
@@ -179,7 +198,7 @@ public class FightCtrl : MonoBehaviour
             tank.AddComponent<Weapon>();
             tank.SetActive(false);
             tank.transform.SetParent(pos.transform.Find("Tank"), false);
-            CommonHelper.ReplaceMaterial(tank);
+            CommonHelper.ReplaceMaterial(tank,"black");
             PlayerB_Tanks.Add(tank);
         }
 
@@ -303,8 +322,9 @@ public class FightCtrl : MonoBehaviour
                // HitRate = item.HitRate,
                 Range = item.Range,
                 AttackSkill = item.AttackSkill,
-                DefenseSkill = item.DefenseSkill
-            }); ;
+                DefenseSkill = item.DefenseSkill,
+                Buffs = new List<Buff>()
+            });; ;
         }
         foreach (TankProperty item in PlayerB.TankList)
         {
@@ -321,7 +341,8 @@ public class FightCtrl : MonoBehaviour
                 //HitRate = item.HitRate,
                 Range = item.Range,
                 AttackSkill = item.AttackSkill,
-                DefenseSkill = item.DefenseSkill
+                DefenseSkill = item.DefenseSkill,
+                Buffs = new List<Buff>()
 
             });
         }
@@ -395,6 +416,7 @@ public class FightCtrl : MonoBehaviour
     /// </summary>
     void NextRound() 
     {
+        if (Round == 0) { Round++; }
         GameObject roundPanel = UIPanel.transform.Find("txt_round_center").gameObject;
          UIPanel.transform.Find("txt_round_center").SetAsLastSibling();
         Text txt_round = roundPanel.transform.GetComponent<Text>();
@@ -417,7 +439,7 @@ public class FightCtrl : MonoBehaviour
     /// </summary>
     /// <param name="target">目标</param>
     /// <param name="value">数值</param>
-    /// <param name="type">0：减血 1：加血</param>
+    /// <param name="type">0：减血 1：加血 2:魔法伤害</param>
     /// <param name="crit">是否暴击</param>
     void ShowBlood(GameObject target,float value,int type=0,bool crit=false)
     {
@@ -425,8 +447,19 @@ public class FightCtrl : MonoBehaviour
         GameObject newblood = Instantiate(txtblood, UIPanel.transform, false);
         newblood.transform.position = Camera.main.WorldToScreenPoint(target.transform.position + new Vector3(0, CommonHelper.GetRandom(3,7), 0));
         Text val = newblood.transform.Find("txt_val").GetComponent<Text>();
-        val.text =(type==0?"":"+")+ value.ToString();
-        val.color = (type== 0 ? Color.white : Color.green); 
+        val.text =(type==1?"+":"-")+ value.ToString();
+        switch (type)
+        {
+            case 0:
+                val.color = Color.white;
+                break;
+            case 1:
+                val.color = Color.green;
+                break;
+            case 2:
+                val.color = Color.magenta;
+                break;
+        }
         newblood.SetActive(true);
         if (crit == true) 
         {
@@ -454,15 +487,33 @@ public class FightCtrl : MonoBehaviour
         {
             bar = Instantiate(bloodbar, UIPanel.transform, false).transform;
             bar.gameObject.name = "bloodbar_" + fightItem.Code;
-            bar.gameObject.SetActive(true);
+            StartCoroutine(CommonHelper.DelayToInvokeDo(() => { bar.gameObject.SetActive(true); }, 6f));//延迟显示血条
             slider = bar.GetComponent<Slider>();
-            slider.maxValue = fightItem.Player.Hero.Blood + fightItem.Player.TankList.Find(u => u.TankObject == fightItem.Tank).Blood;
+            TankProperty tp = fightItem.Player.TankList.Find(u => u.TankObject == fightItem.Tank);
+            slider.maxValue = fightItem.Player.Hero.Blood + tp.Blood;
             slider.minValue = 0;
+            bar.transform.Find("atk/txt_val").GetComponent<Text>().text = (fightItem.Player.Hero.Attack + tp.Attack).ToString();
+            bar.transform.Find("speed/txt_val").GetComponent<Text>().text = (fightItem.Player.Hero.Speed + tp.Speed).ToString();
+            bar.transform.Find("crit/txt_val").GetComponent<Text>().text = (fightItem.Player.Hero.CritRate + tp.CritRate).ToString()+"%";
+            bar.transform.Find("code/txt_val").GetComponent<Text>().text = "#" + tp.Code;
+            if (fightItem.AttackSkill != null)
+            {
+                bar.transform.Find("skills/atk").GetComponent<RawImage>().texture = CommonHelper.LoadSkillImage(fightItem.AttackSkill.Name);
+                
+            }
+            bar.transform.Find("skills/atk").gameObject.SetActive(fightItem.AttackSkill != null);
+            if (fightItem.DefenseSkill != null)
+            {
+                bar.transform.Find("skills/def").GetComponent<RawImage>().texture = CommonHelper.LoadSkillImage(fightItem.DefenseSkill.Name);
+                
+            }
+            bar.transform.Find("skills/def").gameObject.SetActive(fightItem.DefenseSkill != null);
         }
 
        // bar.position = Camera.main.WorldToScreenPoint(fightItem.Tank.transform.position + new Vector3(0, 13, 0));
         slider = bar.GetComponent<Slider>();
-        slider.value = fightItem.Blood;
+        slider.value =  fightItem.Blood<=0?0: fightItem.Blood;
+        bar.Find("Fill Area/txt_Val").GetComponent<Text>().text = slider.value.ToString();
         if (slider.value <= slider.maxValue * 0.33)
         {
             bar.Find("Fill Area/Fill").GetComponent<Image>().color = Color.red;
@@ -542,7 +593,7 @@ public class FightCtrl : MonoBehaviour
                     if (recover.Trigger() == true)
                     {
                         float maxBlood = fightitem.Player.Hero.Blood + fightitem.Player.TankList.Find(u => u.TankObject == fightitem.Tank).Blood;
-                        float addBlood = (int)Math.Round( maxBlood * recover.Value);
+                        int addBlood = (int)Math.Round( maxBlood * recover.Value);
                         if (addBlood + fightitem.Blood > maxBlood)
                         {
                             fightitem.Blood = maxBlood;
@@ -552,54 +603,40 @@ public class FightCtrl : MonoBehaviour
                             fightitem.Blood += addBlood;
                         }
                         ShowBlood(fightitem.Tank, addBlood, 1);
+                        RefreshBloodBar(fightitem);
                     }
                 }
             }
         }
-        
+
+        #endregion
+        #region 判定是否有Debuff
+        //燃烧
+        Buff rs = fightitem.Buffs.Find(u => u.Name == "combustion" && u.Disable == false);
+
+        if (rs != null)
+        {
+            rs.EffectCount++;
+            float maxBlood = fightitem.Player.Hero.Blood + fightitem.Player.TankList.Find(u => u.TankObject == fightitem.Tank).Blood;
+            int rsAtk = (int)Math.Round(maxBlood * rs.Value);
+            fightitem.Blood -= rsAtk;
+            ShowBlood(fightitem.Tank, rsAtk, 2);
+            RefreshBloodBar(fightitem);
+            CheckDeath(fightitem);
+            
+        }
         #endregion
 
-
-        List<FightOrder> targets = SetTarget(fightitem);
-        //普通攻击
-        SimpleAttack(fightitem, targets);
-       
-        //判断是否一方全部阵亡，若全部阵亡则不再执行攻击，否则继续。当一个回合结束后，开始下一轮
-        if (OrderList.FindAll(u => u.Player.Name == "玩家A" && u.Death == false).Count == 0 || OrderList.FindAll(u => u.Player.Name == "玩家B" && u.Death == false).Count == 0)
+        if (fightitem.Death == false)
         {
 
-            UIPanel.transform.Find("txt_round_center").gameObject.SetActive(true);
-            UIPanel.transform.Find("txt_round_center").SetAsLastSibling();
-            UIPanel.transform.Find("txt_round_center").GetComponent<Text>().text = "GAME  OVER";
-            UIPanel.transform.Find("btnBack").gameObject.SetActive(true);
-           
+            List<FightOrder> targets = SetTarget(fightitem);
+            //普通攻击
+            SimpleAttack(fightitem, targets);
         }
-        else
-        {
-            if (index >= OrderList.Count - 1)
-            {
-                Round++;
-                NextRound();
-            }
-            else
-            {
-                int nextindex = GetNextFightIndex();
-                if (nextindex == -1)
-                {
-                    Round++;
-                    NextRound();
-                }
-                else
-                {
-                    StartCoroutine(CommonHelper.DelayToInvokeDo(() =>
-                    {
-                        Fight(nextindex);
-                    }, 1.2f));
-                }
 
-            }
-
-        }
+        //游戏是否结束
+        CheckGameOver(index);
 
 
     }
@@ -622,13 +659,30 @@ public class FightCtrl : MonoBehaviour
 
 
                     bool iscrit = IsCrit(fightitem.CritRate);
-                    float attack =(int)Math.Round(iscrit ? fightitem.Attack * 2 : fightitem.Attack);
+                    int attack =(int)Math.Round(iscrit ? fightitem.Attack * 2 : fightitem.Attack);
+
+
+
+                    #region Buff效果生效
+                    //穿甲
+                    Buff buff = target.Buffs.Find(u => u.Name == "piercing" && u.Disable == false);
+                    if (buff != null)
+                    {
+                        attack = (int)Math.Round(attack * (1 + buff.Value));
+                        buff.Disable = true;
+                        buff.EffectCount++;
+                        StartCoroutine(CommonHelper.DelayToInvokeDo(() => { DestroyImmediate(buff.BuffObject); },1f));
+                    }
+
+                    #endregion
 
                     #region 防御技能触发判定
                     if (target.DefenseSkill != null)
                     {
+                        
                         switch (target.DefenseSkill.Name.ToLower())
                         {
+
                             //圣盾
                             case "holyshield":
                                 HolyShield holyShield = target.Tank.GetComponent<HolyShield>();
@@ -636,6 +690,7 @@ public class FightCtrl : MonoBehaviour
                                 {
                                     if (holyShield.Trigger() == true)
                                     {
+                                        CommonHelper.ShowSkillIcon(target.Tank, target.DefenseSkill.Name, UIPanel);
                                         continue;
                                     }
                                 }
@@ -647,6 +702,7 @@ public class FightCtrl : MonoBehaviour
                                 {
                                     if (heavyArmor.Trigger() == true)
                                     {
+                                        CommonHelper.ShowSkillIcon(target.Tank, target.DefenseSkill.Name, UIPanel);
                                         //伤害减少百分比
                                         attack = (int)Math.Round((1 - heavyArmor.Value) * attack);
                                     }
@@ -659,6 +715,7 @@ public class FightCtrl : MonoBehaviour
                                 {
                                     if (dodge.Trigger() == true)
                                     {
+                                        CommonHelper.ShowSkillIcon(target.Tank, target.DefenseSkill.Name, UIPanel);
                                         //闪避触发
                                         //未命中
                                         showMiss(target);
@@ -673,7 +730,7 @@ public class FightCtrl : MonoBehaviour
                                 {
                                     if (taunt.Trigger() == true)
                                     {
-
+                                        CommonHelper.ShowSkillIcon(target.Tank, target.DefenseSkill.Name, UIPanel);
                                     }
                                 }
                                 break;
@@ -684,6 +741,7 @@ public class FightCtrl : MonoBehaviour
                                 {
                                     if (revenge.Trigger() == true)
                                     {
+                                        CommonHelper.ShowSkillIcon(target.Tank, target.DefenseSkill.Name, UIPanel);
                                         //随机一个攻击对象
                                         SimpleAttack(target, SetTarget(target), true);
                                     }
@@ -697,8 +755,9 @@ public class FightCtrl : MonoBehaviour
                                     antiinjury.AttackTank = fightitem.Tank;
                                     if (antiinjury.Trigger() == true)
                                     {
+                                        CommonHelper.ShowSkillIcon(target.Tank, target.DefenseSkill.Name, UIPanel);
                                         //反伤
-                                        float replay_atk = (int)Math.Round(attack * antiinjury.Value);
+                                        int replay_atk = (int)Math.Round(attack * antiinjury.Value);
                                         fightitem.Blood -= replay_atk;
                                         ShowBlood(fightitem.Tank, replay_atk, 0, false);
                                         RefreshBloodBar(fightitem);
@@ -747,6 +806,7 @@ public class FightCtrl : MonoBehaviour
                                     batter.TargetTank = target.Tank;
                                     if (batter.EffectAttack(()=> { SimpleAttack(fightitem, targets, true); }) == true)
                                     {
+                                        CommonHelper.ShowSkillIcon(fightitem.Tank, fightitem.AttackSkill.Name, UIPanel);
                                         continue;
                                     }
                                 }
@@ -755,78 +815,85 @@ public class FightCtrl : MonoBehaviour
                                 Thump thump = fightitem.Tank.GetComponent<Thump>();
                                 if (thump != null)
                                 {
+                                    CommonHelper.ShowSkillIcon(fightitem.Tank, fightitem.AttackSkill.Name, UIPanel);
                                     thump.TargetTank = target.Tank;
                                     thump.EffectAttack();
 
                                     attack = (int)Math.Round(attack * thump.Value);
                                 }
                                 break;
+                            case "piercing":
+                                Piercing piercing = fightitem.Tank.GetComponent<Piercing>();
+                                if (piercing != null)
+                                {
+                                    CommonHelper.ShowSkillIcon(fightitem.Tank, fightitem.AttackSkill.Name, UIPanel);
+                                    piercing.TargetTank = target.Tank;
+                                    piercing.EffectAttack();
+                                    //buff标记
+                                    GameObject pojia = Instantiate(Resources.Load<GameObject>("Skills/Buff/pojia"), target.Tank.transform.parent, false);
+                                    //添加buff
+                                    target.Buffs.Add(new Buff
+                                    {
+                                        TankCode = target.Code,
+                                        TankObject = target.Tank,
+                                        FromTankCode = fightitem.Code,
+                                        FromTankObject = fightitem.Tank,
+                                        BuffObject = pojia,
+                                        Name = "piercing",
+                                        BuffType = "debuff",
+                                        Value = piercing.Value,
+                                        EffectCount = 0,
+                                        Disable = false
+                                    });
+                                }
+                                break;
+                            //燃烧
+                            case "combustion":
+                                Combustion combustion = fightitem.Tank.GetComponent<Combustion>();
+                                if (combustion != null)
+                                {
+                                    CommonHelper.ShowSkillIcon(fightitem.Tank, fightitem.AttackSkill.Name, UIPanel);
+                                    combustion.TargetTank = target.Tank;
+                                    combustion.EffectAttack();
+                                    //只挂载一个燃烧效果
+                                    if (target.Buffs.Find(u => u.Name == "combustion" && u.Disable == false) == null)
+                                    {
+                                        //buff标记
+                                        GameObject ranshao = Instantiate(Resources.Load<GameObject>("Skills/Buff/ranshao"), target.Tank.transform.parent, false);
+                                        //添加buff
+                                        target.Buffs.Add(new Buff
+                                        {
+                                            TankCode = target.Code,
+                                            TankObject = target.Tank,
+                                            FromTankCode = fightitem.Code,
+                                            FromTankObject = fightitem.Tank,
+                                            BuffObject = ranshao,
+                                            Name = "combustion",
+                                            BuffType = "debuff",
+                                            Value = combustion.Value,
+                                            EffectCount = 0,
+                                            Disable = false
+                                        });
+                                    }
+                                }
+                                break;
                         }
                     }
                     #endregion
 
-                    target.Blood -= attack;// - target.Defense;
+                    target.Blood -= attack;
                     ShowBlood(target.Tank, attack, 0, iscrit);
                     RefreshBloodBar(target);
-                    if (target.Blood <= 0)
-                    {
-                        target.Blood = 0;
-                        target.Death = true;
-                        //死亡爆炸效果
-                        GameObject Deathprefab = CommonHelper.GetPrefabs("skill", "Death");
-                        GameObject death = Instantiate(Deathprefab);
-                        death.SetActive(true);
-                        death.transform.SetParent(target.Tank.transform.parent.parent, false);
-                        target.Tank.transform.GetChild(0).GetComponent<Animator>().Play("Death");
 
-
-                        #region 死亡后判定是否有复生技能和亡语技能
-                        if (target.DefenseSkill != null)
-                        {
-                            if (target.DefenseSkill.Name.ToLower() == "revive")
-                            {
-                                Revive revive = target.Tank.GetComponent<Revive>();
-                                if (revive != null)
-                                {
-                                    if (revive.Trigger() == true)
-                                    {
-                                        StartCoroutine(CommonHelper.DelayToInvokeDo(() =>
-                                        {
-                                                //恢复20%血量，移除死亡效果，恢复正常状态
-                                                target.Tank.transform.GetChild(0).GetComponent<Animator>().Play("Idle");
-                                            Destroy(death);
-                                            target.Death = false;
-                                            target.Blood = (target.Player.Hero.Blood + target.Player.TankList.Find(u => u.TankObject == target.Tank).Blood) * 0.2f;
-                                            RefreshBloodBar(target);
-                                        }, 1f));
-                                    }
-                                }
-                            }
-                            else if (target.DefenseSkill.Name.ToLower() == "deathsound")
-                            {
-                                DeathSound deathsound = target.Tank.GetComponent<DeathSound>();
-                                if (deathsound != null)
-                                {
-                                    if (deathsound.Trigger() == true)
-                                    {
-                                        //亡语效果
-
-                                    }
-                                }
-                            }
-
-                        }
-                        #endregion
-
-
-                    }
+                    CheckDeath(target);
+                    
                     //攻击是否为技能
                     if (isskill == false)
                     {
                        // AttackSkills(fightitem, new List<FightOrder>() { target });
                     }
 
-                    Debug.Log($"{target.Player.Name},{target.Title}被攻击减少{ fightitem.Attack}血量，剩余{target.Blood }血量");
+                    
                 }
 
 
@@ -840,6 +907,138 @@ public class FightCtrl : MonoBehaviour
         //    }, 0.5f));
         //}
     }
+
+    /// <summary>
+    /// 检查游戏是否结束
+    /// </summary>
+    void CheckGameOver(int index)
+    {
+
+        //判断是否一方全部阵亡，若全部阵亡则不再执行攻击，否则继续。当一个回合结束后，开始下一轮
+        if (OrderList.FindAll(u => u.Player.Name == "玩家A" && u.Death == false).Count == 0 || OrderList.FindAll(u => u.Player.Name == "玩家B" && u.Death == false).Count == 0)
+        {
+
+            UIPanel.transform.Find("txt_round_center").gameObject.SetActive(true);
+            UIPanel.transform.Find("txt_round_center").SetAsLastSibling();
+            if (OrderList.FindAll(u => u.Player.Name == "玩家A" && u.Death == false).Count == 0)
+            {
+                UIPanel.transform.Find("txt_round_center").GetComponent<Text>().text = "Defeated";
+            }
+            else
+            {
+                UIPanel.transform.Find("txt_round_center").GetComponent<Text>().text = "VICTORY";
+            }
+
+            UIPanel.transform.Find("btnBack").gameObject.SetActive(true);
+
+        }
+        else
+        {
+            if (index >= OrderList.Count - 1)
+            {
+                Round++;
+                NextRound();
+            }
+            else
+            {
+                int nextindex = GetNextFightIndex();
+                if (nextindex == -1)
+                {
+                    Round++;
+                    NextRound();
+                }
+                else
+                {
+                    StartCoroutine(CommonHelper.DelayToInvokeDo(() =>
+                    {
+                        Fight(nextindex);
+                    }, 1.2f));
+                }
+
+            }
+
+        }
+    }
+
+
+    /// <summary>
+    /// 判定是否死亡
+    /// </summary>
+    /// <param name="target"></param>
+    /// <returns></returns>
+    bool CheckDeath(FightOrder target)
+    {
+        if (target.Blood <= 0)
+        {
+            target.Blood = 0;
+            target.Death = true;
+            //死亡爆炸效果
+            GameObject Deathprefab = CommonHelper.GetPrefabs("skill", "Death");
+            GameObject death = Instantiate(Deathprefab);
+            death.SetActive(true);
+            death.transform.SetParent(target.Tank.transform.parent.parent, false);
+            target.Tank.transform.GetChild(0).GetComponent<Animator>().Play("Death");
+
+
+            #region 死亡后判定是否有复生技能和亡语技能
+            if (target.DefenseSkill != null)
+            {
+                if (target.DefenseSkill.Name.ToLower() == "revive")
+                {
+                    Revive revive = target.Tank.GetComponent<Revive>();
+                    if (revive != null)
+                    {
+                        if (revive.Trigger() == true)
+                        {
+                            target.Death = false;
+                            target.Blood = (int)((target.Player.Hero.Blood + target.Player.TankList.Find(u => u.TankObject == target.Tank).Blood) * 0.2f);
+                            CommonHelper.ShowSkillIcon(target.Tank, target.DefenseSkill.Name, UIPanel);
+                            StartCoroutine(CommonHelper.DelayToInvokeDo(() =>
+                            {
+                                //恢复20%血量，移除死亡效果，恢复正常状态
+                                target.Tank.transform.GetChild(0).GetComponent<Animator>().Play("Idle");
+                                Destroy(death);
+                                RefreshBloodBar(target);
+                            }, 1f));
+                        }
+                    }
+                }
+                else if (target.DefenseSkill.Name.ToLower() == "deathsound")
+                {
+                    DeathSound deathsound = target.Tank.GetComponent<DeathSound>();
+                    if (deathsound != null)
+                    {
+                        if (deathsound.Trigger() == true)
+                        {
+                            CommonHelper.ShowSkillIcon(target.Tank, target.DefenseSkill.Name, UIPanel);
+                            //亡语效果
+
+                        }
+                    }
+                }
+
+            }
+            #endregion
+
+            //死亡后移除身上的特效
+            if (target.Death == true)
+            {
+                if (target.DefenseSkill != null)
+                {
+                    Transform sk = target.Tank.transform.parent.Find(target.DefenseSkill.Title + "(Clone)");
+                    if (sk != null)
+                    {
+                        DestroyImmediate(sk.gameObject);
+                    }
+                }
+
+            }
+
+            
+        }
+        return target.Death;
+    }
+
 
     //显示miss 未命中
     void showMiss(FightOrder target)
@@ -965,6 +1164,20 @@ public class FightCtrl : MonoBehaviour
                         thump.Value = 2; //2倍攻击
                         thump.Effected = 0;
                         thump.FromTank = fromItem.Tank;
+                        break;
+                    //穿甲
+                    case "piercing":
+                        Piercing piercing = fromItem.Tank.AddComponent<Piercing>();
+                        piercing.Value = 0.2f; //20%附加伤害
+                        piercing.Effected = 0;
+                        piercing.FromTank = fromItem.Tank;
+                        break;
+                    //燃烧
+                    case "combustion":
+                        Combustion combustion = fromItem.Tank.AddComponent<Combustion>();
+                        combustion.Value = 0.2f; //20%附加伤害
+                        combustion.Effected = 0;
+                        combustion.FromTank = fromItem.Tank;
                         break;
 
                 }

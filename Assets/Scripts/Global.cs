@@ -54,13 +54,13 @@ public class Global : MonoBehaviour
             ResourceCtrl.Instance.TankList.Clear();
         }
         // TankList.Add();
-        for (int i = 0; i < 12; i++)
+        for (int i = 0; i < 50; i++)
         {
             TankProperty tank = new TankProperty((12 + i).ToString().PadLeft(5, '0'), "蝎式坦克", null);
-            tank.AttackSkill =  ResourceCtrl.Instance.SkillList.FindAll(u=>u.Type=="Attack")[i];
-            tank.DefenseSkill = i < 8 ? ResourceCtrl.Instance.SkillList.FindAll(u => u.Type == "Defense")[CommonHelper.GetRandom(0, 8)] : null;
+            //tank.AttackSkill =  ResourceCtrl.Instance.SkillList.FindAll(u=>u.Type=="Attack")[CommonHelper.GetRandom(0, 12)];
+            tank.DefenseSkill = ResourceCtrl.Instance.SkillList.FindAll(u => u.Type == "Defense")[CommonHelper.GetRandom(0, 8)];
 
-            //tank.AttackSkill = ResourceCtrl.Instance.SkillList.Find(u => u.Name == "Thump");
+            tank.AttackSkill = ResourceCtrl.Instance.SkillList.Find(u => u.Name == "Combustion");
             //tank.DefenseSkill = ResourceCtrl.Instance.SkillList.Find(u => u.Name == "Taunt");
             ResourceCtrl.Instance.TankList.Add(tank);
         }

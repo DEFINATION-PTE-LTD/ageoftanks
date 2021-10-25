@@ -60,5 +60,9 @@ public class FightOrder
     /// 防御技能
     /// </summary>
     public SkillInfo DefenseSkill { get; set; }
+    /// <summary>
+    /// 正负增益效果
+    /// </summary>
+    public List<Buff> Buffs { get; set; }
 }
 

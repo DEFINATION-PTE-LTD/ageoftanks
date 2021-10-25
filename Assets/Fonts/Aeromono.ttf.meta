@@ -1,0 +1,23 @@
+fileFormatVersion: 2
+guid: bb8e8534d5c07f849a79d04e9b0d5979
+TrueTypeFontImporter:
+  externalObjects: {}
+  serializedVersion: 4
+  fontSize: 16
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontName: Aeromono
+  fontNames:
+  - Aeromono
+  fallbackFontReferences:
+  - {fileID: 12800000, guid: b231fdfa92bae884bb047dc32764e371, type: 3}
+  customCharacters: 
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  useLegacyBoundsCalculation: 0
+  shouldRoundAdvanceValue: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
