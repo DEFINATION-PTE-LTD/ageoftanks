@@ -47,7 +47,7 @@ public class AntiInjury : MonoBehaviour
             {
                 child.SetActive(false);
                 child.transform.localPosition = new Vector3(0, 0, 0);
-            }, 1f));
+            }, 2f));
         });
 
         Effected++;

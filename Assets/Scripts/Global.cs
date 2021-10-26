@@ -43,7 +43,7 @@ public class Global : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
+        
     }
 
     //初始化坦克列表
@@ -57,11 +57,11 @@ public class Global : MonoBehaviour
         for (int i = 0; i < 50; i++)
         {
             TankProperty tank = new TankProperty((12 + i).ToString().PadLeft(5, '0'), "蝎式坦克", null);
-            //tank.AttackSkill =  ResourceCtrl.Instance.SkillList.FindAll(u=>u.Type=="Attack")[CommonHelper.GetRandom(0, 12)];
+            tank.AttackSkill =  ResourceCtrl.Instance.SkillList.FindAll(u=>u.Type=="Attack")[CommonHelper.GetRandom(0, 12)];
             tank.DefenseSkill = ResourceCtrl.Instance.SkillList.FindAll(u => u.Type == "Defense")[CommonHelper.GetRandom(0, 8)];
 
-            tank.AttackSkill = ResourceCtrl.Instance.SkillList.Find(u => u.Name == "Combustion");
-            //tank.DefenseSkill = ResourceCtrl.Instance.SkillList.Find(u => u.Name == "Taunt");
+            //tank.AttackSkill = ResourceCtrl.Instance.SkillList.Find(u => u.Name == "Duel");
+            //tank.DefenseSkill = ResourceCtrl.Instance.SkillList.Find(u => u.Name == "Revenge");
             ResourceCtrl.Instance.TankList.Add(tank);
         }
         //默认选中前6个

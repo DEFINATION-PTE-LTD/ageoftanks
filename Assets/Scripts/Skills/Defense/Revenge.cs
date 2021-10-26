@@ -42,7 +42,7 @@ public class Revenge : MonoBehaviour
         StartCoroutine(CommonHelper.DelayToInvokeDo(() =>
         {
             child.SetActive(false);
-        }, 1f));
+        }, 2f));
 
         //Vector3 oldScale = SkillPrefab.transform.localScale;
         //Vector3 newScale = new Vector3(1.5f, 1.5f, 1.5f);

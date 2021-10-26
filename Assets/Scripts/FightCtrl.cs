@@ -37,6 +37,8 @@ public class FightCtrl : MonoBehaviour
     public int CountDownTime = 5; //倒计时
     public int Round = 0; //回合数
     public int FightIndex = -1; //当前战斗方的下标
+    
+    List<FightOrder> DuelList = new List<FightOrder>(); //决斗中的坦克
 
     private void Awake()
     {
@@ -365,46 +367,150 @@ public class FightCtrl : MonoBehaviour
     /// 为当前攻击方随机设置攻击目标
     /// </summary>
     /// <param name="fightOrder"></param>
+    /// <param name="count">目标数</param>
+    /// <param name="ignoreTaunt">是否无视嘲讽</param>
     /// <returns></returns>
     public List<FightOrder> SetTarget(FightOrder fightOrder)
     {
         List<FightOrder> list = new List<FightOrder>();
-        Weapon w = fightOrder.Tank.GetComponent<Weapon>();
+  
+        int count = 1;
+        //对方存活坦克
+        List<FightOrder> livelist = OrderList.FindAll(u => u.Player.Name != fightOrder.Player.Name && u.Death == false && DuelList.Contains(u)==false);
 
-        if (w.target != null && w.target.Count > 0)
+
+        string atkName = "";
+        if (fightOrder.AttackSkill != null)
         {
-            w.target.Clear();
+            atkName = fightOrder.AttackSkill.Name;
+        }
+        if (atkName.ToLower() == "scattering")
+        {
+            count = fightOrder.Tank.GetComponent<Scattering>().Value;
         }
 
 
-        int count = 1;// CommonHelper.GetRandom(1, 7);
-                      //对方存活坦克
-        List<FightOrder> livelist = OrderList.FindAll(u => u.Player.Name != fightOrder.Player.Name && u.Death == false);
-        if (count >= livelist.Count)
+        //逐个击破 攻击攻击力最弱的
+        if (atkName.ToLower() == "destroyweak")
         {
-            foreach (FightOrder item in livelist)
+            //按攻击力排序，第一个就是攻击力最弱的
+            FightOrder fo = livelist.OrderBy(u => u.Attack).FirstOrDefault();
+            if (fo != null)
             {
-                w.target.Add(item.Tank);
-                list = livelist;
+                list.Add(fo);
+            }
+        }
+        //攻无不克 攻击攻击力最强的
+        else if (atkName.ToLower() == "invincible")
+        {
+            //按攻击力排序，第一个就是攻击力最弱的
+            FightOrder fo = livelist.OrderByDescending(u => u.Attack).FirstOrDefault();
+            if (fo != null)
+            {
+                list.Add(fo);
             }
         }
         else
         {
-            for (int i = 0; i < count; i++)
+            //具有帝国指令debuff的敌方
+            List<FightOrder> directive = new List<FightOrder>();
+            foreach (FightOrder item in livelist)
             {
-                FightOrder newor = livelist[CommonHelper.GetRandom(0, livelist.Count)];
-                GameObject newtar = newor.Tank;
-                while (w.target.IndexOf(newtar) > -1)
+                if (item.Buffs.FindIndex(u => u.Disable == false && u.Name == "empiredirective") > -1)
                 {
-                    newor = livelist[CommonHelper.GetRandom(0, livelist.Count)];
-                    newtar = newor.Tank;
+                    directive.Add(item);
                 }
-                w.target.Add(newtar);
+            }
 
-                list.Add(newor);
+
+            //具有嘲讽技能的敌方
+            List<FightOrder> tauntlist = new List<FightOrder>();
+            foreach (FightOrder item in livelist)
+            {
+                if (item.DefenseSkill != null)
+                {
+                    if (item.DefenseSkill.Name.ToLower() == "taunt")
+                    {
+                        tauntlist.Add(item);
+                    }
+                }
+            }
+
+
+            //优先级：帝国指令>嘲讽
+            if (directive.Count > 0)
+            {
+                if (count == directive.Count)
+                {
+                    list.AddRange(directive);
+                }
+                else if (count > directive.Count)
+                {
+                    //先全选帝国指令
+                    list.AddRange(directive);
+                }
+                //小于帝国指令总数
+                else
+                {
+                    list.AddRange(directive.GetRange(0, count));
+                }
+            }
+
+
+
+            //从嘲讽中选
+            if (count > list.Count)
+            {
+                //嘲讽列表中排除帝国指令
+                List<FightOrder> tauntlist2 = tauntlist.FindAll(u => directive.Contains(u) == false);
+                if (tauntlist2.Count > 0)
+                {
+                    //足够
+                    if (count - list.Count == tauntlist2.Count)
+                    {
+                        list.AddRange(tauntlist2);
+                    }
+                    //不够
+                    else if (count - list.Count > tauntlist2.Count)
+                    {
+                        list.AddRange(tauntlist2);
+                    }
+                    //多余
+                    else
+                    {
+                        list.AddRange(tauntlist2.GetRange(0, count - list.Count));
+                    }
+
+                }
+            }
+
+
+            //从其余存活中选择
+            if (count > list.Count)
+            {
+                List<FightOrder> livelist2 = livelist.FindAll(u => directive.Contains(u) == false && tauntlist.Contains(u) == false);
+
+                if (livelist2.Count > 0)
+                {
+                    //足够
+                    if (count - list.Count == livelist2.Count)
+                    {
+                        list.AddRange(livelist2);
+                    }
+                    //不够
+                    else if (count - list.Count > livelist2.Count)
+                    {
+                        list.AddRange(livelist2);
+                    }
+                    //多余
+                    else
+                    {
+                        list.AddRange(livelist2.GetRange(0, count - list.Count));
+                    }
+
+                }
             }
         }
-
 
         return list;
     }
@@ -610,6 +716,7 @@ public class FightCtrl : MonoBehaviour
         }
 
         #endregion
+
         #region 判定是否有Debuff
         //燃烧
         Buff rs = fightitem.Buffs.Find(u => u.Name == "combustion" && u.Disable == false);
@@ -625,61 +732,98 @@ public class FightCtrl : MonoBehaviour
             CheckDeath(fightitem);
             
         }
+
+
         #endregion
 
         if (fightitem.Death == false)
         {
-
-            List<FightOrder> targets = SetTarget(fightitem);
-            //普通攻击
-            SimpleAttack(fightitem, targets);
+            //冻结
+            Buff dj = fightitem.Buffs.Find(u => u.Name == "frozen" && u.Disable == false);
+            if (dj != null)
+            {
+                dj.EffectCount = 1;
+                dj.Disable = true;
+                StartCoroutine(CommonHelper.DelayToInvokeDo(() => { DestroyImmediate(dj.BuffObject); }, 1f));
+                //游戏是否结束
+                StartCoroutine(CommonHelper.DelayToInvokeDo(() =>
+                {
+                    CheckGameStatus(index);
+                }, 0.3f));
+            }
+            else
+            {
+                List<FightOrder> targets = SetTarget(fightitem);
+                int targetIndex = 0;
+                foreach (FightOrder item in targets)
+                {
+                    //普通攻击
+                    StartCoroutine(CommonHelper.DelayToInvokeDo(() => { SimpleAttack(fightitem, item, targets.Count>1?true:false); }, targetIndex * 0.5f));
+                    targetIndex++;
+                }
+                //游戏是否结束
+                StartCoroutine(CommonHelper.DelayToInvokeDo(() =>
+                {
+                    CheckGameStatus(index);
+                }, targets.Count * 0.5f));
+            }
         }
-
-        //游戏是否结束
-        CheckGameOver(index);
+        else 
+        {
+            //游戏是否结束
+            StartCoroutine(CommonHelper.DelayToInvokeDo(() =>
+            {
+                CheckGameStatus(index);
+            }, 1f));
+        }
+       
 
 
     }
 
 
     //普通攻击
-    void SimpleAttack(FightOrder fightitem, List<FightOrder> targets,bool isskill=false)
+    void SimpleAttack(FightOrder fightitem, FightOrder target,bool isskill=false)
     {
         if (fightitem.Death == false)
         {
             Weapon w = fightitem.Tank.GetComponent<Weapon>();
-           // List<FightOrder> targets = SetTarget(fightitem);
-            if (targets.Count > 0)
+            w.target = new List<GameObject>() { target.Tank };
+            w.Shoot(fightitem.Tank);
+            //被攻击坦克普通攻击血量减少操作
+
+
+            bool iscrit = IsCrit(fightitem.CritRate);
+            int attack = (int)Math.Round(iscrit ? fightitem.Attack * 2 : fightitem.Attack);
+
+
+
+            #region Buff效果生效
+            //穿甲
+            Buff buff = target.Buffs.Find(u => u.Name == "piercing" && u.Disable == false);
+            if (buff != null)
             {
-                w.Shoot(fightitem.Tank);
-                //被攻击坦克普通攻击血量减少操作
-                for (int j = 0; j < targets.Count; j++)
+                attack = (int)Math.Round(attack * (1 + buff.Value));
+                buff.Disable = true;
+                buff.EffectCount++;
+                StartCoroutine(CommonHelper.DelayToInvokeDo(() => { DestroyImmediate(buff.BuffObject); }, 1f));
+            }
+
+            #endregion
+
+            #region 防御技能触发判定
+            if (target.DefenseSkill != null)
+            {
+                //禁魔 有禁魔状态的不能使用技能
+                Buff jinmo = target.Buffs.Find(u => u.Name == "forbidden" && u.Disable == false);
+                if (jinmo != null)
                 {
-                    FightOrder target = targets[j];
-
-
-                    bool iscrit = IsCrit(fightitem.CritRate);
-                    int attack =(int)Math.Round(iscrit ? fightitem.Attack * 2 : fightitem.Attack);
-
-
-
-                    #region Buff效果生效
-                    //穿甲
-                    Buff buff = target.Buffs.Find(u => u.Name == "piercing" && u.Disable == false);
-                    if (buff != null)
+                    jinmo.EffectCount++;
+                }
+                else
+                {
+                    StartCoroutine(CommonHelper.DelayToInvokeDo(() =>
                     {
-                        attack = (int)Math.Round(attack * (1 + buff.Value));
-                        buff.Disable = true;
-                        buff.EffectCount++;
-                        StartCoroutine(CommonHelper.DelayToInvokeDo(() => { DestroyImmediate(buff.BuffObject); },1f));
-                    }
-
-                    #endregion
-
-                    #region 防御技能触发判定
-                    if (target.DefenseSkill != null)
-                    {
-                        
                         switch (target.DefenseSkill.Name.ToLower())
                         {
 
@@ -691,7 +835,7 @@ public class FightCtrl : MonoBehaviour
                                     if (holyShield.Trigger() == true)
                                     {
                                         CommonHelper.ShowSkillIcon(target.Tank, target.DefenseSkill.Name, UIPanel);
-                                        continue;
+                                        return;
                                     }
                                 }
                                 break;
@@ -719,7 +863,7 @@ public class FightCtrl : MonoBehaviour
                                         //闪避触发
                                         //未命中
                                         showMiss(target);
-                                        continue;
+                                        return;
                                     }
                                 }
                                 break;
@@ -743,7 +887,7 @@ public class FightCtrl : MonoBehaviour
                                     {
                                         CommonHelper.ShowSkillIcon(target.Tank, target.DefenseSkill.Name, UIPanel);
                                         //随机一个攻击对象
-                                        SimpleAttack(target, SetTarget(target), true);
+                                        SimpleAttack(target, SetTarget(target)[0], true);
                                     }
                                 }
                                 break;
@@ -765,72 +909,90 @@ public class FightCtrl : MonoBehaviour
                                     }
                                 }
                                 break;
-                                //复生(死亡时判定)
-                                //case "revive":
-                                //    Revive revive = target.Tank.GetComponent<Revive>();
-                                //    if (revive != null)
-                                //    {
-                                //        if (revive.Trigger() == true)
-                                //        {
-                                //            continue;
-                                //        }
-                                //    }
-                                //    break;
-                                //恢复
-                                //case "recover":
-                                //    Recover recover = target.Tank.GetComponent<Recover>();
-                                //    if (recover != null)
-                                //    {
-                                //        if (recover.Trigger() == true)
-                                //        {
-                                //            continue;
-                                //        }
-                                //    }
-                                //    break;
+
                         }
+                    }, 0.3f));
+                }
+            }
+            //攻击技能效果
+            //AttackSkills(fightitem, targets);
+            #endregion
 
-                    }
-                    //攻击技能效果
-                    //AttackSkills(fightitem, targets);
-                    #endregion
-
-                    #region 攻击技能特效触发
-                    if (fightitem.AttackSkill != null && isskill==false)
+            #region 攻击技能特效触发
+            if (fightitem.AttackSkill != null && isskill == false)
+            {
+                //禁魔 有禁魔状态的不能使用技能
+                Buff jinmo = fightitem.Buffs.Find(u => u.Name == "forbidden" && u.Disable == false);
+                if (jinmo != null)
+                {
+                    jinmo.EffectCount++;
+                }
+                else
+                {
+                    switch (fightitem.AttackSkill.Name.ToLower())
                     {
-                        switch (fightitem.AttackSkill.Name.ToLower())
-                        {
-                            case "batter":
-                                Batter batter = fightitem.Tank.GetComponent<Batter>();
-                                if (batter != null)
-                                {
-                                    batter.TargetTank = target.Tank;
-                                    if (batter.EffectAttack(()=> { SimpleAttack(fightitem, targets, true); }) == true)
-                                    {
-                                        CommonHelper.ShowSkillIcon(fightitem.Tank, fightitem.AttackSkill.Name, UIPanel);
-                                        continue;
-                                    }
-                                }
-                                break;
-                            case "thump":
-                                Thump thump = fightitem.Tank.GetComponent<Thump>();
-                                if (thump != null)
+                        case "batter":
+                            Batter batter = fightitem.Tank.GetComponent<Batter>();
+                            if (batter != null)
+                            {
+                                batter.TargetTank = target.Tank;
+                                if (batter.EffectAttack(() => { SimpleAttack(fightitem, target, true); }) == true)
                                 {
                                     CommonHelper.ShowSkillIcon(fightitem.Tank, fightitem.AttackSkill.Name, UIPanel);
-                                    thump.TargetTank = target.Tank;
-                                    thump.EffectAttack();
+                                    return;
+                                }
+                            }
+                            break;
+                        case "thump":
+                            Thump thump = fightitem.Tank.GetComponent<Thump>();
+                            if (thump != null)
+                            {
+                                CommonHelper.ShowSkillIcon(fightitem.Tank, fightitem.AttackSkill.Name, UIPanel);
+                                thump.TargetTank = target.Tank;
+                                thump.EffectAttack();
 
-                                    attack = (int)Math.Round(attack * thump.Value);
-                                }
-                                break;
-                            case "piercing":
-                                Piercing piercing = fightitem.Tank.GetComponent<Piercing>();
-                                if (piercing != null)
+                                attack = (int)Math.Round(attack * thump.Value);
+                            }
+                            break;
+                        case "piercing":
+                            Piercing piercing = fightitem.Tank.GetComponent<Piercing>();
+                            if (piercing != null)
+                            {
+                                CommonHelper.ShowSkillIcon(fightitem.Tank, fightitem.AttackSkill.Name, UIPanel);
+                                piercing.TargetTank = target.Tank;
+                                piercing.EffectAttack();
+                                //buff标记
+                                GameObject pojia = Instantiate(Resources.Load<GameObject>("Skills/Buff/pojia"), target.Tank.transform.parent, false);
+                                //添加buff
+                                target.Buffs.Add(new Buff
                                 {
-                                    CommonHelper.ShowSkillIcon(fightitem.Tank, fightitem.AttackSkill.Name, UIPanel);
-                                    piercing.TargetTank = target.Tank;
-                                    piercing.EffectAttack();
+                                    TankCode = target.Code,
+                                    TankObject = target.Tank,
+                                    FromTankCode = fightitem.Code,
+                                    FromTankObject = fightitem.Tank,
+                                    BuffObject = pojia,
+                                    Name = "piercing",
+                                    BuffType = "debuff",
+                                    Value = piercing.Value,
+                                    EffectCount = 0,
+                                    Disable = false
+                                });
+                            }
+                            break;
+                        //燃烧
+                        case "combustion":
+                            Combustion combustion = fightitem.Tank.GetComponent<Combustion>();
+                            if (combustion != null)
+                            {
+                                CommonHelper.ShowSkillIcon(fightitem.Tank, fightitem.AttackSkill.Name, UIPanel);
+                                combustion.TargetTank = target.Tank;
+                                combustion.EffectAttack();
+                                //只挂载一个燃烧效果
+                                if (target.Buffs.Find(u => u.Name == "combustion" && u.Disable == false) == null)
+                                {
                                     //buff标记
-                                    GameObject pojia = Instantiate(Resources.Load<GameObject>("Skills/Buff/pojia"), target.Tank.transform.parent, false);
+                                    
+                                    GameObject ranshao = GameObject.Instantiate(CommonHelper.GetPrefabs("skill", "Attack/燃烧"), target.Tank.transform.parent, false);
                                     //添加buff
                                     target.Buffs.Add(new Buff
                                     {
@@ -838,66 +1000,242 @@ public class FightCtrl : MonoBehaviour
                                         TankObject = target.Tank,
                                         FromTankCode = fightitem.Code,
                                         FromTankObject = fightitem.Tank,
-                                        BuffObject = pojia,
-                                        Name = "piercing",
+                                        BuffObject = ranshao,
+                                        Name = "combustion",
                                         BuffType = "debuff",
-                                        Value = piercing.Value,
+                                        Value = combustion.Value,
                                         EffectCount = 0,
                                         Disable = false
                                     });
                                 }
-                                break;
-                            //燃烧
-                            case "combustion":
-                                Combustion combustion = fightitem.Tank.GetComponent<Combustion>();
-                                if (combustion != null)
+                            }
+                            break;
+                        //散射
+                        case "scattering":
+                            Scattering scattering = fightitem.Tank.GetComponent<Scattering>();
+                            if (scattering != null)
+                            {
+                                CommonHelper.ShowSkillIcon(fightitem.Tank, fightitem.AttackSkill.Name, UIPanel);
+                                scattering.TargetTank = target.Tank;
+                                scattering.EffectAttack();
+
+                            }
+                            break;
+                        //逐个击破
+                        case "destroyweak":
+                            Destroyweak destroyweak = fightitem.Tank.GetComponent<Destroyweak>();
+                            if (destroyweak != null)
+                            {
+                                CommonHelper.ShowSkillIcon(fightitem.Tank, fightitem.AttackSkill.Name, UIPanel);
+                                destroyweak.TargetTank = target.Tank;
+                                destroyweak.EffectAttack();
+
+                            }
+                            break;
+                        //攻无不克
+                        case "invincible":
+                            Invincible invincible = fightitem.Tank.GetComponent<Invincible>();
+                            if (invincible != null)
+                            {
+                                CommonHelper.ShowSkillIcon(fightitem.Tank, fightitem.AttackSkill.Name, UIPanel);
+                                invincible.TargetTank = target.Tank;
+                                invincible.EffectAttack();
+
+                            }
+                            break;
+                        //必杀
+                        case "kill":
+                            Kill kill = fightitem.Tank.GetComponent<Kill>();
+                            if (kill != null)
+                            {
+
+                                //概率判定成功
+                                if (CommonHelper.IsHit(kill.Value))
                                 {
                                     CommonHelper.ShowSkillIcon(fightitem.Tank, fightitem.AttackSkill.Name, UIPanel);
-                                    combustion.TargetTank = target.Tank;
-                                    combustion.EffectAttack();
-                                    //只挂载一个燃烧效果
-                                    if (target.Buffs.Find(u => u.Name == "combustion" && u.Disable == false) == null)
-                                    {
-                                        //buff标记
-                                        GameObject ranshao = Instantiate(Resources.Load<GameObject>("Skills/Buff/ranshao"), target.Tank.transform.parent, false);
-                                        //添加buff
-                                        target.Buffs.Add(new Buff
-                                        {
-                                            TankCode = target.Code,
-                                            TankObject = target.Tank,
-                                            FromTankCode = fightitem.Code,
-                                            FromTankObject = fightitem.Tank,
-                                            BuffObject = ranshao,
-                                            Name = "combustion",
-                                            BuffType = "debuff",
-                                            Value = combustion.Value,
-                                            EffectCount = 0,
-                                            Disable = false
-                                        });
-                                    }
+                                    kill.TargetTank = target.Tank;
+                                    kill.EffectAttack();
+                                    attack = (int)target.Blood;
+
                                 }
-                                break;
-                        }
+
+                            }
+                            break;
+                        //吸血
+                        case "suckblood":
+                            SuckBlood suckblood = fightitem.Tank.GetComponent<SuckBlood>();
+                            if (suckblood != null)
+                            {
+
+                                CommonHelper.ShowSkillIcon(fightitem.Tank, fightitem.AttackSkill.Name, UIPanel);
+                                suckblood.TargetTank = target.Tank;
+                                suckblood.EffectAttack();
+                                int suckvalue = (int)Math.Round(attack * suckblood.Value);
+                                float maxBlood = fightitem.Player.Hero.Blood + fightitem.Player.TankList.Find(u => u.TankObject == fightitem.Tank).Blood;
+                                if (suckvalue + fightitem.Blood > maxBlood)
+                                {
+                                    fightitem.Blood = maxBlood;
+                                }
+                                else
+                                {
+                                    fightitem.Blood += suckvalue;
+                                }
+                                ShowBlood(fightitem.Tank, suckvalue, 1);
+                                RefreshBloodBar(fightitem);
+
+                            }
+                            break;
+                        //冰冻
+                        case "frozen":
+                            Frozen frozen = fightitem.Tank.GetComponent<Frozen>();
+                            if (frozen != null)
+                            {
+                                CommonHelper.ShowSkillIcon(fightitem.Tank, fightitem.AttackSkill.Name, UIPanel);
+                                frozen.TargetTank = target.Tank;
+                                frozen.EffectAttack();
+                                //只挂载一个冰冻效果
+                                if (target.Buffs.Find(u => u.Name == "frozen" && u.Disable == false) == null)
+                                {
+                                    //buff标记
+                                    GameObject dongjie = GameObject.Instantiate(CommonHelper.GetPrefabs("skill", "Attack/冰冻"), target.Tank.transform.parent, false);
+                                    //添加buff
+                                    target.Buffs.Add(new Buff
+                                    {
+                                        TankCode = target.Code,
+                                        TankObject = target.Tank,
+                                        FromTankCode = fightitem.Code,
+                                        FromTankObject = fightitem.Tank,
+                                        BuffObject = dongjie,
+                                        Name = "frozen",
+                                        BuffType = "debuff",
+                                        Value = frozen.Value,
+                                        EffectCount = 0,
+                                        Disable = false
+                                    });
+                                }
+                            }
+                            break;
+                        //禁魔
+                        case "forbidden":
+                            Forbidden forbidden = fightitem.Tank.GetComponent<Forbidden>();
+                            if (forbidden != null)
+                            {
+                                CommonHelper.ShowSkillIcon(fightitem.Tank, fightitem.AttackSkill.Name, UIPanel);
+                                forbidden.TargetTank = target.Tank;
+                                forbidden.EffectAttack();
+                                //只挂载一个冰冻效果
+                                if (target.Buffs.Find(u => u.Name == "forbidden" && u.Disable == false) == null)
+                                {
+                                    //buff标记
+                                    GameObject chengmo = Instantiate(Resources.Load<GameObject>("Skills/Buff/chengmo"), target.Tank.transform.parent, false);
+                                    //添加buff
+                                    target.Buffs.Add(new Buff
+                                    {
+                                        TankCode = target.Code,
+                                        TankObject = target.Tank,
+                                        FromTankCode = fightitem.Code,
+                                        FromTankObject = fightitem.Tank,
+                                        BuffObject = chengmo,
+                                        Name = "forbidden",
+                                        BuffType = "debuff",
+                                        Value = forbidden.Value,
+                                        EffectCount = 0,
+                                        Disable = false
+                                    });
+                                }
+                            }
+                            break;
+                        //协同开火
+                        case "cofire":
+                            Cofire cofire = fightitem.Tank.GetComponent<Cofire>();
+                            if (cofire != null)
+                            {
+                                //从存活的坦克中选择指定数量的进行一次攻击
+                                List<FightOrder> livelist = OrderList.FindAll(u => u.Player.Name == fightitem.Player.Name && u.Death == false && u.Code!=fightitem.Code);
+                                List<FightOrder> atklist = new List<FightOrder>();
+                                if (cofire.Value >= livelist.Count)
+                                {
+                                    atklist = livelist;
+                                }
+                                else
+                                {
+                                    atklist = livelist.GetRange(0, cofire.Value);
+                                }
+                                if (atklist.Count > 0)
+                                {
+                                    CommonHelper.ShowSkillIcon(fightitem.Tank, fightitem.AttackSkill.Name, UIPanel);
+                                    cofire.TargetTank = target.Tank;
+                                    cofire.EffectAttack(atklist);
+
+                                    int confireIndex = 0;
+                                    foreach (FightOrder item in atklist)
+                                    {
+                                        StartCoroutine(CommonHelper.DelayToInvokeDo(() => { SimpleAttack(item, SetTarget(item)[0], true); }, (confireIndex+1) * 0.3f));
+                                        confireIndex++;
+                                    }
+                                    
+                                }
+                            }
+                            break;
+                        //帝国指令
+                        case "empiredirective":
+                            EmpireDirective empiredirective = fightitem.Tank.GetComponent<EmpireDirective>();
+                            if (empiredirective != null)
+                            {
+
+                                CommonHelper.ShowSkillIcon(fightitem.Tank, fightitem.AttackSkill.Name, UIPanel);
+                                empiredirective.TargetTank = target.Tank;
+                                //empiredirective.EffectAttack();
+                                //只挂载一个指令效果
+                                if (target.Buffs.Find(u => u.Name == "empiredirective" && u.Disable == false) == null)
+                                {
+                                    //buff标记
+                                    GameObject ed = GameObject.Instantiate(CommonHelper.GetPrefabs("skill", "Attack/帝国指令"), target.Tank.transform.parent, false);
+                                    
+                                    //添加buff
+                                    target.Buffs.Add(new Buff
+                                    {
+                                        TankCode = target.Code,
+                                        TankObject = target.Tank,
+                                        FromTankCode = fightitem.Code,
+                                        FromTankObject = fightitem.Tank,
+                                        BuffObject = ed,
+                                        Name = "empiredirective",
+                                        BuffType = "debuff",
+                                        EffectCount = 0,
+                                        Disable = false
+                                    });
+                                }
+
+                            }
+                            break;
+                        //决斗
+                        case "duel":
+                            Duel duel = fightitem.Tank.GetComponent<Duel>();
+                            if (duel != null)
+                            {
+                                CommonHelper.ShowSkillIcon(fightitem.Tank, fightitem.AttackSkill.Name, UIPanel);
+                                duel.TargetTank = target.Tank;
+                                duel.EffectAttack();
+                                StartCoroutine(CommonHelper.DelayToInvokeDo(() => { DuelFight(target, fightitem); }, 0.5f));
+                                if (DuelList == null) 
+                                {
+                                    DuelList = new List<FightOrder>();
+                                }
+                                DuelList.Add(fightitem);
+                                DuelList.Add(target);
+                            }
+                            break;
                     }
-                    #endregion
-
-                    target.Blood -= attack;
-                    ShowBlood(target.Tank, attack, 0, iscrit);
-                    RefreshBloodBar(target);
-
-                    CheckDeath(target);
-                    
-                    //攻击是否为技能
-                    if (isskill == false)
-                    {
-                       // AttackSkills(fightitem, new List<FightOrder>() { target });
-                    }
-
-                    
                 }
-
-
             }
+            #endregion
+
+            target.Blood -= attack;
+            ShowBlood(target.Tank, attack, 0, iscrit);
+            RefreshBloodBar(target);
+
+            CheckDeath(target);
         }
         //if (times > 1) 
         //{
@@ -908,10 +1246,34 @@ public class FightCtrl : MonoBehaviour
         //}
     }
 
+    //决斗递归函数
+    void DuelFight(FightOrder attacker,FightOrder target) 
+    {
+        Weapon w = attacker.Tank.GetComponent<Weapon>();
+        w.target = new List<GameObject>() { target.Tank };
+        w.Shoot(attacker.Tank);
+        bool iscrit = IsCrit(attacker.CritRate);
+        int attack = (int)Math.Round(iscrit ? attacker.Attack * 2 : attacker.Attack);
+        target.Blood -= attack;
+        ShowBlood(target.Tank, attack, 0, iscrit);
+        RefreshBloodBar(target);
+
+        if (CheckDeath(target) == false)
+        {
+            StartCoroutine(CommonHelper.DelayToInvokeDo(() => { DuelFight(target, attacker); }, 0.5f));
+        }
+        else
+        {
+            DuelList.Remove(attacker);
+            DuelList.Remove(target);
+        }
+    }
+
+
     /// <summary>
-    /// 检查游戏是否结束
+    /// 检查游戏状态 继续或是结束
     /// </summary>
-    void CheckGameOver(int index)
+    void CheckGameStatus(int index)
     {
 
         //判断是否一方全部阵亡，若全部阵亡则不再执行攻击，否则继续。当一个回合结束后，开始下一轮
@@ -1031,7 +1393,15 @@ public class FightCtrl : MonoBehaviour
                         DestroyImmediate(sk.gameObject);
                     }
                 }
-
+                //移除buff效果
+                if (target.Buffs.Count > 0)
+                {
+                    foreach (Buff item in target.Buffs.FindAll(u=>u.Disable==false))
+                    {
+                        item.Disable = true;
+                        DestroyImmediate(item.BuffObject);
+                    }
+                }
             }
 
             
@@ -1052,7 +1422,6 @@ public class FightCtrl : MonoBehaviour
         val.text = "MISS";
         val.color = Color.red;
         miss.SetActive(true);
-
 
         miss.transform.DOMove(Camera.main.WorldToScreenPoint(target.Tank.transform.position + new Vector3(-0.5f, CommonHelper.GetRandom(16, 25), 0)), 0.5f);//上飘
         miss.transform.DOScale(new Vector3(1.2f, 1.2f, 1.2f), 0.5f).OnComplete(() => {
@@ -1105,6 +1474,7 @@ public class FightCtrl : MonoBehaviour
                         recover.Effected = 0;
                         recover.Tank = fromItem.Tank;
                         break;
+                        //嘲讽
                     case "taunt":
                         Taunt taunt = fromItem.Tank.AddComponent<Taunt>();
                         //taunt.Value = 0.1f;
@@ -1168,79 +1538,86 @@ public class FightCtrl : MonoBehaviour
                     //穿甲
                     case "piercing":
                         Piercing piercing = fromItem.Tank.AddComponent<Piercing>();
-                        piercing.Value = 0.2f; //20%附加伤害
+                        piercing.Value = 0.5f; //50%附加伤害
                         piercing.Effected = 0;
                         piercing.FromTank = fromItem.Tank;
                         break;
                     //燃烧
                     case "combustion":
                         Combustion combustion = fromItem.Tank.AddComponent<Combustion>();
-                        combustion.Value = 0.2f; //20%附加伤害
+                        combustion.Value = 0.1f; //10%附加伤害
                         combustion.Effected = 0;
                         combustion.FromTank = fromItem.Tank;
                         break;
-
+                    //散射
+                    case "scattering":
+                        Scattering scattering = fromItem.Tank.AddComponent<Scattering>();
+                        scattering.Value = 3;//同时攻击3个目标
+                        scattering.Effected = 0;
+                        scattering.FromTank = fromItem.Tank;
+                        break;
+                    //逐个击破
+                    case "destroyweak":
+                        Destroyweak destroyweak = fromItem.Tank.AddComponent<Destroyweak>();
+                        destroyweak.Effected = 0;
+                        destroyweak.FromTank = fromItem.Tank;
+                        break;
+                    //攻无不克
+                    case "invincible":
+                        Invincible invincible = fromItem.Tank.AddComponent<Invincible>();
+                        invincible.Effected = 0;
+                        invincible.FromTank = fromItem.Tank;
+                        break;
+                    //必杀
+                    case "kill":
+                        Kill kill = fromItem.Tank.AddComponent<Kill>();
+                        kill.Value = 25f;
+                        kill.Effected = 0;
+                        kill.FromTank = fromItem.Tank;
+                        break;
+                    //吸血
+                    case "suckblood":
+                        SuckBlood suckblood = fromItem.Tank.AddComponent<SuckBlood>();
+                        suckblood.Value = 0.4f;
+                        suckblood.Effected = 0;
+                        suckblood.FromTank = fromItem.Tank;
+                        break;
+                    //冰冻
+                    case "frozen":
+                        Frozen frozen = fromItem.Tank.AddComponent<Frozen>();
+                        frozen.Value =1;
+                        frozen.Effected = 0;
+                        frozen.FromTank = fromItem.Tank;
+                        break;
+                    //禁魔
+                    case "forbidden":
+                        Forbidden forbidden = fromItem.Tank.AddComponent<Forbidden>();
+                        forbidden.Value = 0;
+                        forbidden.Effected = 0;
+                        forbidden.FromTank = fromItem.Tank;
+                        break;
+                    //协同开火
+                    case "cofire":
+                        Cofire cofire = fromItem.Tank.AddComponent<Cofire>();
+                        cofire.Value = 3;
+                        cofire.Effected = 0;
+                        cofire.FromTank = fromItem.Tank;
+                        break;
+                    //帝国指令
+                    case "empiredirective":
+                        EmpireDirective empiredirective = fromItem.Tank.AddComponent<EmpireDirective>();
+                        empiredirective.Effected = 0;
+                        empiredirective.FromTank = fromItem.Tank;
+                        break;
+                    //决斗
+                    case "duel":
+                        Duel duel = fromItem.Tank.AddComponent<Duel>();
+                        duel.Effected = 0;
+                        duel.FromTank = fromItem.Tank;
+                        break;
                 }
             }
         }
-    }
-
-
-    //技能触发 攻击者、被攻击者
-    void AttackSkills(FightOrder fromItem,List<FightOrder> targets)
-    {
-        if (fromItem.AttackSkill == null) 
-        {
-            return;
-        }
-        string skillname = fromItem.AttackSkill.Title;
-        Weapon wea = fromItem.Tank.GetComponent<Weapon>();
-
-        //获取技能
-        GameObject skillprefab = CommonHelper.GetPrefabs("skill", "Attack/" + skillname);
-        foreach (FightOrder target in targets)
-        {
-            GameObject skill = Instantiate(skillprefab, target.Tank.transform.parent.parent, false);
-            skill.SetActive(true);
-
-            StartCoroutine(CommonHelper.DelayToInvokeDo(() => { DestroyImmediate(skill); }, 5f));
-            //for (int i = 1; i <= hitcount - 1; i++)
-            //{
-            //    float delay = i * 0.5f; //延迟时间
-            //    StartCoroutine(CommonHelper.DelayToInvokeDo(() => { SimpleAttack(fromItem, targets, true); }, delay));
-            //}
-        }
-
-
-        switch (skillname)
-        {
-            //case "连击":
-            //    //连续发起多次攻击（2-6次）次数在获得是就已固定
-            //    int hitcount =3;
-            //    foreach (FightOrder target in targets)
-            //    {
-            //        GameObject skill = Instantiate(skillprefab, target.Tank.transform.parent.parent, false);
-            //        skill.SetActive(true);
-            //        Destroy(skill, 5f);
-
-            //        for (int i = 1; i <= hitcount-1; i++)
-            //        {
-            //           float delay = i * 0.5f; //延迟时间
-            //           StartCoroutine(CommonHelper.DelayToInvokeDo(()=> { SimpleAttack(fromItem, targets, true); }, delay));
-            //        }
-            //    }
-            //    break;
-            case "重击":
-                //对敌方造成多倍攻击伤害（200 % -600 %）
-                
-
-                break;
-            case "穿甲":
-
-                break;
-        }
-
-        //Destroy(skill, 5f);
     }
 
 

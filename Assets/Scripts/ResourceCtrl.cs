@@ -166,9 +166,9 @@ public class ResourceCtrl : MonoBehaviour
         });
         list.Add(new SkillInfo
         {
-            Name = "Destroy",
+            Name = "Destroyweak",
             Type = "Attack",
-            Icon = "Resource/Texture/skill/Destroy",
+            Icon = "Resource/Texture/skill/Destroyweak",
             Title = "逐个击破",
             Description = "优先攻击对方攻击力最弱的坦克（无视嘲讽）",
             Title_en = "Destroy one by one",
