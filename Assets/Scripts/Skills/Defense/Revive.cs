@@ -39,15 +39,21 @@ public class Revive : MonoBehaviour
     {
         if (Effected < Total)
         {
-            GameObject child = SkillEffect.transform.Find("16_RFX_Magic_Buff3").gameObject;
-            child.SetActive(true);
-            child.GetComponent<ParticleSystem>().Play();
-
-            Effected++;
-            if (Effected == Total)
+            if (SkillEffect != null)
             {
-               StartCoroutine(CommonHelper.DelayToInvokeDo(()=> { DestroyImmediate(SkillEffect); },3f));
+                GameObject child = SkillEffect.transform.Find("16_RFX_Magic_Buff3").gameObject;
+                if (child != null)
+                {
+                    child.SetActive(true);
+                    child.GetComponent<ParticleSystem>().Play();
+                }
             }
+            Effected++;
+                if (Effected == Total)
+                {
+                    StartCoroutine(CommonHelper.DelayToInvokeDo(() => { DestroyImmediate(SkillEffect); }, 3f));
+                }
+            
             return true;
         }
         return false;

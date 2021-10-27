@@ -41,15 +41,23 @@ public class HolyShield:MonoBehaviour
         {
             StartCoroutine(CommonHelper.DelayToInvokeDo(() =>
             {
-                GameObject child = SkillEffect.transform.Find("GroundFX_Fire01").gameObject;
-                child.SetActive(true);
-                ParticleSystem particleSystem = child.transform.GetChild(0).GetComponent<ParticleSystem>();
-                particleSystem.playbackSpeed = 2;
-                particleSystem.Play();
-                StartCoroutine(CommonHelper.DelayToInvokeDo(() =>
+                if (SkillEffect != null)
+                {
+                    GameObject child = SkillEffect.transform.Find("GroundFX_Fire01").gameObject;
+                    if (child != null)
                     {
-                        child.SetActive(false);
-                    }, 1f));
+                        child.SetActive(true);
+                        ParticleSystem particleSystem = child.transform.GetChild(0).GetComponent<ParticleSystem>();
+                        particleSystem.Play();
+                        StartCoroutine(CommonHelper.DelayToInvokeDo(() =>
+                            {
+                                if (child != null)
+                                {
+                                    child.SetActive(false);
+                                }
+                            }, 1f));
+                    }
+                }
             }, 0.3f));
            
 

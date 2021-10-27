@@ -29,6 +29,7 @@ public class Global : MonoBehaviour
             {
                 Root.transform.Find("MainPanel/RightPanel/txtTip").gameObject.SetActive(false);
                 SceneManager.LoadScene("FightScene2");
+                System.GC.Collect();
             }
         });
 

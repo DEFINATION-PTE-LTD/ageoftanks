@@ -37,11 +37,15 @@ public class Taunt : MonoBehaviour
     /// <returns></returns>
     public bool Trigger()
     {
-
-        GameObject child = SkillEffect.transform.Find("HitFX_Dark").gameObject;
-        child.SetActive(true);
-        child.transform.GetChild(0).GetComponent<ParticleSystem>().Play();
-
+        if (SkillEffect != null)
+        {
+            GameObject child = SkillEffect.transform.Find("HitFX_Dark").gameObject;
+            if (child != null)
+            {
+                child.SetActive(true);
+                child.transform.GetChild(0).GetComponent<ParticleSystem>().Play();
+            }
+        }
         Effected++;
 
         return true;

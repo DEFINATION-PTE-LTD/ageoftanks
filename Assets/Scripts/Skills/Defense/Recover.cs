@@ -38,11 +38,12 @@ public class Recover:MonoBehaviour
     /// <returns></returns>
     public bool Trigger()
     {
-
-        GameObject child = SkillEffect.transform.Find("15_RFX_Magic_Buff2").gameObject;
-        child.SetActive(true);
-        child.GetComponent<ParticleSystem>().Play();
-
+        if (SkillEffect != null)
+        {
+            GameObject child = SkillEffect.transform.Find("15_RFX_Magic_Buff2").gameObject;
+            child.SetActive(true);
+            child.GetComponent<ParticleSystem>().Play();
+        }
         Effected++;
 
         return true;

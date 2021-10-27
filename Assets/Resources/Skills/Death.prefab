@@ -143,6 +143,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: WFX_Fire Natural Broad (Black Smoke)
       objectReference: {fileID: 0}
+    - target: {fileID: 100002, guid: 002c8e66c11fe4048a8c3a08b7f0fe74, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 400002, guid: 002c8e66c11fe4048a8c3a08b7f0fe74, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0

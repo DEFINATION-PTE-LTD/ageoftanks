@@ -36,9 +36,16 @@ public class HeavyArmor : MonoBehaviour
     /// <returns></returns>
     public bool Trigger()
     {
-        GameObject child = SkillEffect.transform.Find("fx_Summoner_body_b").gameObject;
-        child.SetActive(true);
-        child.GetComponent<ParticleSystem>().Play();
+        
+        if (SkillEffect != null)
+        {
+            GameObject child = SkillEffect.transform.Find("fx_Summoner_body_b").gameObject;
+            if (child != null)
+            {
+                child.SetActive(true);
+                child.GetComponent<ParticleSystem>().Play();
+            }
+        }
         Effected++;
         return true;
 

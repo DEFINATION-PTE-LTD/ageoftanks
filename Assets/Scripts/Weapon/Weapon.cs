@@ -102,7 +102,7 @@ public class Weapon : MonoBehaviour
             }
 
         }
-        Debug.Log($"Find {weapons.Count} weapons");
+        //Debug.Log($"Find {weapons.Count} weapons");
     }
     /// <summary>
     /// 查找武器枪管
@@ -443,7 +443,7 @@ public class Weapon : MonoBehaviour
 
                 shootSound.loop = false;
                 shootSound.Play();
-                Destroy(sound, 2f);
+                StartCoroutine(CommonHelper.DelayToInvokeDo(() => { DestroyImmediate(sound); }, 2f)) ;
             }, m * 0.1f));
         }
         //  SoundMgr.Instance.SkillSound(gameObject, skillname, true);
@@ -459,7 +459,7 @@ public class Weapon : MonoBehaviour
             GameObject fire = Instantiate(firePrefab, barrel.transform, false);
             fire.GetComponent<ParticleSystem>().Play();
             fire.transform.Rotate(new Vector3(0, -90, 0));
-            Destroy(fire, 0.2f);
+            StartCoroutine(CommonHelper.DelayToInvokeDo(() => { DestroyImmediate(fire); }, 0.2f));
         }
         else if (weapon.name.IndexOf("Weapon_GLauncher") > -1)
         {
@@ -468,21 +468,21 @@ public class Weapon : MonoBehaviour
             GameObject fire = Instantiate(firePrefab, barrel.transform, false);
             fire.GetComponent<ParticleSystem>().Play();
             fire.transform.Rotate(new Vector3(0, -90, 0));
-            Destroy(fire, 0.2f);
+            StartCoroutine(CommonHelper.DelayToInvokeDo(() => { DestroyImmediate(fire); }, 0.2f));
         }
         else if (weapon.name.IndexOf("Weapon_Shock_Rifle") > -1)
         {
             GameObject fire = Instantiate(firePrefab, barrel.transform, false);
             fire.GetComponent<ParticleSystem>().Play();
             fire.transform.Rotate(new Vector3(0, -90, 0));
-            Destroy(fire, 0.2f);
+            StartCoroutine(CommonHelper.DelayToInvokeDo(() => { DestroyImmediate(fire); }, 0.2f));
         }
         else if (weapon.name.IndexOf("Weapon_Shocker") > -1)
         {
             GameObject fire = Instantiate(firePrefab, barrel.transform, false);
             fire.GetComponent<ParticleSystem>().Play();
             fire.transform.Rotate(new Vector3(0, -90, 0));
-            Destroy(fire, 0.2f);
+            StartCoroutine(CommonHelper.DelayToInvokeDo(() => { DestroyImmediate(fire); }, 0.2f));
         }
         else if (weapon.name.IndexOf("Weapon_Sniper") > -1)
         {
@@ -491,7 +491,7 @@ public class Weapon : MonoBehaviour
             GameObject fire = Instantiate(firePrefab, barrel.transform, false);
             fire.GetComponent<ParticleSystem>().Play();
             fire.transform.Rotate(new Vector3(0, -90, 0));
-            Destroy(fire, 0.2f);
+            StartCoroutine(CommonHelper.DelayToInvokeDo(() => { DestroyImmediate(fire); }, 0.2f));
         }
        
 

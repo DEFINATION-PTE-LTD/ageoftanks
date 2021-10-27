@@ -31,9 +31,10 @@ public class ResourceCtrl : MonoBehaviour
         }
         ResourceRoot = gameObject;
         InitSkillInfo();
-
+        System.GC.Collect();
         SceneManager.LoadScene("IndexScene");
     }
+    
 
 
     /// <summary>

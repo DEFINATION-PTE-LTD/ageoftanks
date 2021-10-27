@@ -51,9 +51,9 @@ public class FightCtrl : MonoBehaviour
         UIPanel.transform.Find("btnBack").SetAsLastSibling();
         UIPanel.transform.Find("btnBack").GetComponent<UnityEngine.UI.Button>().onClick.AddListener(() =>
         {
-            Debug.Log("back click");
+            
             SceneManager.LoadSceneAsync("IndexScene");
-            GC.Collect();
+            System.GC.Collect();
         });
         //5秒后开始
         InvokeRepeating("TimePlay", 1f, 1f);
@@ -222,7 +222,7 @@ public class FightCtrl : MonoBehaviour
                 GameObject newObj = Instantiate(transfer);
                 newObj.transform.SetParent(pos.transform, false);
                 newObj.SetActive(true);
-                Destroy(newObj, 5f);
+                StartCoroutine(CommonHelper.DelayToInvokeDo(() => { DestroyImmediate(newObj); }, 5f));
                 GameObject tank = PlayerA_Tanks[num];
                 tank.SetActive(true);
                 tank.transform.DOScale(new Vector3(1, 1, 1), 0.1f).From(new Vector3(0, 0, 0)).SetEase(Ease.InOutExpo);
@@ -236,7 +236,7 @@ public class FightCtrl : MonoBehaviour
                 GameObject newObj = Instantiate(transfer);
                 newObj.transform.SetParent(pos.transform, false);
                 newObj.SetActive(true);
-                Destroy(newObj, 5f);
+                StartCoroutine(CommonHelper.DelayToInvokeDo(() => { DestroyImmediate(newObj); }, 5f));
                 GameObject tank = PlayerB_Tanks[num];
                 tank.SetActive(true);
                 tank.transform.DOScale(new Vector3(1, 1, 1), 0.1f).From(new Vector3(0, 0, 0)).SetEase(Ease.InOutExpo);
@@ -822,8 +822,8 @@ public class FightCtrl : MonoBehaviour
                 }
                 else
                 {
-                    StartCoroutine(CommonHelper.DelayToInvokeDo(() =>
-                    {
+                   // StartCoroutine(CommonHelper.DelayToInvokeDo(() =>
+                   // {
                         switch (target.DefenseSkill.Name.ToLower())
                         {
 
@@ -886,8 +886,8 @@ public class FightCtrl : MonoBehaviour
                                     if (revenge.Trigger() == true)
                                     {
                                         CommonHelper.ShowSkillIcon(target.Tank, target.DefenseSkill.Name, UIPanel);
-                                        //随机一个攻击对象
-                                        SimpleAttack(target, SetTarget(target)[0], true);
+                                    //攻击伤害来源的坦克
+                                    StartCoroutine(CommonHelper.DelayToInvokeDo(() => { SimpleAttack(target, fightitem, true); }, 0.5f)); 
                                     }
                                 }
                                 break;
@@ -911,11 +911,10 @@ public class FightCtrl : MonoBehaviour
                                 break;
 
                         }
-                    }, 0.3f));
+                    //}, 0.3f));
                 }
             }
-            //攻击技能效果
-            //AttackSkills(fightitem, targets);
+
             #endregion
 
             #region 攻击技能特效触发
@@ -1167,11 +1166,11 @@ public class FightCtrl : MonoBehaviour
                                     cofire.TargetTank = target.Tank;
                                     cofire.EffectAttack(atklist);
 
-                                    int confireIndex = 0;
-                                    foreach (FightOrder item in atklist)
+                         
+                                    for (int i = 0; i < atklist.Count; i++)
                                     {
-                                        StartCoroutine(CommonHelper.DelayToInvokeDo(() => { SimpleAttack(item, SetTarget(item)[0], true); }, (confireIndex+1) * 0.3f));
-                                        confireIndex++;
+                                        FightOrder item = atklist[i];
+                                        StartCoroutine(CommonHelper.DelayToInvokeDo(() => { SimpleAttack(item, SetTarget(item)[0], true); }, (i + 1) * 0.3f));
                                     }
                                     
                                 }
@@ -1264,8 +1263,11 @@ public class FightCtrl : MonoBehaviour
         }
         else
         {
-            DuelList.Remove(attacker);
-            DuelList.Remove(target);
+            StartCoroutine(CommonHelper.DelayToInvokeDo(() =>
+            {
+                DuelList.Remove(attacker);
+                DuelList.Remove(target);
+            }, 1f));
         }
     }
 
@@ -1335,12 +1337,15 @@ public class FightCtrl : MonoBehaviour
             target.Blood = 0;
             target.Death = true;
             //死亡爆炸效果
-            GameObject Deathprefab = CommonHelper.GetPrefabs("skill", "Death");
-            GameObject death = Instantiate(Deathprefab);
+            GameObject death = Instantiate(CommonHelper.GetPrefabs("skill", "Death"));
             death.SetActive(true);
             death.transform.SetParent(target.Tank.transform.parent.parent, false);
-            target.Tank.transform.GetChild(0).GetComponent<Animator>().Play("Death");
-
+            //StartCoroutine(CommonHelper.DelayToInvokeDo(() => { DestroyImmediate(death); }, 4f));
+            Animator t_animator = target.Tank.transform.GetChild(0).GetComponent<Animator>();
+            if (t_animator != null && t_animator.gameObject.activeInHierarchy)
+            {
+                t_animator.Play("Death");
+            }
 
             #region 死亡后判定是否有复生技能和亡语技能
             if (target.DefenseSkill != null)
@@ -1358,8 +1363,13 @@ public class FightCtrl : MonoBehaviour
                             StartCoroutine(CommonHelper.DelayToInvokeDo(() =>
                             {
                                 //恢复20%血量，移除死亡效果，恢复正常状态
-                                target.Tank.transform.GetChild(0).GetComponent<Animator>().Play("Idle");
-                                Destroy(death);
+                                Animator animator = target.Tank.transform.GetChild(0).GetComponent<Animator>();
+                                if (animator != null && animator.gameObject.activeInHierarchy)
+                                {
+                                    animator.Play("Idle");
+                                }
+
+                                DestroyImmediate(death);
                                 RefreshBloodBar(target);
                             }, 1f));
                         }

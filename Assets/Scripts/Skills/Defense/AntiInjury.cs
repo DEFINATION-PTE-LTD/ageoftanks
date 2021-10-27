@@ -36,20 +36,24 @@ public class AntiInjury : MonoBehaviour
     /// <returns></returns>
     public bool Trigger()
     {
-        GameObject child = SkillEffect.transform.Find("fx_magic_lightning_falling_continuous_gold").gameObject;
-       
+        if (SkillEffect != null)
+        {
+            GameObject child = Instantiate( SkillEffect.transform.Find("fx_magic_lightning_falling_continuous_gold").gameObject, SkillEffect.transform,false);
 
-        child.transform.DOMove(AttackTank.transform.position, 0.3f).OnComplete(() => {
-
-            child.SetActive(true);
-            child.GetComponent<ParticleSystem>().Play();
-            StartCoroutine(CommonHelper.DelayToInvokeDo(() =>
+            if (child != null)
             {
-                child.SetActive(false);
-                child.transform.localPosition = new Vector3(0, 0, 0);
-            }, 2f));
-        });
+                child.transform.DOMove(AttackTank.transform.position, 0.3f).OnComplete(() =>
+                {
 
+                    child.SetActive(true);
+                    child.GetComponent<ParticleSystem>().Play();
+                    StartCoroutine(CommonHelper.DelayToInvokeDo(() =>
+                    {
+                        DestroyImmediate(child);
+                    }, 2f));
+                });
+            }
+        }
         Effected++;
 
         return true;

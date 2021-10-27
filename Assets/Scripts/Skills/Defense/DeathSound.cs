@@ -38,13 +38,21 @@ public class DeathSound : MonoBehaviour
     {
         if (Effected < Total)
         {
-            GameObject child = SkillEffect.transform.Find("CircleFX_Dark").gameObject;
-            child.SetActive(true);
-            child.transform.GetChild(0).GetComponent<ParticleSystem>().Play();
-            Effected++;
-            if (Effected == Total)
+            SkillEffect = GameObject.Instantiate(SkillPrefab, Tank.transform.parent, false);
+            SkillEffect.SetActive(true);
+            if (SkillEffect != null)
             {
-                StartCoroutine(CommonHelper.DelayToInvokeDo(() => { DestroyImmediate(SkillEffect); }, 1f));
+                GameObject child = SkillEffect.transform.Find("CircleFX_Dark").gameObject;
+                if (child != null)
+                {
+                    child.SetActive(true);
+                    child.transform.GetChild(0).GetComponent<ParticleSystem>().Play();
+                }
+                Effected++;
+                if (Effected == Total)
+                {
+                    StartCoroutine(CommonHelper.DelayToInvokeDo(() => { DestroyImmediate(SkillEffect); }, 1f));
+                }
             }
             return true;
         }
