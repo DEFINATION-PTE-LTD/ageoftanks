@@ -5,7 +5,7 @@ using UnityEngine;
 /// <summary>
 /// 对战顺序
 /// </summary>
-public class FightOrder 
+public class FightItem 
 {
     //所属玩家
     public Player Player { get; set; }

@@ -31,14 +31,14 @@ public class FightCtrl : MonoBehaviour
     /// </summary>
     public Player PlayerA, PlayerB;
 
-    List<FightOrder> OrderList;
+    List<FightItem> OrderList;
 
     //public int index = 0;
     public int CountDownTime = 5; //倒计时
     public int Round = 0; //回合数
     public int FightIndex = -1; //当前战斗方的下标
     
-    List<FightOrder> DuelList = new List<FightOrder>(); //决斗中的坦克
+    List<FightItem> DuelList = new List<FightItem>(); //决斗中的坦克
 
     private void Awake()
     {
@@ -95,7 +95,7 @@ public class FightCtrl : MonoBehaviour
     {
         //AutoShoot();
        
-            foreach (FightOrder fightItem in OrderList)
+            foreach (FightItem fightItem in OrderList)
             {
                 GameObject bloodbar = UIPanel.transform.Find("bloodbar").gameObject;
                 Transform bar = UIPanel.transform.Find("bloodbar_" + fightItem.Code);
@@ -309,10 +309,10 @@ public class FightCtrl : MonoBehaviour
     /// </summary>
     public void GetFightOrder()
     {
-        OrderList = new List<FightOrder>();
+        OrderList = new List<FightItem>();
         foreach (TankProperty item in PlayerA.TankList)
         {
-            OrderList.Add(new FightOrder {
+            OrderList.Add(new FightItem {
                 Player = PlayerA,
                 Tank = item.TankObject,
                 Code = item.Code,
@@ -330,7 +330,7 @@ public class FightCtrl : MonoBehaviour
         }
         foreach (TankProperty item in PlayerB.TankList)
         {
-            OrderList.Add(new FightOrder
+            OrderList.Add(new FightItem
             {
                 Player = PlayerB,
                 Tank = item.TankObject,
@@ -351,7 +351,7 @@ public class FightCtrl : MonoBehaviour
 
         OrderList = OrderList.OrderByDescending(u => u.Speed).ToList();
 
-        foreach (FightOrder item in OrderList)
+        foreach (FightItem item in OrderList)
         {
             RefreshBloodBar(item);
             
@@ -370,13 +370,13 @@ public class FightCtrl : MonoBehaviour
     /// <param name="count">目标数</param>
     /// <param name="ignoreTaunt">是否无视嘲讽</param>
     /// <returns></returns>
-    public List<FightOrder> SetTarget(FightOrder fightOrder)
+    public List<FightItem> SetTarget(FightItem fightOrder)
     {
-        List<FightOrder> list = new List<FightOrder>();
+        List<FightItem> list = new List<FightItem>();
   
         int count = 1;
         //对方存活坦克
-        List<FightOrder> livelist = OrderList.FindAll(u => u.Player.Name != fightOrder.Player.Name && u.Death == false && DuelList.Contains(u)==false);
+        List<FightItem> livelist = OrderList.FindAll(u => u.Player.Name != fightOrder.Player.Name && u.Death == false && DuelList.Contains(u)==false);
 
 
         string atkName = "";
@@ -394,7 +394,7 @@ public class FightCtrl : MonoBehaviour
         if (atkName.ToLower() == "destroyweak")
         {
             //按攻击力排序，第一个就是攻击力最弱的
-            FightOrder fo = livelist.OrderBy(u => u.Attack).FirstOrDefault();
+            FightItem fo = livelist.OrderBy(u => u.Attack).FirstOrDefault();
             if (fo != null)
             {
                 list.Add(fo);
@@ -404,7 +404,7 @@ public class FightCtrl : MonoBehaviour
         else if (atkName.ToLower() == "invincible")
         {
             //按攻击力排序，第一个就是攻击力最弱的
-            FightOrder fo = livelist.OrderByDescending(u => u.Attack).FirstOrDefault();
+            FightItem fo = livelist.OrderByDescending(u => u.Attack).FirstOrDefault();
             if (fo != null)
             {
                 list.Add(fo);
@@ -413,8 +413,8 @@ public class FightCtrl : MonoBehaviour
         else
         {
             //具有帝国指令debuff的敌方
-            List<FightOrder> directive = new List<FightOrder>();
-            foreach (FightOrder item in livelist)
+            List<FightItem> directive = new List<FightItem>();
+            foreach (FightItem item in livelist)
             {
                 if (item.Buffs.FindIndex(u => u.Disable == false && u.Name == "empiredirective") > -1)
                 {
@@ -424,8 +424,8 @@ public class FightCtrl : MonoBehaviour
 
 
             //具有嘲讽技能的敌方
-            List<FightOrder> tauntlist = new List<FightOrder>();
-            foreach (FightOrder item in livelist)
+            List<FightItem> tauntlist = new List<FightItem>();
+            foreach (FightItem item in livelist)
             {
                 if (item.DefenseSkill != null)
                 {
@@ -462,7 +462,7 @@ public class FightCtrl : MonoBehaviour
             if (count > list.Count)
             {
                 //嘲讽列表中排除帝国指令
-                List<FightOrder> tauntlist2 = tauntlist.FindAll(u => directive.Contains(u) == false);
+                List<FightItem> tauntlist2 = tauntlist.FindAll(u => directive.Contains(u) == false);
                 if (tauntlist2.Count > 0)
                 {
                     //足够
@@ -488,7 +488,7 @@ public class FightCtrl : MonoBehaviour
             //从其余存活中选择
             if (count > list.Count)
             {
-                List<FightOrder> livelist2 = livelist.FindAll(u => directive.Contains(u) == false && tauntlist.Contains(u) == false);
+                List<FightItem> livelist2 = livelist.FindAll(u => directive.Contains(u) == false && tauntlist.Contains(u) == false);
 
                 if (livelist2.Count > 0)
                 {
@@ -584,7 +584,7 @@ public class FightCtrl : MonoBehaviour
     /// 刷新血条
     /// </summary>
     /// <param name="fightItem"></param>
-    void RefreshBloodBar(FightOrder fightItem)
+    void RefreshBloodBar(FightItem fightItem)
     {
         GameObject bloodbar = UIPanel.transform.Find("bloodbar").gameObject;
         Transform bar = UIPanel.transform.Find("bloodbar_" + fightItem.Code);
@@ -686,7 +686,7 @@ public class FightCtrl : MonoBehaviour
     //轮流对战，递归轮流执行操作
     void Fight(int index)
     {
-        FightOrder fightitem = OrderList[index];
+        FightItem fightitem = OrderList[index];
 
         #region 判定是否有恢复技能
         if (fightitem.DefenseSkill != null)
@@ -753,9 +753,9 @@ public class FightCtrl : MonoBehaviour
             }
             else
             {
-                List<FightOrder> targets = SetTarget(fightitem);
+                List<FightItem> targets = SetTarget(fightitem);
                 int targetIndex = 0;
-                foreach (FightOrder item in targets)
+                foreach (FightItem item in targets)
                 {
                     //普通攻击
                     StartCoroutine(CommonHelper.DelayToInvokeDo(() => { SimpleAttack(fightitem, item, targets.Count>1?true:false); }, targetIndex * 0.5f));
@@ -783,7 +783,7 @@ public class FightCtrl : MonoBehaviour
 
 
     //普通攻击
-    void SimpleAttack(FightOrder fightitem, FightOrder target,bool isskill=false)
+    void SimpleAttack(FightItem fightitem, FightItem target,bool isskill=false)
     {
         if (fightitem.Death == false)
         {
@@ -1150,8 +1150,8 @@ public class FightCtrl : MonoBehaviour
                             if (cofire != null)
                             {
                                 //从存活的坦克中选择指定数量的进行一次攻击
-                                List<FightOrder> livelist = OrderList.FindAll(u => u.Player.Name == fightitem.Player.Name && u.Death == false && u.Code!=fightitem.Code);
-                                List<FightOrder> atklist = new List<FightOrder>();
+                                List<FightItem> livelist = OrderList.FindAll(u => u.Player.Name == fightitem.Player.Name && u.Death == false && u.Code!=fightitem.Code);
+                                List<FightItem> atklist = new List<FightItem>();
                                 if (cofire.Value >= livelist.Count)
                                 {
                                     atklist = livelist;
@@ -1169,7 +1169,7 @@ public class FightCtrl : MonoBehaviour
                          
                                     for (int i = 0; i < atklist.Count; i++)
                                     {
-                                        FightOrder item = atklist[i];
+                                        FightItem item = atklist[i];
                                         StartCoroutine(CommonHelper.DelayToInvokeDo(() => { SimpleAttack(item, SetTarget(item)[0], true); }, (i + 1) * 0.3f));
                                     }
                                     
@@ -1219,7 +1219,7 @@ public class FightCtrl : MonoBehaviour
                                 StartCoroutine(CommonHelper.DelayToInvokeDo(() => { DuelFight(target, fightitem); }, 0.5f));
                                 if (DuelList == null) 
                                 {
-                                    DuelList = new List<FightOrder>();
+                                    DuelList = new List<FightItem>();
                                 }
                                 DuelList.Add(fightitem);
                                 DuelList.Add(target);
@@ -1246,7 +1246,7 @@ public class FightCtrl : MonoBehaviour
     }
 
     //决斗递归函数
-    void DuelFight(FightOrder attacker,FightOrder target) 
+    void DuelFight(FightItem attacker,FightItem target) 
     {
         Weapon w = attacker.Tank.GetComponent<Weapon>();
         w.target = new List<GameObject>() { target.Tank };
@@ -1330,7 +1330,7 @@ public class FightCtrl : MonoBehaviour
     /// </summary>
     /// <param name="target"></param>
     /// <returns></returns>
-    bool CheckDeath(FightOrder target)
+    bool CheckDeath(FightItem target)
     {
         if (target.Blood <= 0)
         {
@@ -1421,7 +1421,7 @@ public class FightCtrl : MonoBehaviour
 
 
     //显示miss 未命中
-    void showMiss(FightOrder target)
+    void showMiss(FightItem target)
     {
         //闪避触发
         //未命中
@@ -1445,7 +1445,7 @@ public class FightCtrl : MonoBehaviour
 
     
     //防御技能挂载
-    void SetupDefenseSkills(FightOrder fromItem)
+    void SetupDefenseSkills(FightItem fromItem)
     {
         if (fromItem.DefenseSkill != null)
         {
@@ -1522,7 +1522,7 @@ public class FightCtrl : MonoBehaviour
     }
 
 
-    void SetupAttackSkills(FightOrder fromItem)
+    void SetupAttackSkills(FightItem fromItem)
     {
         if (fromItem.AttackSkill != null)
         {

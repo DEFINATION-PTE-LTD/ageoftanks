@@ -32,10 +32,10 @@ public class Cofire : MonoBehaviour
     /// 攻击特效
     /// </summary>
     /// <returns></returns>
-    public bool EffectAttack(List<FightOrder> targets)
+    public bool EffectAttack(List<FightItem> targets)
     {
 
-        foreach (FightOrder item in targets)
+        foreach (FightItem item in targets)
         {
             GameObject effect = GameObject.Instantiate(SkillPrefab, item.Tank.transform.parent, false);
             effect.SetActive(true);
