@@ -211,9 +211,7 @@ public class FightCtrl : MonoBehaviour
     {
         GameObject transfer = CommonHelper.GetPrefabs("skill", "Transfer");
 
-        //建立动画队列
-        Sequence quence = DOTween.Sequence();
-
+     
         foreach (GameObject pos in PlayerA_Pos)
         {
             int num = PlayerA_Pos.IndexOf(pos);

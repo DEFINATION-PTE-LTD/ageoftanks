@@ -346,7 +346,7 @@ public class Weapon : MonoBehaviour
                     {
                         //添加一个动画
                         quence.Append(
-                        transform.DOLookAt(t.transform.position, 0.1f,AxisConstraint.Y).OnComplete(() =>
+                        transform.DOLookAt(t.transform.position, 0.3f,AxisConstraint.Y).OnComplete(() =>
                         {
                             for (int i = 0; i < 3; i++)
                             {
