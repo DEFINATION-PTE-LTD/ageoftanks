@@ -8,7 +8,8 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>10.0.20506</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <RootNamespace></RootNamespace>
+    <RootNamespace>
+    </RootNamespace>
     <ProjectGuid>{2AE90DFC-31C0-EF44-5E2F-C8CCA3A111E3}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
@@ -118,9 +119,11 @@
     <Compile Include="Assets\Scripts\Common\CommonHelper.cs" />
     <Compile Include="Assets\Scripts\Common\CropPicture.cs" />
     <Compile Include="Assets\Scripts\Common\GLauncher.cs" />
+    <Compile Include="Assets\Scripts\Common\HttpTool.cs" />
     <Compile Include="Assets\Scripts\Common\PosCtrl.cs" />
     <Compile Include="Assets\Scripts\FightCtrl.cs" />
     <Compile Include="Assets\Scripts\Global.cs" />
+    <Compile Include="Assets\Scripts\Models\APIResult.cs" />
     <Compile Include="Assets\Scripts\Models\Buff.cs" />
     <Compile Include="Assets\Scripts\Models\FightItem.cs" />
     <Compile Include="Assets\Scripts\Models\HeroProperty.cs" />
@@ -131,6 +134,7 @@
     <Compile Include="Assets\Scripts\ObjectRot.cs" />
     <Compile Include="Assets\Scripts\PackagingCtrl.cs" />
     <Compile Include="Assets\Scripts\ResourceCtrl.cs" />
+    <Compile Include="Assets\Scripts\Scene\Login.cs" />
     <Compile Include="Assets\Scripts\Skills\Attack\Batter.cs" />
     <Compile Include="Assets\Scripts\Skills\Attack\Cofire.cs" />
     <Compile Include="Assets\Scripts\Skills\Attack\Combustion.cs" />
@@ -426,6 +430,9 @@
     </Reference>
     <Reference Include="UnityEditor">
       <HintPath>D:/Program Files/Unity/Editor/Data/Managed/UnityEditor.dll</HintPath>
+    </Reference>
+    <Reference Include="LitJson">
+      <HintPath>E:/Projects/TankGame/Code/AgeOfTanks/Assets/Plugins/LitJson.dll</HintPath>
     </Reference>
     <Reference Include="DOTween">
       <HintPath>E:/Projects/TankGame/Code/AgeOfTanks/Assets/Plugins/Demigiant/DOTween/DOTween.dll</HintPath>
