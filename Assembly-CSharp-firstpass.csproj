@@ -249,8 +249,8 @@
     <Reference Include="UnityEditor">
       <HintPath>D:/Program Files/Unity/Editor/Data/Managed/UnityEditor.dll</HintPath>
     </Reference>
-    <Reference Include="LitJson">
-      <HintPath>E:/Projects/TankGame/Code/AgeOfTanks/Assets/Plugins/LitJson.dll</HintPath>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>E:/Projects/TankGame/Code/AgeOfTanks/Assets/JsonDotNet/Assemblies/Standalone/Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="DOTween">
       <HintPath>E:/Projects/TankGame/Code/AgeOfTanks/Assets/Plugins/Demigiant/DOTween/DOTween.dll</HintPath>

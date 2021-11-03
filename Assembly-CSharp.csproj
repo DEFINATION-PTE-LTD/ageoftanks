@@ -8,8 +8,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>10.0.20506</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <RootNamespace>
-    </RootNamespace>
+    <RootNamespace></RootNamespace>
     <ProjectGuid>{2AE90DFC-31C0-EF44-5E2F-C8CCA3A111E3}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
@@ -120,9 +119,8 @@
     <Compile Include="Assets\Scripts\Common\CropPicture.cs" />
     <Compile Include="Assets\Scripts\Common\GLauncher.cs" />
     <Compile Include="Assets\Scripts\Common\HttpTool.cs" />
+    <Compile Include="Assets\Scripts\Common\JSONhelper.cs" />
     <Compile Include="Assets\Scripts\Common\PosCtrl.cs" />
-    <Compile Include="Assets\Scripts\FightCtrl.cs" />
-    <Compile Include="Assets\Scripts\Global.cs" />
     <Compile Include="Assets\Scripts\Models\APIResult.cs" />
     <Compile Include="Assets\Scripts\Models\Buff.cs" />
     <Compile Include="Assets\Scripts\Models\FightItem.cs" />
@@ -133,8 +131,14 @@
     <Compile Include="Assets\Scripts\Models\WeaponObjectClass.cs" />
     <Compile Include="Assets\Scripts\ObjectRot.cs" />
     <Compile Include="Assets\Scripts\PackagingCtrl.cs" />
-    <Compile Include="Assets\Scripts\ResourceCtrl.cs" />
+    <Compile Include="Assets\Scripts\Scene\BackTo.cs" />
+    <Compile Include="Assets\Scripts\Scene\BattleMode.cs" />
+    <Compile Include="Assets\Scripts\Scene\FightCtrl.cs" />
     <Compile Include="Assets\Scripts\Scene\Login.cs" />
+    <Compile Include="Assets\Scripts\Scene\RegimentSelect.cs" />
+    <Compile Include="Assets\Scripts\Scene\ResourceCtrl.cs" />
+    <Compile Include="Assets\Scripts\Scene\SoloFight.cs" />
+    <Compile Include="Assets\Scripts\Scene\SoloSelect.cs" />
     <Compile Include="Assets\Scripts\Skills\Attack\Batter.cs" />
     <Compile Include="Assets\Scripts\Skills\Attack\Cofire.cs" />
     <Compile Include="Assets\Scripts\Skills\Attack\Combustion.cs" />
@@ -212,6 +216,7 @@
     <None Include="Assets\RFX_Resources\Scripts\HowtoPlay.txt" />
     <None Include="Assets\Ciconia Studio\Shaders\Mirror Shaders\MirrorReflection FastMirror Forward.shader" />
     <None Include="Assets\Mech_Constructor_Spiders\Readme.txt" />
+    <None Include="Assets\JsonDotNet\link.xml" />
     <None Include="Assets\JMO Assets\WarFX\_Effects (Mobile, Regular Mesh)\MuzzleFlashes\!MuzzleFlash Differences.txt" />
     <None Include="Assets\Hovl Studio\Magic circles Vol 4\Shaders\Distortion.shader" />
     <None Include="Assets\Hovl Studio\Magic circles Vol 4\Shaders\Blend_TwoSides.shader" />
@@ -431,8 +436,8 @@
     <Reference Include="UnityEditor">
       <HintPath>D:/Program Files/Unity/Editor/Data/Managed/UnityEditor.dll</HintPath>
     </Reference>
-    <Reference Include="LitJson">
-      <HintPath>E:/Projects/TankGame/Code/AgeOfTanks/Assets/Plugins/LitJson.dll</HintPath>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>E:/Projects/TankGame/Code/AgeOfTanks/Assets/JsonDotNet/Assemblies/Standalone/Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="DOTween">
       <HintPath>E:/Projects/TankGame/Code/AgeOfTanks/Assets/Plugins/Demigiant/DOTween/DOTween.dll</HintPath>

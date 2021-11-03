@@ -73,8 +73,8 @@ public class TankProperty
         Code = code;
         TankType = tankType;
         Speed = CommonHelper.GetRandom(10,50);
-        Blood = CommonHelper.GetRandom(200, 1000);
-        Attack = CommonHelper.GetRandom(50, 200);
+        Blood = CommonHelper.GetRandom(800, 1000);
+        Attack = CommonHelper.GetRandom(80, 130);
         CritRate = CommonHelper.GetRandom(5, 20);
         //Defense = CommonHelper.GetRandom(10, 20);
         Bearer = CommonHelper.GetRandom(10000, 30000);

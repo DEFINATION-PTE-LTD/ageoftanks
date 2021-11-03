@@ -1,6 +1,4 @@
-﻿using LitJson;
-
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -19,11 +17,11 @@ public class Login : MonoBehaviour
             if (!string.IsNullOrEmpty(account) && !string.IsNullOrEmpty(password))
             {
          
-                string jsonstr = JsonMapper.ToJson(new { Account = account, Password = password });// JSONhelper.ToJson(jsonObj);
+                string jsonstr = JSONhelper.ToJson(new { Account = account, Password = password });// JSONhelper.ToJson(jsonObj);
                 Debug.Log(jsonstr);
                 HttpTool.Instance.Post("aotuser/login", jsonstr, (string result)=> {
                     Debug.Log(result);
-                    APIResult res = JsonMapper.ToObject<APIResult>(result);// JSONhelper.ConvertToObject<APIResult>(result);
+                    APIResult res = JSONhelper.ConvertToObject<APIResult>(result);// JSONhelper.ConvertToObject<APIResult>(result);
    
                     if (res.success == true)
                     {

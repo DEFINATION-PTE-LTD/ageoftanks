@@ -271,8 +271,8 @@
     <Reference Include="SyntaxTree.VisualStudio.Unity.Bridge">
       <HintPath>C:/Program Files (x86)/Microsoft Visual Studio Tools for Unity/16.0/Editor/SyntaxTree.VisualStudio.Unity.Bridge.dll</HintPath>
     </Reference>
-    <Reference Include="LitJson">
-      <HintPath>E:/Projects/TankGame/Code/AgeOfTanks/Assets/Plugins/LitJson.dll</HintPath>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>E:/Projects/TankGame/Code/AgeOfTanks/Assets/JsonDotNet/Assemblies/Standalone/Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="DOTween">
       <HintPath>E:/Projects/TankGame/Code/AgeOfTanks/Assets/Plugins/Demigiant/DOTween/DOTween.dll</HintPath>
