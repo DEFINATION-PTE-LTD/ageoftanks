@@ -42,12 +42,13 @@ public class FightCtrl : MonoBehaviour
 
     private void Awake()
     {
+        
         InitPlatform();
         InitTank();
         StartTransfer();
         InitPlayer();
         GetFightOrder();
-
+        ShowLoadPanel();
         UIPanel.transform.Find("btnBack").SetAsLastSibling();
         UIPanel.transform.Find("btnBack").GetComponent<UnityEngine.UI.Button>().onClick.AddListener(() =>
         {
@@ -66,6 +67,7 @@ public class FightCtrl : MonoBehaviour
             });
 
         },6f));
+
 
         
     }
@@ -301,6 +303,55 @@ public class FightCtrl : MonoBehaviour
             TankList = tankPropertiesB
         };
     }
+
+
+    public void ShowLoadPanel()
+    {
+       GameObject loadPanel = Instantiate(ResourceCtrl.Instance.ResourceRoot.transform.Find("UI/LoadPanel").gameObject, UIPanel.transform, false);
+        GameObject loadCard = ResourceCtrl.Instance.ResourceRoot.transform.Find("UI/LoadCard").gameObject;//  Resources.Load<GameObject>("UI/LoadCard");
+        //A
+        Transform ContentA = loadPanel.transform.Find("Panel/PanelA/Scroll View/Viewport/Content");
+        foreach (TankProperty item in PlayerA.TankList)
+        {
+            GameObject newCard = Instantiate(loadCard, ContentA,false);
+            newCard.SetActive(true);
+            newCard.name = "TankCard" + item.Code;
+            newCard.transform.Find("Panel/image").GetComponent<RawImage>().texture = CommonHelper.LoadTankImage(item.Code);
+            newCard.transform.Find("Panel/txtNo").GetComponent<Text>().text = "#" + item.Code;
+
+            newCard.transform.Find("Panel/iconAttack/txtVal").GetComponent<Text>().text = item.Attack.ToString();
+            newCard.transform.Find("Panel/iconDefense/txtVal").GetComponent<Text>().text = item.Blood.ToString();
+
+            newCard.transform.Find("Panel/iconCrit/txtVal").GetComponent<Text>().text = item.CritRate.ToString() + "%";
+            newCard.transform.Find("Panel/iconSpeed/txtVal").GetComponent<Text>().text = item.Speed.ToString();
+
+            newCard.transform.Find("Panel/attackSkill/icon").GetComponent<RawImage>().texture = CommonHelper.LoadSkillImage(item.AttackSkill.Name) ;
+            newCard.transform.Find("Panel/defenseSkill/icon").GetComponent<RawImage>().texture = CommonHelper.LoadSkillImage(item.DefenseSkill.Name);
+        }
+
+
+        //B
+        Transform ContentB = loadPanel.transform.Find("Panel/PanelB/Scroll View/Viewport/Content");
+        foreach (TankProperty item in PlayerB.TankList)
+        {
+            GameObject newCard = Instantiate(loadCard, ContentB);
+            newCard.SetActive(true);
+            newCard.name = "TankCard" + item.Code;
+            newCard.transform.Find("Panel/image").GetComponent<RawImage>().texture = CommonHelper.LoadTankImage(item.Code);
+            newCard.transform.Find("Panel/txtNo").GetComponent<Text>().text = "#" + item.Code;
+
+            newCard.transform.Find("Panel/iconAttack/txtVal").GetComponent<Text>().text = item.Attack.ToString();
+            newCard.transform.Find("Panel/iconDefense/txtVal").GetComponent<Text>().text = item.Blood.ToString();
+
+            newCard.transform.Find("Panel/iconCrit/txtVal").GetComponent<Text>().text = item.CritRate.ToString() + "%";
+            newCard.transform.Find("Panel/iconSpeed/txtVal").GetComponent<Text>().text = item.Speed.ToString();
+
+            newCard.transform.Find("Panel/attackSkill/icon").GetComponent<RawImage>().texture = CommonHelper.LoadSkillImage(item.AttackSkill.Name);
+            newCard.transform.Find("Panel/defenseSkill/icon").GetComponent<RawImage>().texture = CommonHelper.LoadSkillImage(item.DefenseSkill.Name);
+        }
+
+    }
+
 
     /// <summary>
     /// 按照攻击速度进行排序

@@ -165,7 +165,7 @@ public class RegimentSelect : MonoBehaviour,IBeginDragHandler, IDragHandler, IEn
             if (item != null)
             {
                 int childCount = pos.childCount;
-
+                string childName = "";
                 for (int j = 0; j < childCount; j++)
                 {
                     if (pos.GetChild(j).name == "Text")
@@ -174,38 +174,49 @@ public class RegimentSelect : MonoBehaviour,IBeginDragHandler, IDragHandler, IEn
                     }
                     else
                     {
-                        DestroyImmediate(pos.GetChild(j).gameObject);
+                        childName = pos.GetChild(j).gameObject.name;
+                        //DestroyImmediate(pos.GetChild(j).gameObject);
                     }
                 }
 
-                GameObject newCard = Instantiate(tankCard, pos);
-                newCard.transform.GetComponent<RectTransform>().position = pos.GetComponent<RectTransform>().position;
-                newCard.SetActive(true);
-                newCard.AddComponent<CanvasGroup>();
-                newCard.name = "TankCard" + item.Code;
-                newCard.transform.Find("Panel/image").GetComponent<RawImage>().texture = CommonHelper.LoadTankImage(item.Code);
-                newCard.transform.Find("Panel/txtNo").GetComponent<Text>().text = "#" + item.Code;
-                newCard.transform.Find("Panel/iconAttack/txtVal").GetComponent<Text>().text = item.Attack.ToString();
-                newCard.transform.Find("Panel/iconDefense/txtVal").GetComponent<Text>().text = item.Blood.ToString();
-                newCard.transform.Find("Panel/iconCrit/txtVal").GetComponent<Text>().text = item.CritRate.ToString() + "%";
-                newCard.transform.Find("Panel/iconSpeed/txtVal").GetComponent<Text>().text = item.Speed.ToString();
-
-                string skill = "";
-                if (item.AttackSkill != null)
+                if (childName == "" || childName != "TankCard" + item.Code)
                 {
-                    skill = "ATK：" + item.AttackSkill.Description_en + "\n";
+                    if (childName != "")
+                    {
+                        DestroyImmediate(pos.Find(childName).gameObject);
+                    }
+
+                    GameObject newCard = Instantiate(tankCard, pos);
+                    newCard.transform.GetComponent<RectTransform>().position = pos.GetComponent<RectTransform>().position;
+                    newCard.SetActive(true);
+                    newCard.AddComponent<CanvasGroup>();
+                    newCard.name = "TankCard" + item.Code;
+                    newCard.transform.Find("Panel/image").GetComponent<RawImage>().texture = CommonHelper.LoadTankImage(item.Code);
+                    newCard.transform.Find("Panel/txtNo").GetComponent<Text>().text = "#" + item.Code;
+                    newCard.transform.Find("Panel/iconAttack/txtVal").GetComponent<Text>().text = item.Attack.ToString();
+                    newCard.transform.Find("Panel/iconDefense/txtVal").GetComponent<Text>().text = item.Blood.ToString();
+                    newCard.transform.Find("Panel/iconCrit/txtVal").GetComponent<Text>().text = item.CritRate.ToString() + "%";
+                    newCard.transform.Find("Panel/iconSpeed/txtVal").GetComponent<Text>().text = item.Speed.ToString();
+
+                    string skill = "";
+                    if (item.AttackSkill != null)
+                    {
+                        skill = "ATK：" + item.AttackSkill.Description_en + "\n";
+                    }
+
+                    if (item.DefenseSkill != null)
+                    {
+                        skill += "DEF：" + item.DefenseSkill.Description_en;
+                    }
+                    newCard.transform.Find("Panel/txtSkill").GetComponent<Text>().text = skill;
+
+                    newCard.gameObject.AddComponent<UnityEngine.UI.Button>().onClick.AddListener(() =>
+                    {
+                        showDetail(item);
+                    });
+
+                    newCard.transform.DOLocalRotate(new Vector3(0,0,0), 0.8f).From(new Vector3(0, 180, 0));
                 }
-
-                if (item.DefenseSkill != null)
-                {
-                    skill += "DEF：" + item.DefenseSkill.Description_en;
-                }
-                newCard.transform.Find("Panel/txtSkill").GetComponent<Text>().text = skill;
-
-                newCard.gameObject.AddComponent<UnityEngine.UI.Button>().onClick.AddListener(() =>
-                {
-                    showDetail(item);
-                });
             }
             else
             {
@@ -401,13 +412,14 @@ public class RegimentSelect : MonoBehaviour,IBeginDragHandler, IDragHandler, IEn
                 }
 
                 dragItem = Root.transform.Find("DragCard").gameObject;
+                Instantiate(eventData.selectedObject, dragItem.transform,false);
                 dragItem.SetActive(true);
                 dragItem.GetComponent<CanvasGroup>().blocksRaycasts = false;
-                //Debug.Log(eventData.selectedObject);
+
                 dragObject = eventData.selectedObject;
                 dragObjectPos = eventData.selectedObject.GetComponent<RectTransform>().position;
-                //dragItem.GetComponent<RawImage>().texture = Global.Instance.GetIcon(dragObject.name.Replace("Btn_", ""));
-                Debug.Log("开始拖拽");
+               
+     
             }
         }
         catch (Exception)
@@ -429,8 +441,6 @@ public class RegimentSelect : MonoBehaviour,IBeginDragHandler, IDragHandler, IEn
             if (dragItem != null)
             {
                 dragItem.SetActive(true);
-
-                // dragItem.GetComponent<RawImage>().texture = eventData.selectedObject.GetComponent<RawImage>().texture;
                 Vector3 pos;
                 RectTransformUtility.ScreenPointToWorldPointInRectangle(dragItem.GetComponent<RectTransform>(), eventData.position, eventData.enterEventCamera, out pos);
                 dragItem.GetComponent<RectTransform>().position = pos;
@@ -476,35 +486,22 @@ public class RegimentSelect : MonoBehaviour,IBeginDragHandler, IDragHandler, IEn
                             break;
                     }
                 }
-
-                TankProperty temp = selects[StartIndex];
-                selects[StartIndex] = selects[EndIndex];
-                selects[EndIndex] = temp;
-                RefreshSelectCard();
-
+                if (EndIndex != -1)
+                {
+                    TankProperty temp = selects[StartIndex];
+                    selects[StartIndex] = selects[EndIndex];
+                    selects[EndIndex] = temp;
+                    RefreshSelectCard();
+                }
                 dragItem.SetActive(false);
-                dragItem = null;
-                StartIndex = -1;
-                EndIndex = -1;
-                Debug.Log("结束拖拽");
+                    DestroyImmediate(dragItem.transform.GetChild(0).gameObject);
+                    dragItem = null;
+                    StartIndex = -1;
+                    EndIndex = -1;
+                    Debug.Log("结束拖拽");
+                
             }
-            //检测拖入的目标点是否是7个Card之中
-            //eventData.pointerEnter.GetComponentsInParent<>
             
-            //if (eventData.pointerEnter && dragObject != null)
-            //{
-
-            //    RawImage img;
-            //    if (eventData.pointerEnter.TryGetComponent<RawImage>(out img))
-            //    {
-
-            //    }
-
-
-            //    //eventData.pointerEnter.GetComponent<RawImage>().texture = Global.GetIcon("Piercing");  
-            //}
-            //dragObject = null;
-            //dragItem.GetComponent<CanvasGroup>().blocksRaycasts = true;
             
            
         }

@@ -417,33 +417,37 @@ public class Weapon : MonoBehaviour
         {
             StartCoroutine(CommonHelper.DelayToInvokeDo(() =>
             {
-                GameObject sound = new GameObject();
-                AudioSource shootSound = sound.AddComponent<AudioSource>();
+                //GameObject sound = new GameObject();
+                //AudioSource shootSound = sound.AddComponent<AudioSource>();
 
                 if (wc.WeaponObj.name.IndexOf("Weapon_DoubleGun") > -1)
                 {
-                    shootSound.clip = Resources.Load<AudioClip>("Sound/weapon_gatling_006");
+                    AudioManager.Instance.EffectAudio("Sound/weapon_gatling_006");
+                    //shootSound.clip = Resources.Load<AudioClip>("Sound/weapon_gatling_006");
                 }
                 else if (wc.WeaponObj.name.IndexOf("Weapon_GLauncher") > -1)
                 {
-                    shootSound.clip = Resources.Load<AudioClip>("Sound/thump");
+                    AudioManager.Instance.EffectAudio("Sound/thump");
+                    //shootSound.clip = Resources.Load<AudioClip>("Sound/thump");
                 }
                 else if (wc.WeaponObj.name.IndexOf("Weapon_Shock_Rifle") > -1)
                 {
-                    shootSound.clip = Resources.Load<AudioClip>("Sound/laser");
+                    AudioManager.Instance.EffectAudio("Sound/laser");
+                    //shootSound.clip = Resources.Load<AudioClip>("Sound/laser");
                 }
                 else if (wc.WeaponObj.name.IndexOf("Weapon_Shocker") > -1)
                 {
-                    shootSound.clip = Resources.Load<AudioClip>("Sound/combustion");
+                    AudioManager.Instance.EffectAudio("Sound/combustion");
+                   // shootSound.clip = Resources.Load<AudioClip>("Sound/combustion");
                 }
                 else if (wc.WeaponObj.name.IndexOf("Weapon_Sniper") > -1)
                 {
-                    shootSound.clip = Resources.Load<AudioClip>("Sound/bullet");
+                    AudioManager.Instance.EffectAudio("Sound/bullet");
+                    //shootSound.clip = Resources.Load<AudioClip>("Sound/bullet");
                 }
 
-                shootSound.loop = false;
-                shootSound.Play();
-                StartCoroutine(CommonHelper.DelayToInvokeDo(() => { DestroyImmediate(sound); }, 2f)) ;
+   
+                
             }, m * 0.1f));
         }
         //  SoundMgr.Instance.SkillSound(gameObject, skillname, true);

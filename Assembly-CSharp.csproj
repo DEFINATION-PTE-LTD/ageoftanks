@@ -114,6 +114,7 @@
     <Compile Include="Assets\RFX_Resources\Scripts\Destroy.cs" />
     <Compile Include="Assets\Scripts\AnimationBindEvent.cs" />
     <Compile Include="Assets\Scripts\CameraSwitch.cs" />
+    <Compile Include="Assets\Scripts\Common\AudioManager.cs" />
     <Compile Include="Assets\Scripts\Common\CameraRot.cs" />
     <Compile Include="Assets\Scripts\Common\CommonHelper.cs" />
     <Compile Include="Assets\Scripts\Common\CropPicture.cs" />
@@ -121,6 +122,7 @@
     <Compile Include="Assets\Scripts\Common\HttpTool.cs" />
     <Compile Include="Assets\Scripts\Common\JSONhelper.cs" />
     <Compile Include="Assets\Scripts\Common\PosCtrl.cs" />
+    <Compile Include="Assets\Scripts\Common\VolumeCtrl.cs" />
     <Compile Include="Assets\Scripts\Models\APIResult.cs" />
     <Compile Include="Assets\Scripts\Models\Buff.cs" />
     <Compile Include="Assets\Scripts\Models\FightItem.cs" />
