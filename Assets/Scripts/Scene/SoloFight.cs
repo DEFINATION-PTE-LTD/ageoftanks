@@ -51,7 +51,7 @@ public class SoloFight : MonoBehaviour
         UIPanel.transform.Find("btnBack").SetAsLastSibling();
         UIPanel.transform.Find("btnBack").GetComponent<UnityEngine.UI.Button>().onClick.AddListener(() =>
         {
-
+            AudioManager.Instance.PlayBtnAudio();
             SceneManager.LoadSceneAsync("BattleMode");
             System.GC.Collect();
         });

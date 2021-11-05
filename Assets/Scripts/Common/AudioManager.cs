@@ -50,7 +50,7 @@ public class AudioManager : MonoBehaviour
         SetVolume(2, EffectVol);
 
         //播放背景音乐
-        PlayBgm();
+        PlayBgm("Sound/bg-sound");
     }
 
     /// <summary>
@@ -80,10 +80,12 @@ public class AudioManager : MonoBehaviour
     /// <summary>
     /// 播放背景音乐
     /// </summary>
-    public void PlayBgm()
+    public void PlayBgm(string _audioName)
     {
         AudioSource audioSource = transform.Find("Background").GetComponent<AudioSource>();
         audioSource.volume = MusicVol;
+        audioSource.clip = Resources.Load<AudioClip>(_audioName);
+        audioSource.loop = true;
         audioSource.Play();
     }
 
@@ -92,7 +94,7 @@ public class AudioManager : MonoBehaviour
     /// </summary>
     /// <param name="_audioName"></param>
     /// <param name="_delay"></param>
-    public void EffectAudio(string _audioName, float _delay = 0f)
+    public void PlayAudio(string _audioName, float _delay = 0f)
     {
         GameObject effectSound = new GameObject();
         AudioSource sound = effectSound.AddComponent<AudioSource>();
@@ -106,4 +108,13 @@ public class AudioManager : MonoBehaviour
 
         Destroy(effectSound, sound.clip.length);
     }
+
+    /// <summary>
+    /// 按钮音效
+    /// </summary>
+    public void PlayBtnAudio()
+    {
+        PlayAudio("Sound/btn");
+    }
+
 }

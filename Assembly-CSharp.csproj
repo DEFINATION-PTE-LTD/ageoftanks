@@ -133,6 +133,7 @@
     <Compile Include="Assets\Scripts\Models\WeaponObjectClass.cs" />
     <Compile Include="Assets\Scripts\ObjectRot.cs" />
     <Compile Include="Assets\Scripts\PackagingCtrl.cs" />
+    <Compile Include="Assets\Scripts\Scene\AOTButton.cs" />
     <Compile Include="Assets\Scripts\Scene\BackTo.cs" />
     <Compile Include="Assets\Scripts\Scene\BattleMode.cs" />
     <Compile Include="Assets\Scripts\Scene\FightCtrl.cs" />

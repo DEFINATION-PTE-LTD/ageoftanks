@@ -18,6 +18,9 @@ public class SoloSelect : MonoBehaviour
         InitTankList();
         InitCardPool();
         Root.transform.Find("MainPanel/RightPanel/BtnPlay").GetComponent<UnityEngine.UI.Button>().onClick.AddListener(StartAction);
+
+        ResourceCtrl.Instance.SelectList.Clear();
+        ResourceCtrl.Instance.SelectListB.Clear();
     }
     // Start is called before the first frame update
     void Start()
@@ -36,6 +39,7 @@ public class SoloSelect : MonoBehaviour
     //开始试玩按钮
     private void StartAction()
     {
+        AudioManager.Instance.PlayBtnAudio();
         if (ResourceCtrl.Instance.SelectList.Count == 0)
         {
             Root.transform.Find("MainPanel/RightPanel/txtTip").gameObject.SetActive(true);
@@ -44,12 +48,13 @@ public class SoloSelect : MonoBehaviour
         else
         {
             Root.transform.Find("MainPanel/RightPanel/txtTip").gameObject.SetActive(false);
+            //默认选中1个
+            ResourceCtrl.Instance.SelectListB.Clear();
+            ResourceCtrl.Instance.SelectListB.Add( ResourceCtrl.Instance.TankList.FindAll(u => ResourceCtrl.Instance.SelectList.Contains(u) == false)[CommonHelper.GetRandom(0,49)]);
             SceneManager.LoadScene("FightSolo");
             System.GC.Collect();
         }
     }
-
-
     #endregion
 
     //初始化坦克列表
@@ -70,8 +75,7 @@ public class SoloSelect : MonoBehaviour
             //tank.DefenseSkill = ResourceCtrl.Instance.SkillList.Find(u => u.Name == "Revenge");
             ResourceCtrl.Instance.TankList.Add(tank);
         }
-        //默认选中前1个
-        //ResourceCtrl.Instance.SelectList = ResourceCtrl.Instance.TankList.GetRange(0, 1);
+       
     }
 
     /// <summary>
@@ -118,6 +122,7 @@ public class SoloSelect : MonoBehaviour
             newCard.transform.Find("Panel/txtSkill").GetComponent<Text>().text = skill;
 
             newCard.gameObject.AddComponent<UnityEngine.UI.Button>().onClick.AddListener(() => {
+                AudioManager.Instance.PlayBtnAudio();
                 Debug.Log("当前点击了" + newCard.name);
                 showDetail(item);
             });
@@ -188,10 +193,11 @@ public class SoloSelect : MonoBehaviour
             infoPanel.transform.Find("BtnSelect").gameObject.SetActive(true);
             btnSelect.onClick.AddListener(() =>
             {
+                AudioManager.Instance.PlayBtnAudio();
                 //标记状态切换
 
                 Root.transform.Find("MainPanel/RightPanel/CardPool/Viewport/Content/TankCard" + item.Code + "/Panel/CheckStatus").gameObject.SetActive(false);
-                ResourceCtrl.Instance.SelectList.Remove(item);
+                ResourceCtrl.Instance.SelectList.Clear();
                 infoPanel.transform.DOScale(new Vector3(0, 0, 0), 0.2f).SetEase(Ease.OutExpo).OnComplete(() =>
                 {
                     infoPanel.SetActive(false);
@@ -207,12 +213,12 @@ public class SoloSelect : MonoBehaviour
 
             btnSelect.onClick.AddListener(() =>
             {
+                AudioManager.Instance.PlayBtnAudio();
                 if (ResourceCtrl.Instance.SelectList.Count > 0)
                 {
                     Root.transform.Find("MainPanel/RightPanel/CardPool/Viewport/Content/TankCard" + ResourceCtrl.Instance.SelectList[0].Code + "/Panel/CheckStatus").gameObject.SetActive(false);
                     ResourceCtrl.Instance.SelectList.Clear();
                 }
-
 
                 ResourceCtrl.Instance.SelectList.Add(item);
                 Root.transform.Find("MainPanel/RightPanel/CardPool/Viewport/Content/TankCard" + item.Code + "/Panel/CheckStatus").gameObject.SetActive(true);
@@ -228,6 +234,7 @@ public class SoloSelect : MonoBehaviour
         UnityEngine.UI.Button btnClose = infoPanel.transform.Find("BtnClose").GetComponent<UnityEngine.UI.Button>();
         btnClose.onClick.RemoveAllListeners();
         btnClose.onClick.AddListener(() => {
+            AudioManager.Instance.PlayBtnAudio();
             infoPanel.transform.DOScale(new Vector3(0, 0, 0), 0.2f).SetEase(Ease.OutExpo).OnComplete(() =>
             {
                 infoPanel.SetActive(false);

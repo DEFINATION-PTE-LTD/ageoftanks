@@ -9,8 +9,10 @@ using UnityEngine.SceneManagement;
 
 public class FightCtrl : MonoBehaviour
 {
-    public GameObject UIPanel;
-    public GameObject Pointer;
+    public GameObject UIPanel;//UI界面
+    public GameObject LoadPanel;//对局加载界面
+    public GameObject StarterCam;//视角物体
+
     /// <summary>
     /// 对战台
     /// </summary>
@@ -34,47 +36,58 @@ public class FightCtrl : MonoBehaviour
     List<FightItem> OrderList;
 
     //public int index = 0;
-    public int CountDownTime = 5; //倒计时
-    public int Round = 0; //回合数
-    public int FightIndex = -1; //当前战斗方的下标
+    private int CountDownTime = 10; //倒计时
+    private int Round = 0; //回合数
+    private int FightIndex = -1; //当前战斗方的下标
     
     List<FightItem> DuelList = new List<FightItem>(); //决斗中的坦克
 
     private void Awake()
     {
-        
+        AudioManager.Instance.PlayBgm("Sound/bg-fight");
+
         InitPlatform();
         InitTank();
-        StartTransfer();
+        //StartTransfer();
         InitPlayer();
         GetFightOrder();
         ShowLoadPanel();
         UIPanel.transform.Find("btnBack").SetAsLastSibling();
         UIPanel.transform.Find("btnBack").GetComponent<UnityEngine.UI.Button>().onClick.AddListener(() =>
         {
-            
+            AudioManager.Instance.PlayBtnAudio();
+            AudioManager.Instance.PlayBgm("Sound/bg-sound");
             SceneManager.LoadSceneAsync("BattleMode");
             System.GC.Collect();
         });
         //5秒后开始
         InvokeRepeating("TimePlay", 1f, 1f);
 
-        StartCoroutine(CommonHelper.DelayToInvokeDo(() => { 
-           
-            UIPanel.transform.Find("txt_time_center").GetComponent<Text>().DOText("Fight", 0.5f).OnComplete(()=> {
-                UIPanel.transform.Find("txt_time_center").gameObject.SetActive(false);
-                NextRound();
-            });
+        StartCoroutine(CommonHelper.DelayToInvokeDo(() => {
+            LoadPanel.transform.Find("Panel/Panel/txt_time_center").gameObject.SetActive(false);
+            LoadPanel.SetActive(false);
+            StarterCam.transform.GetComponent<Animator>().enabled = true;
+            StartTransfer();
+            StartCoroutine(CommonHelper.DelayToInvokeDo(() =>
+            {
+                LoadPanel.transform.Find("Panel/Panel/txt_time_center").gameObject.SetActive(true);
+                //UIPanel.transform.Find("txt_time_center").GetComponent<Text>().DOText("Fight", 0.5f).OnComplete(() =>
+                //{
+                LoadPanel.transform.Find("Panel/Panel/txt_time_center").gameObject.SetActive(false);
+                    NextRound();
+               // });
+            }, 3f));
 
-        },6f));
+        },11f));
 
 
         
     }
+    
 
     void TimePlay() 
     {
-        Transform timePanel = UIPanel.transform.Find("txt_time_center");
+        Transform timePanel = LoadPanel.transform.Find("Panel/Panel/txt_time_center");// UIPanel.transform.Find("txt_time_center");
         timePanel.SetAsLastSibling();
         timePanel.GetComponent<Text>().text = CountDownTime.ToString();
         timePanel.gameObject.SetActive(true);
@@ -194,15 +207,49 @@ public class FightCtrl : MonoBehaviour
 
 
         //玩家B随机分配
-        foreach (GameObject pos in PlayerB_Pos)
+        //foreach (GameObject pos in PlayerB_Pos)
+        //{
+        //    //随机分配
+        //    int index = CommonHelper.GetRandom(12, list.Count);
+        //    GameObject tank = Instantiate(list[index]);
+        //    tank.AddComponent<Weapon>();
+        //    tank.SetActive(false);
+        //    tank.transform.SetParent(pos.transform.Find("Tank"), false);
+        //    CommonHelper.ReplaceMaterial(tank,"black");
+        //    PlayerB_Tanks.Add(tank);
+        //}
+
+        for (int i = 0; i < ResourceCtrl.Instance.SelectListB.Count; i++)
         {
-            //随机分配
-            int index = CommonHelper.GetRandom(0, list.Count);
-            GameObject tank = Instantiate(list[index]);
+            TankProperty item = ResourceCtrl.Instance.SelectListB[i];
+            GameObject tank = null;
+
+            if (item.Code.CompareTo("00012") >= 0 && item.Code.CompareTo("00024") <= 0)
+            {
+                tank = Instantiate(list.Find(u => u.name == item.Code));
+                CommonHelper.ReplaceMaterial(tank, "black");
+            }
+            else if (item.Code.CompareTo("00025") >= 0 && item.Code.CompareTo("00036") <= 0)
+            {
+                tank = Instantiate(list.Find(u => u.name == (Convert.ToInt32(item.Code) - 13).ToString().PadLeft(5, '0')));
+                CommonHelper.ReplaceMaterial(tank, "blue");
+            }
+            else if (item.Code.CompareTo("00037") >= 0 && item.Code.CompareTo("00049") <= 0)
+            {
+                tank = Instantiate(list.Find(u => u.name == (Convert.ToInt32(item.Code) - 25).ToString().PadLeft(5, '0')));
+                CommonHelper.ReplaceMaterial(tank, "yellow");
+            }
+            else if (item.Code.CompareTo("00050") >= 0 && item.Code.CompareTo("00062") <= 0)
+            {
+                tank = Instantiate(list.Find(u => u.name == (Convert.ToInt32(item.Code) - 38).ToString().PadLeft(5, '0')));
+                CommonHelper.ReplaceMaterial(tank, "red");
+            }
+
             tank.AddComponent<Weapon>();
             tank.SetActive(false);
-            tank.transform.SetParent(pos.transform.Find("Tank"), false);
-            CommonHelper.ReplaceMaterial(tank,"black");
+            tank.transform.SetParent(PlayerB_Pos[i].transform.Find("Tank"), false);
+
+            item.TankObject = tank;
             PlayerB_Tanks.Add(tank);
         }
 
@@ -276,16 +323,16 @@ public class FightCtrl : MonoBehaviour
             TankList = tankPropertiesA
         };
 
-        List<TankProperty> tankPropertiesB = new List<TankProperty>();
-        foreach (GameObject item in PlayerB_Tanks)
-        {
-            int num = PlayerB_Tanks.IndexOf(item);
-            string id = (num + 1).ToString().PadLeft(5, '0');
-            TankProperty tank = new TankProperty(id, "蝎式坦克", item);
-            tank.AttackSkill = ResourceCtrl.Instance.SkillList.FindAll(u=>u.Type=="Attack")[CommonHelper.GetRandom(0,13)];
-            tank.DefenseSkill = ResourceCtrl.Instance.SkillList.FindAll(u => u.Type == "Defense")[CommonHelper.GetRandom(0, 8)];
-            tankPropertiesB.Add(tank);
-        }
+        List<TankProperty> tankPropertiesB = ResourceCtrl.Instance.SelectListB;
+        //foreach (GameObject item in PlayerB_Tanks)
+        //{
+        //    int num = PlayerB_Tanks.IndexOf(item);
+        //    string id = (num + 1).ToString().PadLeft(5, '0');
+        //    TankProperty tank = new TankProperty(id, "蝎式坦克", item);
+        //    tank.AttackSkill = ResourceCtrl.Instance.SkillList.FindAll(u=>u.Type=="Attack")[CommonHelper.GetRandom(0,13)];
+        //    tank.DefenseSkill = ResourceCtrl.Instance.SkillList.FindAll(u => u.Type == "Defense")[CommonHelper.GetRandom(0, 8)];
+        //    tankPropertiesB.Add(tank);
+        //}
         PlayerB = new Player
         {
             Name = "玩家B",
@@ -305,15 +352,17 @@ public class FightCtrl : MonoBehaviour
     }
 
 
+    //显示对局卡牌
     public void ShowLoadPanel()
     {
-       GameObject loadPanel = Instantiate(ResourceCtrl.Instance.ResourceRoot.transform.Find("UI/LoadPanel").gameObject, UIPanel.transform, false);
-        GameObject loadCard = ResourceCtrl.Instance.ResourceRoot.transform.Find("UI/LoadCard").gameObject;//  Resources.Load<GameObject>("UI/LoadCard");
+        GameObject loadPanel = Instantiate(ResourceCtrl.Instance.ResourceRoot.transform.Find("UI/LoadPanel").gameObject, UIPanel.transform, false);
+        LoadPanel = loadPanel;
+        GameObject loadCard = loadPanel.transform.Find("Panel/LoadCard").gameObject;//  Resources.Load<GameObject>("UI/LoadCard");
         //A
-        Transform ContentA = loadPanel.transform.Find("Panel/PanelA/Scroll View/Viewport/Content");
+        Transform ContentA = loadPanel.transform.Find("Panel/PlayerA/Scroll View/Viewport/Content");
         foreach (TankProperty item in PlayerA.TankList)
         {
-            GameObject newCard = Instantiate(loadCard, ContentA,false);
+            GameObject newCard = Instantiate(loadCard, ContentA);
             newCard.SetActive(true);
             newCard.name = "TankCard" + item.Code;
             newCard.transform.Find("Panel/image").GetComponent<RawImage>().texture = CommonHelper.LoadTankImage(item.Code);
@@ -331,7 +380,7 @@ public class FightCtrl : MonoBehaviour
 
 
         //B
-        Transform ContentB = loadPanel.transform.Find("Panel/PanelB/Scroll View/Viewport/Content");
+        Transform ContentB = loadPanel.transform.Find("Panel/PlayerB/Scroll View/Viewport/Content");
         foreach (TankProperty item in PlayerB.TankList)
         {
             GameObject newCard = Instantiate(loadCard, ContentB);
@@ -1411,15 +1460,19 @@ public class FightCtrl : MonoBehaviour
         //判断是否一方全部阵亡，若全部阵亡则不再执行攻击，否则继续。当一个回合结束后，开始下一轮
         if (OrderList.FindAll(u => u.Player.Name == "玩家A" && u.Death == false).Count == 0 || OrderList.FindAll(u => u.Player.Name == "玩家B" && u.Death == false).Count == 0)
         {
-
+            UIPanel.transform.Find("OverPanel").gameObject.SetActive(true);
+            UIPanel.transform.Find("OverPanel").SetAsLastSibling();
             UIPanel.transform.Find("txt_round_center").gameObject.SetActive(true);
             UIPanel.transform.Find("txt_round_center").SetAsLastSibling();
+            
             if (OrderList.FindAll(u => u.Player.Name == "玩家A" && u.Death == false).Count == 0)
             {
+                AudioManager.Instance.PlayAudio("Sound/defeat");
                 UIPanel.transform.Find("txt_round_center").GetComponent<Text>().text = "Defeated";
             }
             else
             {
+                AudioManager.Instance.PlayAudio("Sound/victory");
                 UIPanel.transform.Find("txt_round_center").GetComponent<Text>().text = "VICTORY";
             }
 

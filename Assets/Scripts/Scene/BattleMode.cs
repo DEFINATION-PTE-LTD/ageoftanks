@@ -19,10 +19,12 @@ public class BattleMode : MonoBehaviour
     void Awake() 
     {
         transform.Find("btn_solo").GetComponent<UnityEngine.UI.Button>().onClick.AddListener(() => {
+            AudioManager.Instance.PlayBtnAudio();
             SceneManager.LoadScene("SoloSelect");
         });
 
         transform.Find("btn_regiment").GetComponent<UnityEngine.UI.Button>().onClick.AddListener(() => {
+            AudioManager.Instance.PlayBtnAudio();
             SceneManager.LoadScene("RegimentSelect");
         });
 

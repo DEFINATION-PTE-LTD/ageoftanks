@@ -11,6 +11,7 @@ public class ResourceCtrl : MonoBehaviour
     public GameObject ResourceRoot;
     public List<TankProperty> TankList = new List<TankProperty>();
     public List<TankProperty> SelectList = new List<TankProperty>();
+    public List<TankProperty> SelectListB = new List<TankProperty>();
     public List<SkillInfo> SkillList = new List<SkillInfo>();
 
     private static ResourceCtrl instance = null;

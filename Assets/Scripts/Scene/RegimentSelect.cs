@@ -46,6 +46,7 @@ public class RegimentSelect : MonoBehaviour,IBeginDragHandler, IDragHandler, IEn
     //开始试玩按钮
     private void StartAction() 
     {
+        AudioManager.Instance.PlayBtnAudio();
         if (HasEmpty() == true)
         {
             Root.transform.Find("MainPanel/RightPanel/txtTip").gameObject.SetActive(true);
@@ -55,6 +56,7 @@ public class RegimentSelect : MonoBehaviour,IBeginDragHandler, IDragHandler, IEn
         {
             Root.transform.Find("MainPanel/RightPanel/txtTip").gameObject.SetActive(false);
             ResourceCtrl.Instance.SelectList = selects.ToList();
+            ResourceCtrl.Instance.SelectListB = ResourceCtrl.Instance.TankList.FindAll(u => selects.Contains(u) == false).GetRange(0, 7);
             SceneManager.LoadScene("FightScene2");
             System.GC.Collect();
         }
@@ -138,6 +140,7 @@ public class RegimentSelect : MonoBehaviour,IBeginDragHandler, IDragHandler, IEn
             newCard.transform.Find("Panel/txtSkill").GetComponent<Text>().text = skill;
 
             newCard.gameObject.AddComponent<UnityEngine.UI.Button>().onClick.AddListener(() => {
+                AudioManager.Instance.PlayBtnAudio();
                 Debug.Log("当前点击了" + newCard.name);
                 showDetail(item);
             });
@@ -212,6 +215,7 @@ public class RegimentSelect : MonoBehaviour,IBeginDragHandler, IDragHandler, IEn
 
                     newCard.gameObject.AddComponent<UnityEngine.UI.Button>().onClick.AddListener(() =>
                     {
+                        AudioManager.Instance.PlayBtnAudio();
                         showDetail(item);
                     });
 
@@ -321,6 +325,7 @@ public class RegimentSelect : MonoBehaviour,IBeginDragHandler, IDragHandler, IEn
             infoPanel.transform.Find("BtnSelect").gameObject.SetActive(true);
             btnSelect.onClick.AddListener(() =>
             {
+                AudioManager.Instance.PlayBtnAudio();
                 for (int i = 0; i < selects.Length; i++)
                 {
                     if (selects[i] != null)
@@ -348,6 +353,7 @@ public class RegimentSelect : MonoBehaviour,IBeginDragHandler, IDragHandler, IEn
 
             btnSelect.onClick.AddListener(() =>
             {
+                AudioManager.Instance.PlayBtnAudio();
                 //ResourceCtrl.Instance.SelectList.Add(item);
                 for (int i = 0; i < selects.Length; i++)
                 {
@@ -371,6 +377,7 @@ public class RegimentSelect : MonoBehaviour,IBeginDragHandler, IDragHandler, IEn
         UnityEngine.UI.Button btnClose = infoPanel.transform.Find("BtnClose").GetComponent<UnityEngine.UI.Button>();
         btnClose.onClick.RemoveAllListeners();
         btnClose.onClick.AddListener(() => {
+            AudioManager.Instance.PlayBtnAudio();
             infoPanel.transform.DOScale(new Vector3(0, 0, 0), 0.2f).SetEase(Ease.OutExpo).OnComplete(() =>
             {
                 infoPanel.SetActive(false);

@@ -422,27 +422,27 @@ public class Weapon : MonoBehaviour
 
                 if (wc.WeaponObj.name.IndexOf("Weapon_DoubleGun") > -1)
                 {
-                    AudioManager.Instance.EffectAudio("Sound/weapon_gatling_006");
+                    AudioManager.Instance.PlayAudio("Sound/weapon_gatling_006");
                     //shootSound.clip = Resources.Load<AudioClip>("Sound/weapon_gatling_006");
                 }
                 else if (wc.WeaponObj.name.IndexOf("Weapon_GLauncher") > -1)
                 {
-                    AudioManager.Instance.EffectAudio("Sound/thump");
+                    AudioManager.Instance.PlayAudio("Sound/thump");
                     //shootSound.clip = Resources.Load<AudioClip>("Sound/thump");
                 }
                 else if (wc.WeaponObj.name.IndexOf("Weapon_Shock_Rifle") > -1)
                 {
-                    AudioManager.Instance.EffectAudio("Sound/laser");
+                    AudioManager.Instance.PlayAudio("Sound/laser");
                     //shootSound.clip = Resources.Load<AudioClip>("Sound/laser");
                 }
                 else if (wc.WeaponObj.name.IndexOf("Weapon_Shocker") > -1)
                 {
-                    AudioManager.Instance.EffectAudio("Sound/combustion");
+                    AudioManager.Instance.PlayAudio("Sound/combustion");
                    // shootSound.clip = Resources.Load<AudioClip>("Sound/combustion");
                 }
                 else if (wc.WeaponObj.name.IndexOf("Weapon_Sniper") > -1)
                 {
-                    AudioManager.Instance.EffectAudio("Sound/bullet");
+                    AudioManager.Instance.PlayAudio("Sound/bullet");
                     //shootSound.clip = Resources.Load<AudioClip>("Sound/bullet");
                 }
 

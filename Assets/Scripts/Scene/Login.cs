@@ -12,6 +12,7 @@ public class Login : MonoBehaviour
        
         transform.Find("btn_login").GetComponent<UnityEngine.UI.Button>().onClick.AddListener(() =>
         {
+            //AudioManager.Instance.PlayBtnAudio();
             string account = transform.Find("Account").GetComponent<InputField>().text;
             string password = transform.Find("Password").GetComponent<InputField>().text;
             if (!string.IsNullOrEmpty(account) && !string.IsNullOrEmpty(password))
