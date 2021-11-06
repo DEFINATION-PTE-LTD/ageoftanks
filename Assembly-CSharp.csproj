@@ -8,7 +8,8 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>10.0.20506</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <RootNamespace></RootNamespace>
+    <RootNamespace>
+    </RootNamespace>
     <ProjectGuid>{2AE90DFC-31C0-EF44-5E2F-C8CCA3A111E3}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
@@ -124,6 +125,7 @@
     <Compile Include="Assets\Scripts\Common\PosCtrl.cs" />
     <Compile Include="Assets\Scripts\Common\VolumeCtrl.cs" />
     <Compile Include="Assets\Scripts\Models\APIResult.cs" />
+    <Compile Include="Assets\Scripts\Models\BaseBuff.cs" />
     <Compile Include="Assets\Scripts\Models\Buff.cs" />
     <Compile Include="Assets\Scripts\Models\FightItem.cs" />
     <Compile Include="Assets\Scripts\Models\HeroProperty.cs" />

@@ -44,6 +44,16 @@ public class FightCtrl : MonoBehaviour
 
     private void Awake()
     {
+        //StartCoroutine(CommonHelper.DelayToInvokeDo(() => {
+        //    UIPanel.transform.Find("OverPanel").gameObject.SetActive(true);
+        //    UIPanel.transform.Find("OverPanel").SetAsLastSibling();
+        //    UIPanel.transform.Find("OverPanel").DOScale(new Vector3(1, 1, 1), 0.5f).From(new Vector3(1, 0, 0));
+        //    UIPanel.transform.Find("victory").gameObject.SetActive(true);
+        //    UIPanel.transform.Find("victory").SetAsLastSibling();
+        //    UIPanel.transform.Find("victory").DOLocalRotate(new Vector3(0,0, 0), 1f).From(new Vector3(100,100,0));// .DOShakeScale(1f);
+        //}, 2f));
+        
+
         AudioManager.Instance.PlayBgm("Sound/bg-fight");
 
         InitPlatform();
@@ -1462,18 +1472,25 @@ public class FightCtrl : MonoBehaviour
         {
             UIPanel.transform.Find("OverPanel").gameObject.SetActive(true);
             UIPanel.transform.Find("OverPanel").SetAsLastSibling();
-            UIPanel.transform.Find("txt_round_center").gameObject.SetActive(true);
-            UIPanel.transform.Find("txt_round_center").SetAsLastSibling();
-            
+            UIPanel.transform.Find("OverPanel").DOScale(new Vector3(1, 1, 1), 0.5f).From(new Vector3(1, 0, 0));
+           // UIPanel.transform.Find("txt_round_center").gameObject.SetActive(true);
+           // UIPanel.transform.Find("txt_round_center").SetAsLastSibling();
+
             if (OrderList.FindAll(u => u.Player.Name == "玩家A" && u.Death == false).Count == 0)
             {
                 AudioManager.Instance.PlayAudio("Sound/defeat");
-                UIPanel.transform.Find("txt_round_center").GetComponent<Text>().text = "Defeated";
+                //UIPanel.transform.Find("txt_round_center").GetComponent<Text>().text = "Defeated";
+                UIPanel.transform.Find("defeat").gameObject.SetActive(true);
+                UIPanel.transform.Find("defeat").SetAsLastSibling();
+                UIPanel.transform.Find("defeat").DOLocalRotate(new Vector3(0, 0, 0), 1f).From(new Vector3(100, 100, 0));
             }
             else
             {
                 AudioManager.Instance.PlayAudio("Sound/victory");
-                UIPanel.transform.Find("txt_round_center").GetComponent<Text>().text = "VICTORY";
+                //UIPanel.transform.Find("txt_round_center").GetComponent<Text>().text = "VICTORY";
+                UIPanel.transform.Find("victory").gameObject.SetActive(true);
+                UIPanel.transform.Find("victory").SetAsLastSibling();
+                UIPanel.transform.Find("victory").DOLocalRotate(new Vector3(0, 0, 0), 1f).From(new Vector3(100, 100, 0));
             }
 
             UIPanel.transform.Find("btnBack").gameObject.SetActive(true);
