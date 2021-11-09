@@ -9,9 +9,12 @@ using UnityEngine.SceneManagement;
 
 public class FightCtrl : MonoBehaviour
 {
+    public int FightType;
+
     public GameObject UIPanel;//UI界面
     public GameObject LoadPanel;//对局加载界面
     public GameObject StarterCam;//视角物体
+    public GameObject Looker;//自由观察视角
 
     /// <summary>
     /// 对战台
@@ -39,6 +42,10 @@ public class FightCtrl : MonoBehaviour
     private int CountDownTime = 10; //倒计时
     private int Round = 0; //回合数
     private int FightIndex = -1; //当前战斗方的下标
+    private bool Finish = false;//战斗是否结束 
+
+    private bool LookAtSwitch = true;//坦克第三人称视角开关
+    private bool FreeLookSwitch = false;//自由视角开关
     
     List<FightItem> DuelList = new List<FightItem>(); //决斗中的坦克
 
@@ -52,7 +59,10 @@ public class FightCtrl : MonoBehaviour
         //    UIPanel.transform.Find("victory").SetAsLastSibling();
         //    UIPanel.transform.Find("victory").DOLocalRotate(new Vector3(0,0, 0), 1f).From(new Vector3(100,100,0));// .DOShakeScale(1f);
         //}, 2f));
-        
+
+        //1v1自动关闭lookat视角
+        if (FightType == 1) { LookAtSwitch = false; }
+
 
         AudioManager.Instance.PlayBgm("Sound/bg-fight");
 
@@ -119,15 +129,35 @@ public class FightCtrl : MonoBehaviour
     void Update()
     {
         //AutoShoot();
-       
-            foreach (FightItem fightItem in OrderList)
-            {
-                GameObject bloodbar = UIPanel.transform.Find("bloodbar").gameObject;
-                Transform bar = UIPanel.transform.Find("bloodbar_" + fightItem.Code);
-                bar.position = Camera.main.WorldToScreenPoint(fightItem.Tank.transform.position + new Vector3(0, 13, 0));
 
+        //血条位置实时更新
+        foreach (FightItem fightItem in OrderList)
+        {
+            GameObject bloodbar = UIPanel.transform.Find("bloodbar").gameObject;
+            Transform bar = UIPanel.transform.Find("bloodbar_" + fightItem.Code);
+            bar.position = Camera.main.WorldToScreenPoint(fightItem.Tank.transform.position + new Vector3(0, 13, 0));
+        }
+        //技能图标及buff图标实时更新
+
+
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            if (Looker != null && Round>=1 && Finish==false) 
+            {
+                Looker.SetActive(!Looker.activeSelf);
+                FreeLookSwitch = Looker.activeSelf;
+                Debug.Log(Looker.activeSelf == true ? "开启自由视角" : "关闭自由视角");
             }
-        
+        }
+        if (Input.GetKeyDown(KeyCode.L))
+        {
+            if (Looker != null && Round >= 1 && Finish == false)
+            {
+                LookAtSwitch = !LookAtSwitch;
+                if (LookAtSwitch == false) { CMLookAt(-1); }
+                Debug.Log(LookAtSwitch == true ? "开启锁定视角" : "关闭锁定视角");
+            }
+        }
     }
 
   
@@ -829,6 +859,7 @@ public class FightCtrl : MonoBehaviour
     //轮流对战，递归轮流执行操作
     void Fight(int index)
     {
+        CMLookAt(index);
         FightItem fightitem = OrderList[index];
 
         #region 判定是否有恢复技能
@@ -903,7 +934,7 @@ public class FightCtrl : MonoBehaviour
                 foreach (FightItem item in targets)
                 {
                     //普通攻击
-                    StartCoroutine(CommonHelper.DelayToInvokeDo(() => { SimpleAttack(fightitem, item, targets.Count>1?true:false); }, targetIndex * 0.5f));
+                    StartCoroutine(CommonHelper.DelayToInvokeDo(() => { SimpleAttack(fightitem, item, targets.Count>1?true:false); }, (targetIndex+1) * 1f));
                     targetIndex++;
                 }
                 //游戏是否结束
@@ -1478,6 +1509,8 @@ public class FightCtrl : MonoBehaviour
 
             if (OrderList.FindAll(u => u.Player.Name == "玩家A" && u.Death == false).Count == 0)
             {
+                Finish = true;
+                if (Looker != null) Looker.SetActive(false);
                 AudioManager.Instance.PlayAudio("Sound/defeat");
                 //UIPanel.transform.Find("txt_round_center").GetComponent<Text>().text = "Defeated";
                 UIPanel.transform.Find("defeat").gameObject.SetActive(true);
@@ -1486,6 +1519,8 @@ public class FightCtrl : MonoBehaviour
             }
             else
             {
+                Finish = true;
+                if (Looker != null) Looker.SetActive(false);
                 AudioManager.Instance.PlayAudio("Sound/victory");
                 //UIPanel.transform.Find("txt_round_center").GetComponent<Text>().text = "VICTORY";
                 UIPanel.transform.Find("victory").gameObject.SetActive(true);
@@ -1505,6 +1540,8 @@ public class FightCtrl : MonoBehaviour
             }
             else
             {
+                
+
                 int nextindex = GetNextFightIndex();
                 if (nextindex == -1)
                 {
@@ -1831,5 +1868,28 @@ public class FightCtrl : MonoBehaviour
     }
 
 
+    /// <summary>
+    /// 相机朝向
+    /// </summary>
+    /// <param name="index">坦克坐标</param>
+    void CMLookAt(int index)
+    {
+        foreach (FightItem item in OrderList)
+        {
+            Transform cm2 = item.Tank.transform.parent.parent.Find("CM");
+            if (cm2 != null)
+            {
+                cm2.gameObject.SetActive(false);
+            }
+        }
+        if (LookAtSwitch == true)
+        {
+            Transform cm = OrderList[index].Tank.transform.parent.parent.Find("CM");
+            if (cm != null)
+            {
+                cm.gameObject.SetActive(true);
+            }
+        }
+    }
 
 }

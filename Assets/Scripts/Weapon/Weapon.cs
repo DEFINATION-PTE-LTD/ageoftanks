@@ -34,10 +34,10 @@ public class Weapon : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            Shoot();
-        }
+        //if (Input.GetKeyDown(KeyCode.Space))
+        //{
+        //    Shoot();
+        //}
     }
     /// <summary>
     /// 查找武器
