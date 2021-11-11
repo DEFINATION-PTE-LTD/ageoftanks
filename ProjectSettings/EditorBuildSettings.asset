@@ -15,15 +15,15 @@ EditorBuildSettings:
     path: Assets/Scenes/RegimentSelect.unity
     guid: ab450c2aeda88804ab30f0aedadf025f
   - enabled: 1
-    path: Assets/Scenes/FightScene2.unity
-    guid: 91ee707f193d07f4f8f46b460b6f009f
-  - enabled: 1
-    path: Assets/Scenes/FightSolo.unity
-    guid: eb67a7b8dacb39b4689bcac25100c416
-  - enabled: 1
     path: Assets/Scenes/BattleMode.unity
     guid: a6af3647492d9c845a7d5749c9a3d659
   - enabled: 1
     path: Assets/Scenes/SoloSelect.unity
     guid: 85aa1988870928444bc345ecf9cea055
+  - enabled: 1
+    path: Assets/Scenes/Alienworld.unity
+    guid: 3d8bda4626fce9f42a3f6a04e3d306c7
+  - enabled: 1
+    path: Assets/Scenes/AlienworldSolo.unity
+    guid: 51d1ace8bd9939a449fe7c0a4493d7a4
   m_configObjects: {}

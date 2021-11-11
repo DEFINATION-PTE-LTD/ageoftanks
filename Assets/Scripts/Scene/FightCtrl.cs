@@ -15,6 +15,7 @@ public class FightCtrl : MonoBehaviour
     public GameObject LoadPanel;//对局加载界面
     public GameObject StarterCam;//视角物体
     public GameObject Looker;//自由观察视角
+    public GameObject GreenPointer, RedPointer; //攻击方指示器
 
     /// <summary>
     /// 对战台
@@ -407,7 +408,7 @@ public class FightCtrl : MonoBehaviour
             newCard.name = "TankCard" + item.Code;
             newCard.transform.Find("Panel/image").GetComponent<RawImage>().texture = CommonHelper.LoadTankImage(item.Code);
             newCard.transform.Find("Panel/txtNo").GetComponent<Text>().text = "#" + item.Code;
-
+            newCard.transform.Find("Panel/bgA").gameObject.SetActive(true);
             newCard.transform.Find("Panel/iconAttack/txtVal").GetComponent<Text>().text = item.Attack.ToString();
             newCard.transform.Find("Panel/iconDefense/txtVal").GetComponent<Text>().text = item.Blood.ToString();
 
@@ -428,7 +429,7 @@ public class FightCtrl : MonoBehaviour
             newCard.name = "TankCard" + item.Code;
             newCard.transform.Find("Panel/image").GetComponent<RawImage>().texture = CommonHelper.LoadTankImage(item.Code);
             newCard.transform.Find("Panel/txtNo").GetComponent<Text>().text = "#" + item.Code;
-
+            newCard.transform.Find("Panel/bgB").gameObject.SetActive(true);
             newCard.transform.Find("Panel/iconAttack/txtVal").GetComponent<Text>().text = item.Attack.ToString();
             newCard.transform.Find("Panel/iconDefense/txtVal").GetComponent<Text>().text = item.Blood.ToString();
 
@@ -443,51 +444,160 @@ public class FightCtrl : MonoBehaviour
 
 
     /// <summary>
-    /// 按照攻击速度进行排序
+    /// 按照从左到右进行排序
     /// </summary>
     public void GetFightOrder()
     {
+
         OrderList = new List<FightItem>();
-        foreach (TankProperty item in PlayerA.TankList)
+        
+        //双方速度最大值进行随机，随机数大的先手
+
+        int SpeedA = (int)PlayerA.TankList.Max(u => u.Speed);
+        int SpeedB = (int)PlayerB.TankList.Max(u => u.Speed);
+
+        int RandomA = CommonHelper.GetRandom(0, SpeedA); //随机数A
+        int RandomB = CommonHelper.GetRandom(0, SpeedB); //随机数B
+        Debug.Log($"随机数A：{RandomA}，随机数B：{RandomB}");
+
+        int count = FightType == 1 ? 1 : 7; //坦克数
+
+        for (int i = 0; i < count; i++)
         {
-            OrderList.Add(new FightItem {
-                Player = PlayerA,
-                Tank = item.TankObject,
-                Code = item.Code,
-                Speed = PlayerA.Hero.Speed + item.Speed,
-                Attack = PlayerA.Hero.Attack + item.Attack,
-                CritRate = PlayerA.Hero.CritRate + item.CritRate,
-                //Defense = PlayerA.Hero.Defense + item.Defense,
-                Blood = PlayerA.Hero.Blood + item.Blood,
-               // HitRate = item.HitRate,
-                Range = item.Range,
-                AttackSkill = item.AttackSkill,
-                DefenseSkill = item.DefenseSkill,
-                Buffs = new List<Buff>()
-            });; ;
-        }
-        foreach (TankProperty item in PlayerB.TankList)
-        {
-            OrderList.Add(new FightItem
+            if (RandomA >= RandomB)
             {
-                Player = PlayerB,
-                Tank = item.TankObject,
-                Code = item.Code,
-                Speed = PlayerB.Hero.Speed + item.Speed,
-                Attack = PlayerB.Hero.Attack + item.Attack,
-                CritRate = PlayerB.Hero.CritRate + item.CritRate,
-                //Defense = PlayerB.Hero.Defense + item.Defense,
-                Blood = PlayerB.Hero.Blood + item.Blood,
-                //HitRate = item.HitRate,
-                Range = item.Range,
-                AttackSkill = item.AttackSkill,
-                DefenseSkill = item.DefenseSkill,
-                Buffs = new List<Buff>()
+                if (PlayerA.TankList.Count >= i + 1)
+                {
+                    TankProperty itemA = PlayerA.TankList[i];
+                    OrderList.Add(new FightItem
+                    {
+                        Player = PlayerA,
+                        Tank = itemA.TankObject,
+                        Code = itemA.Code,
+                        Speed = PlayerA.Hero.Speed + itemA.Speed,
+                        Attack = PlayerA.Hero.Attack + itemA.Attack,
+                        CritRate = PlayerA.Hero.CritRate + itemA.CritRate,
+                        //Defense = PlayerA.Hero.Defense + item.Defense,
+                        Blood = PlayerA.Hero.Blood + itemA.Blood,
+                        // HitRate = item.HitRate,
+                        Range = itemA.Range,
+                        AttackSkill = itemA.AttackSkill,
+                        DefenseSkill = itemA.DefenseSkill,
+                        Buffs = new List<Buff>()
+                    });
+                }
 
-            });
+                if (PlayerB.TankList.Count >= i + 1)
+                {
+                    TankProperty itemB = PlayerB.TankList[i];
+                    OrderList.Add(new FightItem
+                    {
+                        Player = PlayerB,
+                        Tank = itemB.TankObject,
+                        Code = itemB.Code,
+                        Speed = PlayerB.Hero.Speed + itemB.Speed,
+                        Attack = PlayerB.Hero.Attack + itemB.Attack,
+                        CritRate = PlayerB.Hero.CritRate + itemB.CritRate,
+                        //Defense = PlayerB.Hero.Defense + item.Defense,
+                        Blood = PlayerB.Hero.Blood + itemB.Blood,
+                        //HitRate = item.HitRate,
+                        Range = itemB.Range,
+                        AttackSkill = itemB.AttackSkill,
+                        DefenseSkill = itemB.DefenseSkill,
+                        Buffs = new List<Buff>()
+                    });
+                }
+            }
+            else
+            {
+                if (PlayerB.TankList.Count >= i + 1)
+                {
+                    TankProperty itemB = PlayerB.TankList[i];
+                    OrderList.Add(new FightItem
+                    {
+                        Player = PlayerB,
+                        Tank = itemB.TankObject,
+                        Code = itemB.Code,
+                        Speed = PlayerB.Hero.Speed + itemB.Speed,
+                        Attack = PlayerB.Hero.Attack + itemB.Attack,
+                        CritRate = PlayerB.Hero.CritRate + itemB.CritRate,
+                        //Defense = PlayerB.Hero.Defense + item.Defense,
+                        Blood = PlayerB.Hero.Blood + itemB.Blood,
+                        //HitRate = item.HitRate,
+                        Range = itemB.Range,
+                        AttackSkill = itemB.AttackSkill,
+                        DefenseSkill = itemB.DefenseSkill,
+                        Buffs = new List<Buff>()
+                    });
+                }
+
+                if (PlayerA.TankList.Count >= i + 1)
+                {
+                    TankProperty itemA = PlayerA.TankList[i];
+                    OrderList.Add(new FightItem
+                    {
+                        Player = PlayerA,
+                        Tank = itemA.TankObject,
+                        Code = itemA.Code,
+                        Speed = PlayerA.Hero.Speed + itemA.Speed,
+                        Attack = PlayerA.Hero.Attack + itemA.Attack,
+                        CritRate = PlayerA.Hero.CritRate + itemA.CritRate,
+                        //Defense = PlayerA.Hero.Defense + item.Defense,
+                        Blood = PlayerA.Hero.Blood + itemA.Blood,
+                        // HitRate = item.HitRate,
+                        Range = itemA.Range,
+                        AttackSkill = itemA.AttackSkill,
+                        DefenseSkill = itemA.DefenseSkill,
+                        Buffs = new List<Buff>()
+                    });
+                }
+
+                
+            }
         }
 
-        OrderList = OrderList.OrderByDescending(u => u.Speed).ToList();
+        #region 按速度
+        //foreach (TankProperty item in PlayerA.TankList)
+        //{
+        //    OrderList.Add(new FightItem {
+        //        Player = PlayerA,
+        //        Tank = item.TankObject,
+        //        Code = item.Code,
+        //        Speed = PlayerA.Hero.Speed + item.Speed,
+        //        Attack = PlayerA.Hero.Attack + item.Attack,
+        //        CritRate = PlayerA.Hero.CritRate + item.CritRate,
+        //        //Defense = PlayerA.Hero.Defense + item.Defense,
+        //        Blood = PlayerA.Hero.Blood + item.Blood,
+        //       // HitRate = item.HitRate,
+        //        Range = item.Range,
+        //        AttackSkill = item.AttackSkill,
+        //        DefenseSkill = item.DefenseSkill,
+        //        Buffs = new List<Buff>()
+        //    });
+        //}
+        //foreach (TankProperty item in PlayerB.TankList)
+        //{
+        //    OrderList.Add(new FightItem
+        //    {
+        //        Player = PlayerB,
+        //        Tank = item.TankObject,
+        //        Code = item.Code,
+        //        Speed = PlayerB.Hero.Speed + item.Speed,
+        //        Attack = PlayerB.Hero.Attack + item.Attack,
+        //        CritRate = PlayerB.Hero.CritRate + item.CritRate,
+        //        //Defense = PlayerB.Hero.Defense + item.Defense,
+        //        Blood = PlayerB.Hero.Blood + item.Blood,
+        //        //HitRate = item.HitRate,
+        //        Range = item.Range,
+        //        AttackSkill = item.AttackSkill,
+        //        DefenseSkill = item.DefenseSkill,
+        //        Buffs = new List<Buff>()
+
+        //    });
+        //}
+
+        //OrderList = OrderList.OrderByDescending(u => u.Speed).ToList();
+        #endregion
 
         foreach (FightItem item in OrderList)
         {
@@ -514,7 +624,7 @@ public class FightCtrl : MonoBehaviour
   
         int count = 1;
         //对方存活坦克
-        List<FightItem> livelist = OrderList.FindAll(u => u.Player.Name != fightOrder.Player.Name && u.Death == false && DuelList.Contains(u)==false);
+        List<FightItem> livelist = OrderList.FindAll(u => u.Player.Name != fightOrder.Player.Name && u.Death == false);
 
 
         string atkName = "";
@@ -753,6 +863,29 @@ public class FightCtrl : MonoBehaviour
         
     }
 
+    //显示miss 未命中
+    void showMiss(FightItem target)
+    {
+        //闪避触发
+        //未命中
+        GameObject txtblood = UIPanel.transform.Find("txt_blood").gameObject;
+        GameObject miss = Instantiate(txtblood, UIPanel.transform, false);
+        miss.transform.position = Camera.main.WorldToScreenPoint(target.Tank.transform.position + new Vector3(0, 2, 0));
+        Text val = miss.transform.Find("txt_val").GetComponent<Text>();
+        val.text = "MISS";
+        val.color = Color.red;
+        miss.SetActive(true);
+
+        miss.transform.DOMove(Camera.main.WorldToScreenPoint(target.Tank.transform.position + new Vector3(-0.5f, CommonHelper.GetRandom(16, 25), 0)), 0.5f);//上飘
+        miss.transform.DOScale(new Vector3(1.2f, 1.2f, 1.2f), 0.5f).OnComplete(() => {
+            val.DOColor(new Color(val.color.r, val.color.g, val.color.b, 0), 0.8f).OnComplete(() => {
+                DestroyImmediate(miss);
+            }); //消失
+        });//字体放大
+
+
+    }
+
     /// <summary>
     /// 刷新血条
     /// </summary>
@@ -860,6 +993,7 @@ public class FightCtrl : MonoBehaviour
     void Fight(int index)
     {
         CMLookAt(index);
+        SwitchPointer(index);
         FightItem fightitem = OrderList[index];
 
         #region 判定是否有恢复技能
@@ -1397,10 +1531,12 @@ public class FightCtrl : MonoBehaviour
                                 //只挂载一个指令效果
                                 if (target.Buffs.Find(u => u.Name == "duel" && u.Disable == false) == null)
                                 {
-                                              
-                                    GameObject fromTankIcon = Instantiate(UIPanel.transform.Find("duelicon").gameObject, UIPanel.transform, false);
+                                    //buff标记
+                                    GameObject fromTankIcon = Instantiate(Resources.Load<GameObject>("Skills/Buff/duel"), fightitem.Tank.transform.parent, false);
+                                    //GameObject fromTankIcon = Instantiate(UIPanel.transform.Find("duelicon").gameObject, UIPanel.transform, false);
                                     fromTankIcon.SetActive(true);
-                                    fromTankIcon.transform.position = Camera.main.WorldToScreenPoint(fightitem.Tank.transform.position + new Vector3(0, 18, 0));
+                                    fromTankIcon.transform.position = fightitem.Tank.transform.position + new Vector3(0, 10.5f, 0);
+                                    //fromTankIcon.transform.position = Camera.main.WorldToScreenPoint(fightitem.Tank.transform.position + new Vector3(0, 18, 0));
                                     //添加buff
                                     fightitem.Buffs.Add(new Buff
                                     {
@@ -1415,11 +1551,11 @@ public class FightCtrl : MonoBehaviour
                                         Disable = false
                                     });
 
-
-                                    GameObject targetTankIcon = Instantiate(UIPanel.transform.Find("duelicon").gameObject, UIPanel.transform, false);
+                                    GameObject targetTankIcon = Instantiate(Resources.Load<GameObject>("Skills/Buff/duel"), target.Tank.transform.parent, false);
+                                    //GameObject targetTankIcon = Instantiate(UIPanel.transform.Find("duelicon").gameObject, UIPanel.transform, false);
                                     targetTankIcon.SetActive(true);
-                                    targetTankIcon.transform.position = Camera.main.WorldToScreenPoint(target.Tank.transform.position + new Vector3(0, 18, 0));
-
+                                    //targetTankIcon.transform.position = Camera.main.WorldToScreenPoint(target.Tank.transform.position + new Vector3(0, 18, 0));
+                                    targetTankIcon.transform.position = target.Tank.transform.position + new Vector3(0, 10.5f, 0);
                                     //添加buff
                                     target.Buffs.Add(new Buff
                                     {
@@ -1465,33 +1601,7 @@ public class FightCtrl : MonoBehaviour
         //}
     }
 
-    //决斗递归函数
-    void DuelFight(FightItem attacker,FightItem target) 
-    {
-        Weapon w = attacker.Tank.GetComponent<Weapon>();
-        w.target = new List<GameObject>() { target.Tank };
-        w.Shoot(attacker.Tank);
-        bool iscrit = IsCrit(attacker.CritRate);
-        int attack = (int)Math.Round(iscrit ? attacker.Attack * 2 : attacker.Attack);
-        target.Blood -= attack;
-        ShowBlood(target.Tank, attack, 0, iscrit);
-        RefreshBloodBar(target);
-
-        if (CheckDeath(target) == false)
-        {
-            StartCoroutine(CommonHelper.DelayToInvokeDo(() => { DuelFight(target, attacker); }, 0.5f));
-        }
-        else
-        {
-            StartCoroutine(CommonHelper.DelayToInvokeDo(() =>
-            {
-                DuelList.Remove(attacker);
-                DuelList.Remove(target);
-            }, 1f));
-        }
-    }
-
-
+ 
     /// <summary>
     /// 检查游戏状态 继续或是结束
     /// </summary>
@@ -1657,28 +1767,7 @@ public class FightCtrl : MonoBehaviour
     }
 
 
-    //显示miss 未命中
-    void showMiss(FightItem target)
-    {
-        //闪避触发
-        //未命中
-        GameObject txtblood = UIPanel.transform.Find("txt_blood").gameObject;
-        GameObject miss = Instantiate(txtblood, UIPanel.transform, false);
-        miss.transform.position = Camera.main.WorldToScreenPoint(target.Tank.transform.position + new Vector3(0, 2, 0));
-        Text val = miss.transform.Find("txt_val").GetComponent<Text>();
-        val.text = "MISS";
-        val.color = Color.red;
-        miss.SetActive(true);
-
-        miss.transform.DOMove(Camera.main.WorldToScreenPoint(target.Tank.transform.position + new Vector3(-0.5f, CommonHelper.GetRandom(16, 25), 0)), 0.5f);//上飘
-        miss.transform.DOScale(new Vector3(1.2f, 1.2f, 1.2f), 0.5f).OnComplete(() => {
-            val.DOColor(new Color(val.color.r, val.color.g, val.color.b, 0), 0.8f).OnComplete(() => {
-                DestroyImmediate(miss);
-            }); //消失
-        });//字体放大
-
-  
-    }
+   
 
     
     //防御技能挂载
@@ -1758,7 +1847,7 @@ public class FightCtrl : MonoBehaviour
         }
     }
 
-
+    //攻击技能挂载
     void SetupAttackSkills(FightItem fromItem)
     {
         if (fromItem.AttackSkill != null)
@@ -1892,4 +1981,31 @@ public class FightCtrl : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// 切换攻击方指示器
+    /// </summary>
+    void SwitchPointer(int index)
+    {
+
+        Transform tankPos = OrderList[index].Tank.transform.parent.parent;
+        if (tankPos != null)
+        {
+            if (OrderList[index].Player.Name == "玩家A")
+            {
+                GreenPointer.SetActive(true);
+                RedPointer.SetActive(false);
+                GreenPointer.transform.position = new Vector3(tankPos.position.x, GreenPointer.transform.position.y, tankPos.position.z);
+                GreenPointer.transform.DOScale(new Vector3(1,1,1), 0.5f).From(new Vector3(2,2,2));
+            }
+            else
+            {
+                GreenPointer.SetActive(false);
+                RedPointer.SetActive(true);
+                RedPointer.transform.position = new Vector3(tankPos.position.x, RedPointer.transform.position.y, tankPos.position.z);
+                RedPointer.transform.DOScale(new Vector3(1, 1, 1), 0.5f).From(new Vector3(2, 2, 2));
+            }
+            
+        }
+        
+    }
 }

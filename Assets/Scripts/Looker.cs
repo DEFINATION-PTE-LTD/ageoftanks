@@ -12,7 +12,7 @@ public class Looker : MonoBehaviour
     private float ySpeed = 120.0f;
     private float scrollSpeed = 30;
 
-    private float yMinLimit = 0;
+    private float yMinLimit = 5;
     private float yMaxLimit = 100;
 
     float x = 50.0f;

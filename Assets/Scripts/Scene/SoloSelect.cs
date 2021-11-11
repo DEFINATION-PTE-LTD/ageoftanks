@@ -51,7 +51,7 @@ public class SoloSelect : MonoBehaviour
             //默认选中1个
             ResourceCtrl.Instance.SelectListB.Clear();
             ResourceCtrl.Instance.SelectListB.Add( ResourceCtrl.Instance.TankList.FindAll(u => ResourceCtrl.Instance.SelectList.Contains(u) == false)[CommonHelper.GetRandom(0,49)]);
-            SceneManager.LoadScene("FightSolo");
+            SceneManager.LoadScene("AlienworldSolo");
             System.GC.Collect();
         }
     }

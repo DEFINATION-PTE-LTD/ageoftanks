@@ -26,6 +26,7 @@ public class BattleMode : MonoBehaviour
         transform.Find("btn_regiment").GetComponent<UnityEngine.UI.Button>().onClick.AddListener(() => {
             AudioManager.Instance.PlayBtnAudio();
             SceneManager.LoadScene("RegimentSelect");
+           
         });
 
 

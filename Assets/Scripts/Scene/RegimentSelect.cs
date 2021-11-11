@@ -57,7 +57,8 @@ public class RegimentSelect : MonoBehaviour,IBeginDragHandler, IDragHandler, IEn
             Root.transform.Find("MainPanel/RightPanel/txtTip").gameObject.SetActive(false);
             ResourceCtrl.Instance.SelectList = selects.ToList();
             ResourceCtrl.Instance.SelectListB = ResourceCtrl.Instance.TankList.FindAll(u => selects.Contains(u) == false).GetRange(0, 7);
-            SceneManager.LoadScene("FightScene2");
+            // SceneManager.LoadScene("FightScene2");
+            SceneManager.LoadScene("Alienworld");
             System.GC.Collect();
         }
     }

@@ -344,9 +344,10 @@ public class Weapon : MonoBehaviour
                     Sequence quence = DOTween.Sequence();
                     foreach (GameObject t in target)
                     {
+                        Vector3 t_pos = t.transform.position + new Vector3(0, 3, 0);
                         //添加一个动画
                         quence.Append(
-                        transform.DOLookAt(t.transform.position, 0.3f,AxisConstraint.Y).OnComplete(() =>
+                        transform.parent.DOLookAt(t.transform.position, 0.3f,AxisConstraint.Y).OnComplete(() =>
                         {
                             for (int i = 0; i < 3; i++)
                             {
@@ -361,8 +362,8 @@ public class Weapon : MonoBehaviour
                                     bullet.transform.forward = item.transform.forward;
                                     bullet.transform.position = item.transform.position;
                                     bullet.transform.GetComponent<Rigidbody>().AddForce(bullet.transform.forward * 60, ForceMode.Impulse);
-                                    bullet.transform.DOMove(t.transform.position+new Vector3(0,2,0), 0.3f).OnUpdate(() => {
-                                        bullet.transform.DOLookAt(t.transform.position + new Vector3(0, 2, 0), 0, AxisConstraint.Y);
+                                    bullet.transform.DOMove(t_pos, 0.3f).OnUpdate(() => {
+                                        bullet.transform.DOLookAt(t_pos, 0, AxisConstraint.Y);
                                     }).OnComplete(()=> {
                                         DestroyImmediate(bullet);
                                     });
