@@ -300,6 +300,9 @@
     <Reference Include="clipper_library">
       <HintPath>E:/Projects/TankGame/Code/AgeOfTanks/Library/PackageCache/com.unity.cinemachine@2.8.0/Runtime/ThirdParty/clipper_library.dll</HintPath>
     </Reference>
+    <Reference Include="LitJson">
+      <HintPath>E:/Projects/TankGame/Code/AgeOfTanks/Assets/Plugins/LitJson.dll</HintPath>
+    </Reference>
     <Reference Include="nunit.framework">
       <HintPath>E:/Projects/TankGame/Code/AgeOfTanks/Library/PackageCache/com.unity.ext.nunit@1.0.0/net35/unity-custom/nunit.framework.dll</HintPath>
     </Reference>

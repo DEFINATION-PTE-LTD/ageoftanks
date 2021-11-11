@@ -23,7 +23,6 @@ public class JSONhelper
             return JsonConvert.DeserializeObject<T>(json,jsetting);
         }
 
-
         /// <summary>
         /// 生成压缩的json 字符串
         /// </summary>
@@ -65,8 +64,6 @@ public class JSONhelper
         }
 
 
-        
-
         public static DateTime JsonToDateTime(string jsonDate)
         {
             string value = jsonDate.Substring(6, jsonDate.Length - 8);
@@ -98,7 +95,5 @@ public class JSONhelper
             return dateTime;
         }
 
-       
-       
     }
 

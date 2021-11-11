@@ -24,8 +24,11 @@ public class AudioManager : MonoBehaviour
 
     private void Awake()
     {
-        DontDestroyOnLoad(gameObject);
-        AudioManager._instacne = gameObject.GetComponent<AudioManager>();
+        if (_instacne == null)
+        {
+            DontDestroyOnLoad(gameObject);
+            AudioManager._instacne = gameObject.GetComponent<AudioManager>();
+        }
 
         if (PlayerPrefs.HasKey("MusicVol"))
         {

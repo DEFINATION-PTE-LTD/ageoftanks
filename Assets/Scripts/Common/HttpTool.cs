@@ -9,20 +9,21 @@ using System.IO;
 /// <summary>
 /// Http Request SDK 
 /// </summary>
-public  class HttpTool : MonoBehaviour
+public class HttpTool : MonoBehaviour
 {
 
     private static HttpTool _instacne = null;
-    private string baseUrl = "http://game.ageoftanks.io/serverapi/";
+    //private string baseUrl = "http://game.ageoftanks.io/serverapi/";
+    private string baseUrl = "http://localhost:16555/";
 
 
-    Dictionary<string, string> requestHeader = new Dictionary<string, string>();  //  header
     public static HttpTool Instance
     {
         get
         {
             if (_instacne == null)
             {
+                
                 Debug.LogError("Awake error");
             }
             return _instacne;
@@ -31,13 +32,12 @@ public  class HttpTool : MonoBehaviour
 
     void Awake()
     {
-        DontDestroyOnLoad(gameObject);
-        HttpTool._instacne = gameObject.GetComponent<HttpTool>();
-
-        //http header 的内容
-        requestHeader.Add("Content-Type", "application/json");
+        if (_instacne == null)
+        {
+            DontDestroyOnLoad(gameObject);
+            HttpTool._instacne = gameObject.GetComponent<HttpTool>();
+        }
         //requestHeader.Add("sKey", sKey);
-
     }
 
     public  void Get(string methodName, Action<string> callback)
@@ -47,6 +47,9 @@ public  class HttpTool : MonoBehaviour
     public IEnumerator GetRequest(string methodName, Action<string> callback)
     {
         string url = baseUrl + methodName;
+        Dictionary<string, string> requestHeader = new Dictionary<string, string>();  //  header
+        //http header 的内容
+        requestHeader.Add("Content-Type", "application/json");
         using (UnityWebRequest webRequest = UnityWebRequest.Get(url))
         {
             //设置header
@@ -83,6 +86,9 @@ public  class HttpTool : MonoBehaviour
     {
         string url = baseUrl + methodName;
         // Debug.Log(string.Format("url:{0} postData:{1}",url,jsonString));
+        Dictionary<string, string> requestHeader = new Dictionary<string, string>();  //  header
+        //http header 的内容
+        requestHeader.Add("Content-Type", "application/json");
         using (UnityWebRequest webRequest = new UnityWebRequest(url, "POST"))
         {
             byte[] bodyRaw = Encoding.UTF8.GetBytes(jsonString);
@@ -224,5 +230,30 @@ public  class HttpTool : MonoBehaviour
         return sprite;
     }
 
+
+
+    // 上传视频
+    IEnumerator UploadVideo()
+    {
+        byte[] gifByte = File.ReadAllBytes("E:/Work/ffepgtest/gif/a.gif");
+        WWWForm form = new WWWForm();
+        //根据自己长传的文件修改格式
+        form.AddBinaryData("file", gifByte, "myGif.mp4", "a/gif");
+
+        using (UnityWebRequest www = UnityWebRequest.Post(baseUrl + "/upload/", form))
+        {
+            yield return www.SendWebRequest();
+
+            if (www.isNetworkError || www.isHttpError)
+            {
+                Debug.Log(www.error);
+            }
+            else
+            {
+                string text = www.downloadHandler.text;
+                Debug.Log("服务器返回值" + text);//正确打印服务器返回值
+            }
+        }
+    }
 
 }

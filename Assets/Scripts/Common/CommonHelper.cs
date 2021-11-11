@@ -101,7 +101,7 @@ public static class CommonHelper
         switch (skinname)
         {
             case "red":
-                 mat = Resources.Load<Material>("Materials/A_Spiders_Mat(red)");
+                mat = Resources.Load<Material>("Materials/A_Spiders_Mat(red)");
                 break;
             case "blue":
                 mat = Resources.Load<Material>("Materials/A_Spiders_Mat(blue)");

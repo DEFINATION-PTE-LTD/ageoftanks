@@ -219,9 +219,17 @@
     <Compile Include="Assets\Scripts\Models\HeroProperty.cs" />
     <Compile Include="Assets\Scripts\Models\Player.cs" />
     <Compile Include="Assets\Scripts\Models\SkillInfo.cs" />
+    <Compile Include="Assets\Scripts\Models\Table\AOT_Models.cs" />
+    <Compile Include="Assets\Scripts\Models\Table\AOT_Parts.cs" />
+    <Compile Include="Assets\Scripts\Models\Table\AOT_SetupRecord.cs" />
+    <Compile Include="Assets\Scripts\Models\Table\AOT_SkillInfo.cs" />
+    <Compile Include="Assets\Scripts\Models\Table\AOT_SkinInfo.cs" />
+    <Compile Include="Assets\Scripts\Models\Table\AOT_Tanks.cs" />
     <Compile Include="Assets\Scripts\Models\Table\AOT_User.cs" />
     <Compile Include="Assets\Scripts\Models\TankProperty.cs" />
     <Compile Include="Assets\Scripts\Models\WeaponObjectClass.cs" />
+    <Compile Include="Assets\Scripts\Node\LinkNodeInfo.cs" />
+    <Compile Include="Assets\Scripts\Node\Nodes.cs" />
     <Compile Include="Assets\Scripts\ObjectRot.cs" />
     <Compile Include="Assets\Scripts\PackagingCtrl.cs" />
     <Compile Include="Assets\Scripts\Scene\AOTButton.cs" />
@@ -633,6 +641,9 @@
     </Reference>
     <Reference Include="clipper_library">
       <HintPath>E:/Projects/TankGame/Code/AgeOfTanks/Library/PackageCache/com.unity.cinemachine@2.8.0/Runtime/ThirdParty/clipper_library.dll</HintPath>
+    </Reference>
+    <Reference Include="LitJson">
+      <HintPath>E:/Projects/TankGame/Code/AgeOfTanks/Assets/Plugins/LitJson.dll</HintPath>
     </Reference>
     <Reference Include="UnityEditor.iOS.Extensions.Xcode">
       <HintPath>D:/Program Files/Unity/Editor/Data/PlaybackEngines/iOSSupport/UnityEditor.iOS.Extensions.Xcode.dll</HintPath>

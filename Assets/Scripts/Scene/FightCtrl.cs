@@ -40,7 +40,7 @@ public class FightCtrl : MonoBehaviour
     List<FightItem> OrderList;
 
     //public int index = 0;
-    private int CountDownTime = 10; //倒计时
+    private int CountDownTime = 3; //倒计时
     private int Round = 0; //回合数
     private int FightIndex = -1; //当前战斗方的下标
     private bool Finish = false;//战斗是否结束 
@@ -99,7 +99,7 @@ public class FightCtrl : MonoBehaviour
                // });
             }, 3f));
 
-        },11f));
+        },4f));
 
 
         

@@ -27,6 +27,7 @@ public class Login : MonoBehaviour
                     if (res.success == true)
                     {
                         transform.Find("txt_tip").GetComponent<Text>().text = "";
+                        PlayerPrefs.SetString("userinfo", res.data);
                         SceneManager.LoadScene("ResourceScene");
                     }
                     else
@@ -41,5 +42,6 @@ public class Login : MonoBehaviour
 
     }
 
+    
  
 }
