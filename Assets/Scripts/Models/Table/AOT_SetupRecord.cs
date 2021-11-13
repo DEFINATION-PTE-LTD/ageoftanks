@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Data;
 
 	 	//AOT_SetupRecord
-		public class AOT_SetupRecord
+	public class AOT_SetupRecord
 	{
    		     
       	/// <summary>

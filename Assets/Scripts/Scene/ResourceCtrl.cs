@@ -1,5 +1,7 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -16,9 +18,19 @@ public class ResourceCtrl : MonoBehaviour
     public List<TankProperty> TankList = new List<TankProperty>();
     public List<TankProperty> SelectList = new List<TankProperty>();
     public List<TankProperty> SelectListB = new List<TankProperty>();
-    public List<SkillInfo> SkillList = new List<SkillInfo>();
 
-    public List<AOT_SkinInfo> SkinList = new List<AOT_SkinInfo>();
+    public List<AOT_SkillInfo> SkillList = new List<AOT_SkillInfo>();//技能信息
+    public List<AOT_SkinInfo> SkinList = new List<AOT_SkinInfo>();//皮肤信息
+    public List<AOT_Models> ModelList = new List<AOT_Models>();//模型信息
+    public List<AOT_Parts> PartsList = new List<AOT_Parts>(); //坦克部件信息
+    public List<AOT_Tanks> BaseTanks = new List<AOT_Tanks>(); //坦克信息
+    public List<AOT_SetupRecord> MountTanks = new List<AOT_SetupRecord>();//组装坦克信息
+
+    public Dictionary<string, Sprite> PartsSprite = new Dictionary<string, Sprite>();//部件图片
+    public Dictionary<string, Sprite> MountTanksSprite = new Dictionary<string, Sprite>();//组装坦克图片
+
+    public List<LevelInfo> Levels = new List<LevelInfo>();//等级名称
+
 
     private static ResourceCtrl instance = null;
     public static ResourceCtrl Instance
@@ -41,9 +53,13 @@ public class ResourceCtrl : MonoBehaviour
 
         ResourceRoot = gameObject;
         GetUserInfo();
-        InitSkillInfo();
+        GetLevelInfo();
+        
+
         System.GC.Collect();
-        StartCoroutine(CommonHelper.DelayToInvokeDo(() => { SceneManager.LoadScene("BattleMode"); }, 5f));
+        StartCoroutine(CommonHelper.DelayToInvokeDo(() => {
+           SceneManager.LoadScene("BattleMode");
+        }, 5f));
         
     }
 
@@ -56,20 +72,23 @@ public class ResourceCtrl : MonoBehaviour
         if (PlayerPrefs.HasKey("userinfo"))
         {
             string str = PlayerPrefs.GetString("userinfo");
-            Debug.Log(str);
             UserInfo = JSONhelper.ConvertToObject<AOT_User>(str);
+
+            GetSkillInfo();
+            GetSkinInfo();
+            GetModelInfo();
+            GetParts();
+            GetTanks();
         }
         else
         {
             Debug.Log("用户信息获取失败");
         }
     }
-
-
     /// <summary>
     /// 技能基础信息初始化
     /// </summary>
-    void InitSkillInfo()
+    void GetSkillInfo()
     {
         List<SkillInfo> list = new List<SkillInfo>();
 
@@ -301,18 +320,20 @@ public class ResourceCtrl : MonoBehaviour
         //    Description_en = "After receiving damage from the enemy, it will attack the opponent's tank from the source of the damage"
         //});
         #endregion
-        SkillList = list;
+        
         if (UserInfo != null)
         {
             string jsonstr = JSONhelper.ToJson(new { UserID = UserInfo.UUID });
-            List<AOT_SkillInfo> skilllist = new List<AOT_SkillInfo>();
+           
             HttpTool.Instance.Post("aotuser/skillinfo", jsonstr, (string result) =>
             {
-                APIResult res = JSONhelper.ConvertToObject<APIResult>(result);// JSONhelper.ConvertToObject<APIResult>(result);
+                APIResult res = JSONhelper.ToApiResult<AOT_SkillInfo>(result);// JSONhelper.ConvertToObject<APIResult>(result);
 
                 if (res.success == true)
                 {
-                    skilllist = JSONhelper.ConvertToObject<List<AOT_SkillInfo>>(JSONhelper.ToJson(res.data));
+                    SkillList = (List<AOT_SkillInfo>)(res.data);
+                    Debug.Log("技能信息获取完毕");
+                    InitTankList();
                 }
                 else
                 {
@@ -323,113 +344,46 @@ public class ResourceCtrl : MonoBehaviour
 
     }
 
-
-
     //----获取基础信息----
-    //获取皮肤信息
-    void InitSkin()
+
+    
+    //获取等级信息
+    void GetLevelInfo()
     {
-        //普通（1）、稀罕（2）、史诗（3）、传奇（4）、神奇（5）
-        List<AOT_SkinInfo> list = new List<AOT_SkinInfo>();
-        list.Add(new AOT_SkinInfo() {
-            Code = "Skin00001",
-            Level = 1,
-            SkinName = "普通",
-            Title = "普通",
-            MaterialPath = "Materials/A_Spiders_Mat(black)",
-            Description = "",
-            Title_en = "",
-            Description_en = "",
-            AttackUp = 1,
-            BloodUp = 1,
-            SpeedUp = 1,
-            RangeUp = 1,
-            CirtUp = 1,
-            UpType = 1
-        });
-        list.Add(new AOT_SkinInfo()
-        {
-            Code = "Skin00002",
-            Level = 2,
-            SkinName = "稀罕",
-            Title = "稀罕",
-            MaterialPath = "Materials/A_Spiders_Mat(green)",
-            Description = "",
-            Title_en = "",
-            Description_en = "",
-            AttackUp = 1,
-            BloodUp = 1,
-            SpeedUp = 1,
-            RangeUp = 1,
-            CirtUp = 1,
-            UpType = 1
-        });
-        list.Add(new AOT_SkinInfo()
-        {
-            Code = "Skin00003",
-            Level = 3,
-            SkinName = "史诗",
-            Title = "史诗",
-            MaterialPath = "Materials/A_Spiders_Mat(blue)",
-            Description = "",
-            Title_en = "",
-            Description_en = "",
-            AttackUp = 1,
-            BloodUp = 1,
-            SpeedUp = 1,
-            RangeUp = 1,
-            CirtUp = 1,
-            UpType = 1
-        });
-        list.Add(new AOT_SkinInfo()
-        {
-            Code = "Skin00004",
-            Level = 4,
-            SkinName = "传奇",
-            Title = "传奇",
-            MaterialPath = "Materials/A_Spiders_Mat(yellow)",
-            Description = "",
-            Title_en = "",
-            Description_en = "",
-            AttackUp = 1,
-            BloodUp = 1,
-            SpeedUp = 1,
-            RangeUp = 1,
-            CirtUp = 1,
-            UpType = 1
-        });
-        list.Add(new AOT_SkinInfo()
-        {
-            Code = "Skin00005",
-            Level = 5,
-            SkinName = "神奇",
-            Title = "神奇",
-            MaterialPath = "Materials/A_Spiders_Mat(red)",
-            Description = "",
-            Title_en = "",
-            Description_en = "",
-            AttackUp = 1,
-            BloodUp = 1,
-            SpeedUp = 1,
-            RangeUp = 1,
-            CirtUp = 1,
-            UpType = 1
-        });
-
-        SkinList = list;
-
-
         if (UserInfo != null)
         {
             string jsonstr = JSONhelper.ToJson(new { UserID = UserInfo.UUID });
-            List<AOT_SkinInfo> skinlist = new List<AOT_SkinInfo>();
-            HttpTool.Instance.Post("aotuser/skininfo", jsonstr, (string result) =>
+            HttpTool.Instance.Get("aotuser/levels", (string result) =>
             {
-                APIResult res = JSONhelper.ConvertToObject<APIResult>(result);// JSONhelper.ConvertToObject<APIResult>(result);
+                APIResult res = JSONhelper.ToApiResult<LevelInfo>(result);// JSONhelper.ConvertToObject<APIResult>(result);
 
                 if (res.success == true)
                 {
-                    skinlist = JSONhelper.ConvertToObject<List<AOT_SkinInfo>>(JSONhelper.ToJson(res.data));
+                    Levels = (List<LevelInfo>)(res.data);
+                    Debug.Log("等级信息获取完毕");
+                }
+                else
+                {
+                    Debug.Log(res.message);
+                }
+            });
+        }
+
+    }
+    //获取皮肤信息
+    void GetSkinInfo()
+    {
+        if (UserInfo != null)
+        {
+            string jsonstr = JSONhelper.ToJson(new { UserID = UserInfo.UUID });
+            HttpTool.Instance.Post("aotuser/skininfo", jsonstr, (string result) =>
+            {
+                APIResult res = JSONhelper.ToApiResult<AOT_SkinInfo>(result);// JSONhelper.ConvertToObject<APIResult>(result);
+
+                if (res.success == true)
+                {
+                    SkinList = (List<AOT_SkinInfo>)(res.data);
+                    Debug.Log("皮肤信息获取完毕");
                 }
                 else
                 {
@@ -441,11 +395,263 @@ public class ResourceCtrl : MonoBehaviour
     }
 
     //获取模型信息
+    void GetModelInfo()
+    {
+        if (UserInfo != null)
+        {
+            string jsonstr = JSONhelper.ToJson(new { UserID = UserInfo.UUID });
+            HttpTool.Instance.Post("aotuser/model", jsonstr, (string result) =>
+            {
+                APIResult res = JSONhelper.ToApiResult<AOT_Models>(result);// JSONhelper.ConvertToObject<APIResult>(result);
 
-    //获取技能信息
+                if (res.success == true)
+                {
+                    ModelList = (List<AOT_Models>)(res.data);
+                    Debug.Log("模型信息获取完毕");
+                }
+                else
+                {
+                    Debug.Log(res.message);
+                }
+            });
+        }
+
+    }
+
+    //获取坦克部件信息
+    void GetParts()
+    {
+        if (UserInfo != null)
+        {
+            string jsonstr = JSONhelper.ToJson(new { UserID = UserInfo.UUID });
+            HttpTool.Instance.Post("aotuser/parts", jsonstr, (string result) =>
+            {
+                APIResult res = JSONhelper.ToApiResult<AOT_Parts>(result);// JSONhelper.ConvertToObject<APIResult>(result);
+
+                if (res.success == true)
+                {
+                    PartsList = (List<AOT_Parts>)(res.data);
+                    Debug.Log("部件信息获取完毕");
+                    LoadPartTexture();
+                }
+                else
+                {
+                    Debug.Log(res.message);
+                }
+            });
+        }
+    }
+
+    //加载远程图片
+    void LoadPartTexture()
+    {
+        if (PartsList.Count > 0)
+        {
+            foreach (AOT_Parts item in PartsList)
+            {
+                StartCoroutine(HttpTool.Instance.LoadRemoteImg(item.Cover, 200, 200, (Sprite sp) => {
+                    PartsSprite.Add(item.Code, sp);
+                    Debug.Log(item.Code + "图片加载完成");
+                }));
+            }
+        }
+        
+    }
+
 
     //获取坦克信息
+    void GetTanks()
+    {
+        if (UserInfo != null)
+        {
+            string jsonstr = JSONhelper.ToJson(new { UserID = UserInfo.UUID });
+            HttpTool.Instance.Post("aotuser/tanks", jsonstr, (string result) =>
+            {
+                APIResult res = JSONhelper.ToApiResult<AOT_Tanks>(result);// JSONhelper.ConvertToObject<APIResult>(result);
+
+                if (res.success == true)
+                {
+                    BaseTanks = (List<AOT_Tanks>)(res.data);
+                    Debug.Log("坦克信息获取完毕");
+                }
+                else
+                {
+                    Debug.Log(res.message);
+                }
+            });
+        }
+    }
 
 
+    //初始化坦克列表
+    void InitTankList()
+    {
+        if (ResourceCtrl.Instance.TankList != null)
+        {
+            ResourceCtrl.Instance.TankList.Clear();
+        }
+        // TankList.Add();
+        for (int i = 0; i < 50; i++)
+        {
+            TankProperty tank = new TankProperty((12 + i).ToString().PadLeft(5, '0'), "蝎式坦克", null);
+            int atkCount = ResourceCtrl.Instance.SkillList.FindAll(u => u.SkillType == "Attack").Count;
+            int defCount = ResourceCtrl.Instance.SkillList.FindAll(u => u.SkillType == "Defense").Count;
+            tank.AttackSkill = ResourceCtrl.Instance.SkillList.FindAll(u => u.SkillType == "Attack")[CommonHelper.GetRandom(0, atkCount)];
+            tank.DefenseSkill = ResourceCtrl.Instance.SkillList.FindAll(u => u.SkillType == "Defense")[CommonHelper.GetRandom(0, defCount)];
 
+            //tank.AttackSkill = ResourceCtrl.Instance.SkillList.Find(u => u.Name == "Duel");
+            //tank.DefenseSkill = ResourceCtrl.Instance.SkillList.Find(u => u.Name == "Revenge");
+            ResourceCtrl.Instance.TankList.Add(tank);
+        }
+
+    }
+
+
+    /// <summary>
+    /// 组装坦克
+    /// </summary>
+    /// <param name="Engine">底座部分</param>
+    /// <param name="Body">机身部分</param>
+    /// <param name="Head">机头部分</param>
+    /// <param name="Weapon">武器部分</param>
+    /// <returns></returns>
+    public GameObject Mount(AOT_Parts Engine, AOT_Parts Body, AOT_Parts Head, AOT_Parts Weapon)
+    {
+        ResourceCtrl rec = ResourceCtrl.Instance;
+        Nodes parentNode;
+        LinkNodeInfo parentLink;
+
+        //引擎
+        AOT_Models engineModel = rec.ModelList.Find(u => u.Code == Engine.ModelCode);
+        AOT_SkinInfo engineSkin = rec.SkinList.Find(u => u.Code == Engine.SkinCode);
+        GameObject engineObj = Instantiate(Resources.Load<GameObject>(engineModel.FilePath));
+        engineObj.name = engineObj.name.Replace("(Clone)", "");
+        engineObj.transform.localPosition = new Vector3(0, 0, 0);
+        CommonHelper.ReplaceMaterialByPath(engineObj, engineSkin.MaterialPath);
+        engineObj.SetActive(true);
+
+        //机身
+        AOT_Models bodyModel = rec.ModelList.Find(u => u.Code == Body.ModelCode);
+        AOT_SkinInfo bodySkin = rec.SkinList.Find(u => u.Code == Body.SkinCode);
+        parentNode = engineObj.GetComponent<Nodes>();
+        parentLink = parentNode.ChildNodes.Find(u => u.LinkType == LinkType.Body);
+        GameObject bodyObj = Instantiate(Resources.Load<GameObject>(bodyModel.FilePath), parentLink.LinkNode.transform, false);
+        bodyObj.name = bodyObj.name.Replace("(Clone)", "");
+        bodyObj.transform.localPosition = new Vector3(0, 0, 0);
+        CommonHelper.ReplaceMaterialByPath(bodyObj, bodySkin.MaterialPath);
+        bodyObj.SetActive(true);
+
+        //机头
+        AOT_Models headModel = rec.ModelList.Find(u => u.Code == Head.ModelCode);
+        AOT_SkinInfo headSkin = rec.SkinList.Find(u => u.Code == Head.SkinCode);
+        parentNode = bodyObj.GetComponent<Nodes>();
+        parentLink = parentNode.ChildNodes.Find(u => u.LinkType == LinkType.Head);
+        GameObject headObj = Instantiate(Resources.Load<GameObject>(headModel.FilePath), parentLink.LinkNode.transform, false);
+        headObj.name = headObj.name.Replace("(Clone)", "");
+        headObj.transform.localPosition = new Vector3(0, 0, 0);
+        CommonHelper.ReplaceMaterialByPath(headObj, headSkin.MaterialPath);
+        headObj.SetActive(true);
+
+        //武器
+        AOT_Models weaponModel = rec.ModelList.Find(u => u.Code == Weapon.ModelCode);
+        AOT_SkinInfo weaponSkin = rec.SkinList.Find(u => u.Code == Weapon.SkinCode);
+        parentNode = bodyObj.GetComponent<Nodes>();
+        LinkNodeInfo weapon_L_Link = parentNode.ChildNodes.Find(u => u.LinkType == LinkType.Weapon_L);
+        GameObject weaponObj_L = Instantiate(Resources.Load<GameObject>(weaponModel.FilePath), weapon_L_Link.LinkNode.transform, false);
+        weaponObj_L.name = weaponObj_L.name.Replace("(Clone)", "");
+        weaponObj_L.transform.localPosition = new Vector3(0, 0, 0);
+        CommonHelper.ReplaceMaterialByPath(weaponObj_L, weaponSkin.MaterialPath);
+        weaponObj_L.SetActive(true);
+
+        LinkNodeInfo weapon_R_Link = parentNode.ChildNodes.Find(u => u.LinkType == LinkType.Weapon_R);
+        GameObject weaponObj_R = Instantiate(Resources.Load<GameObject>(weaponModel.FilePath), weapon_R_Link.LinkNode.transform, false);
+        weaponObj_R.name = weaponObj_R.name.Replace("(Clone)", "");
+        weaponObj_R.transform.localPosition = new Vector3(0, 0, 0);
+        CommonHelper.ReplaceMaterialByPath(weaponObj_R, weaponSkin.MaterialPath);
+        weaponObj_R.SetActive(true);
+
+
+        return engineObj;
+    }
+
+    /// <summary>
+    /// 获取组装记录
+    /// </summary>
+    /// <param name="Engine">底座部分</param>
+    /// <param name="Body">机身部分</param>
+    /// <param name="Head">机头部分</param>
+    /// <param name="Weapon">武器部分</param>
+    /// <returns></returns>
+    public AOT_SetupRecord GetTankSetupRecord(AOT_Parts Engine, AOT_Parts Body, AOT_Parts Head, AOT_Parts Weapon)
+    {
+        if (Engine != null && Body != null && Head != null && Weapon != null)
+        {
+            int total = Engine.Level + Body.Level + Head.Level + Weapon.Level;
+            int tankLvl = 1;
+
+            #region 确定坦克等级
+            if (total >= 4 && total <= 7)
+            {
+                tankLvl = 1;
+            }
+            else if (total >= 8 && total <= 11)
+            {
+                tankLvl = 2;
+            }
+            else if (total >= 12 && total <= 15)
+            {
+                tankLvl = 3;
+            }
+            else if (total >= 16 && total <= 19)
+            {
+                tankLvl = 4;
+            }
+            else if (total >= 20)
+            {
+                tankLvl = 5;
+            }
+            #endregion
+
+            string Code = (Convert.ToInt32(ResourceCtrl.Instance.TankList.Max(u => u.Code)) + 1).ToString().PadLeft(5, '0');
+
+            //添加组装信息
+            AOT_SetupRecord record = new AOT_SetupRecord();
+
+            record.Code = Code;
+            record.Level = tankLvl;
+            //武器：攻击力、攻击技能
+            record.Attack = Weapon.Attack;
+            record.AttackSkillCode = Weapon.AttackSkillCode;
+            //机身：血量、防御技能
+            record.Blood = Body.Blood;
+            record.DefenseSkillCode = Body.DefenseSkillCode;
+            //底座：速度、承载力
+            record.Speed = Engine.Speed;
+            record.Bearing = Engine.Bearing;
+            //机头：范围、暴击
+            record.Range = Head.Range;
+            record.Crit = Head.Crit;
+            record.Weight = Engine.Weight + Body.Weight + Head.Weight + Weapon.Weight;
+
+            record.LegCode = Engine.Code;
+            record.BodyCode = Body.Code;
+            record.HeadCode = Head.Code;
+            record.WeaponCode = Weapon.Code;
+            record.Status = 1;
+            if (string.Equals(Engine.SkinCode, Body.SkinCode) && string.Equals(Body.SkinCode, Head.SkinCode) && string.Equals(Head.SkinCode, Weapon.SkinCode))
+            {
+                record.SameSkin = true;
+            }
+            else
+            {
+                record.SameSkin = false;
+            }
+
+            return record;
+        }
+        else
+        {
+            return null;
+        }
+    }
 }

@@ -55,11 +55,11 @@ public class FightItem
     /// <summary>
     /// 攻击技能
     /// </summary>
-    public SkillInfo AttackSkill { get; set; }
+    public AOT_SkillInfo AttackSkill { get; set; }
     /// <summary>
     /// 防御技能
     /// </summary>
-    public SkillInfo DefenseSkill { get; set; }
+    public AOT_SkillInfo DefenseSkill { get; set; }
     /// <summary>
     /// 正负增益效果
     /// </summary>

@@ -13,8 +13,8 @@ public class HttpTool : MonoBehaviour
 {
 
     private static HttpTool _instacne = null;
-    //private string baseUrl = "http://game.ageoftanks.io/serverapi/";
-    private string baseUrl = "http://localhost:16555/";
+    private string baseUrl = "http://game.ageoftanks.io/serverapi/";
+   // private string baseUrl = "http://localhost:16555/";
 
 
     public static HttpTool Instance
@@ -118,6 +118,50 @@ public class HttpTool : MonoBehaviour
             }
         }
     }
+
+
+    /// <summary>
+    /// 加载服务器图片
+    /// </summary>
+    /// <param name="url"></param>
+    /// <param name="width"></param>
+    /// <param name="high"></param>
+    /// <param name="callback"></param>
+    /// <returns></returns>
+    public IEnumerator LoadRemoteImg(string url, int width, int high, Action<Sprite> callback)
+    {
+
+        UnityWebRequest unityWebRequest = new UnityWebRequest(baseUrl+url);
+        DownloadHandlerTexture texD1 = new DownloadHandlerTexture(true);
+        unityWebRequest.downloadHandler = texD1;
+        yield return unityWebRequest.SendWebRequest();
+
+        if (unityWebRequest.isHttpError || unityWebRequest.isNetworkError)
+        {
+            Debug.LogError(unityWebRequest.error + "\n" + unityWebRequest.downloadHandler.text);
+            if (callback != null)
+            {
+                callback(null);
+            }
+        }
+        else
+        {
+            Texture2D texture2D = new Texture2D(width, high);
+            texture2D = texD1.texture;
+       
+            Sprite sprite = Sprite.Create(texture2D, new Rect(0, 0, texture2D.width, texture2D.height),
+                new Vector2(0.5f, 0.5f));
+            if (callback != null)
+            {
+                callback(sprite);
+            }
+        }
+
+
+    }
+
+
+
 
 
     /// <summary>

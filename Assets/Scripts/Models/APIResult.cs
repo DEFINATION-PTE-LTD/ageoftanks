@@ -12,7 +12,7 @@ public class APIResult
     /// <summary>
     /// 结果数据
     /// </summary>
-    public string data { get; set; } = "";
+    public object data { get; set; } = "";
     /// <summary>
     /// 错误消息
     /// </summary>

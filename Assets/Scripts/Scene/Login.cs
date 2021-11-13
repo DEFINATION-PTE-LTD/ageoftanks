@@ -22,12 +22,12 @@ public class Login : MonoBehaviour
                 Debug.Log(jsonstr);
                 HttpTool.Instance.Post("aotuser/login", jsonstr, (string result)=> {
                     Debug.Log(result);
-                    APIResult res = JSONhelper.ConvertToObject<APIResult>(result);// JSONhelper.ConvertToObject<APIResult>(result);
+                    APIResult res = JSONhelper.ToApiResult<AOT_User>(result);// JSONhelper.ConvertToObject<APIResult>(result);
    
                     if (res.success == true)
                     {
                         transform.Find("txt_tip").GetComponent<Text>().text = "";
-                        PlayerPrefs.SetString("userinfo", res.data);
+                        PlayerPrefs.SetString("userinfo", JSONhelper.ToJson(((List<AOT_User>)res.data)[0]));
                         SceneManager.LoadScene("ResourceScene");
                     }
                     else

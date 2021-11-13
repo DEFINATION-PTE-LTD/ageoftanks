@@ -226,6 +226,7 @@
     <Compile Include="Assets\Scripts\Models\Table\AOT_SkinInfo.cs" />
     <Compile Include="Assets\Scripts\Models\Table\AOT_Tanks.cs" />
     <Compile Include="Assets\Scripts\Models\Table\AOT_User.cs" />
+    <Compile Include="Assets\Scripts\Models\Table\LevelInfo.cs" />
     <Compile Include="Assets\Scripts\Models\TankProperty.cs" />
     <Compile Include="Assets\Scripts\Models\WeaponObjectClass.cs" />
     <Compile Include="Assets\Scripts\Node\LinkNodeInfo.cs" />
@@ -237,31 +238,32 @@
     <Compile Include="Assets\Scripts\Scene\BattleMode.cs" />
     <Compile Include="Assets\Scripts\Scene\FightCtrl.cs" />
     <Compile Include="Assets\Scripts\Scene\Login.cs" />
+    <Compile Include="Assets\Scripts\Scene\MountPanel.cs" />
+    <Compile Include="Assets\Scripts\Scene\MountTank.cs" />
     <Compile Include="Assets\Scripts\Scene\RegimentSelect.cs" />
     <Compile Include="Assets\Scripts\Scene\ResourceCtrl.cs" />
-    <Compile Include="Assets\Scripts\Scene\SoloFight.cs" />
     <Compile Include="Assets\Scripts\Scene\SoloSelect.cs" />
     <Compile Include="Assets\Scripts\Skills\Attack\Batter.cs" />
+    <Compile Include="Assets\Scripts\Skills\Attack\Burn.cs" />
     <Compile Include="Assets\Scripts\Skills\Attack\Cofire.cs" />
-    <Compile Include="Assets\Scripts\Skills\Attack\Combustion.cs" />
-    <Compile Include="Assets\Scripts\Skills\Attack\Destroyweak.cs" />
+    <Compile Include="Assets\Scripts\Skills\Attack\Critical.cs" />
+    <Compile Include="Assets\Scripts\Skills\Attack\Directive.cs" />
     <Compile Include="Assets\Scripts\Skills\Attack\Duel.cs" />
-    <Compile Include="Assets\Scripts\Skills\Attack\EmpireDirective.cs" />
     <Compile Include="Assets\Scripts\Skills\Attack\Forbidden.cs" />
-    <Compile Include="Assets\Scripts\Skills\Attack\Frozen.cs" />
-    <Compile Include="Assets\Scripts\Skills\Attack\Invincible.cs" />
-    <Compile Include="Assets\Scripts\Skills\Attack\Kill.cs" />
-    <Compile Include="Assets\Scripts\Skills\Attack\Piercing.cs" />
-    <Compile Include="Assets\Scripts\Skills\Attack\Scattering.cs" />
-    <Compile Include="Assets\Scripts\Skills\Attack\SuckBlood.cs" />
-    <Compile Include="Assets\Scripts\Skills\Attack\Thump.cs" />
-    <Compile Include="Assets\Scripts\Skills\Defense\AntiInjury.cs" />
-    <Compile Include="Assets\Scripts\Skills\Defense\DeathSound.cs" />
+    <Compile Include="Assets\Scripts\Skills\Attack\Freeze.cs" />
+    <Compile Include="Assets\Scripts\Skills\Attack\Hatchshot.cs" />
+    <Compile Include="Assets\Scripts\Skills\Attack\Leech.cs" />
+    <Compile Include="Assets\Scripts\Skills\Attack\Penetrate.cs" />
+    <Compile Include="Assets\Scripts\Skills\Attack\Scatter.cs" />
+    <Compile Include="Assets\Scripts\Skills\Attack\Unstoppable.cs" />
+    <Compile Include="Assets\Scripts\Skills\Attack\Vulnerable.cs" />
+    <Compile Include="Assets\Scripts\Skills\Defense\DeathRally.cs" />
     <Compile Include="Assets\Scripts\Skills\Defense\DefenseSkill.cs" />
     <Compile Include="Assets\Scripts\Skills\Defense\Dodge.cs" />
     <Compile Include="Assets\Scripts\Skills\Defense\HeavyArmor.cs" />
     <Compile Include="Assets\Scripts\Skills\Defense\HolyShield.cs" />
     <Compile Include="Assets\Scripts\Skills\Defense\Recover.cs" />
+    <Compile Include="Assets\Scripts\Skills\Defense\Reflect.cs" />
     <Compile Include="Assets\Scripts\Skills\Defense\Revenge.cs" />
     <Compile Include="Assets\Scripts\Skills\Defense\Revive.cs" />
     <Compile Include="Assets\Scripts\Skills\Defense\Taunt.cs" />
@@ -636,14 +638,14 @@
     <Reference Include="Newtonsoft.Json">
       <HintPath>E:/Projects/TankGame/Code/AgeOfTanks/Assets/JsonDotNet/Assemblies/Standalone/Newtonsoft.Json.dll</HintPath>
     </Reference>
+    <Reference Include="LitJson">
+      <HintPath>E:/Projects/TankGame/Code/AgeOfTanks/Assets/Plugins/LitJson.dll</HintPath>
+    </Reference>
     <Reference Include="DOTween">
       <HintPath>E:/Projects/TankGame/Code/AgeOfTanks/Assets/Plugins/Demigiant/DOTween/DOTween.dll</HintPath>
     </Reference>
     <Reference Include="clipper_library">
       <HintPath>E:/Projects/TankGame/Code/AgeOfTanks/Library/PackageCache/com.unity.cinemachine@2.8.0/Runtime/ThirdParty/clipper_library.dll</HintPath>
-    </Reference>
-    <Reference Include="LitJson">
-      <HintPath>E:/Projects/TankGame/Code/AgeOfTanks/Assets/Plugins/LitJson.dll</HintPath>
     </Reference>
     <Reference Include="UnityEditor.iOS.Extensions.Xcode">
       <HintPath>D:/Program Files/Unity/Editor/Data/PlaybackEngines/iOSSupport/UnityEditor.iOS.Extensions.Xcode.dll</HintPath>

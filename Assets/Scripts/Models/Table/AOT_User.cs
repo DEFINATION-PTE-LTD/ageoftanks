@@ -52,31 +52,8 @@ public class AOT_User
 	/// </summary>		
 
 	public string InviteCode { get; set; }
-	/// <summary>
-	/// 0:用户、1：1星、2：2星、3：3星、4：4星、5：5星、6：合伙人
-	/// </summary>		
-
-	public int Level { get; set; }
-	/// <summary>
-	/// Degree
-	/// </summary>		
-
-	public int Degree { get; set; }
-	/// <summary>
-	/// InviteNum
-	/// </summary>		
-
-	public int InviteNum { get; set; }
-	/// <summary>
-	/// TeamNum
-	/// </summary>		
-
-	public int TeamNum { get; set; }
-	/// <summary>
-	/// 每日0点刷新
-	/// </summary>		
-
-	public int TodayCount { get; set; }
+	
+	
 	/// <summary>
 	/// 删除标记 0：未删除 1：删除
 	/// </summary>		

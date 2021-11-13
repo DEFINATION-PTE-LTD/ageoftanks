@@ -193,7 +193,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9d3514040cc15cf47b5c5609d3cd95e8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  LinkType: 1
+  LinkType: 0
   LinkNode: {fileID: 4307436148408643241}
 --- !u!1 &4307436148408643243
 GameObject:

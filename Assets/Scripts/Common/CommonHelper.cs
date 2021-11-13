@@ -77,26 +77,34 @@ public static class CommonHelper
 
 
     /// <summary>
+    /// 运行模式下Texture转换成Texture2D
+    /// </summary>
+    /// <param name="texture"></param>
+    /// <returns></returns>
+    public static Texture2D TextureToTexture2D(Texture texture)
+    {
+        Texture2D texture2D = new Texture2D(texture.width, texture.height, TextureFormat.RGBA32, false);
+        RenderTexture currentRT = RenderTexture.active;
+        RenderTexture renderTexture = RenderTexture.GetTemporary(texture.width, texture.height, 32);
+        Graphics.Blit(texture, renderTexture);
+
+        RenderTexture.active = renderTexture;
+        texture2D.ReadPixels(new Rect(0, 0, renderTexture.width, renderTexture.height), 0, 0);
+        texture2D.Apply();
+
+        RenderTexture.active = currentRT;
+        RenderTexture.ReleaseTemporary(renderTexture);
+
+        return texture2D;
+    }
+
+
+    /// <summary>
     /// 材质球替换（换肤功能）
     /// </summary>
     /// <param name="gameObject"></param>
     public static void ReplaceMaterial(GameObject gameObject,string skinname)
     {
-        //把材质球放到Resources文件夹下
-        //List<Material> mats = new List<Material>();
-        //mats.Add(Resources.Load<Material>("Materials/A_Spiders_Mat(red)"));
-        //mats.Add(Resources.Load<Material>("Materials/A_Spiders_Mat(blue)"));
-        //mats.Add(Resources.Load<Material>("Materials/A_Spiders_Mat(black)"));
-        //mats.Add(Resources.Load<Material>("Materials/A_Spiders_Mat(yellow)"));
-        //mats.Add(Resources.Load<Material>("Materials/A_Spiders_Mat(green)"));
-        //mats.Add(Resources.Load<Material>("Materials/A_Spiders_Mat(rusty)"));
-
-        //if (mats == null)
-        //{
-        //    return;
-        //}
-        //List<MeshRenderer> rend = new List<MeshRenderer>();
-
         Material mat;// = mats[GetRandom(0, 6)];
         switch (skinname)
         {
@@ -150,18 +158,48 @@ public static class CommonHelper
                 item.material = mat;
             }
         }
-        //rend.enabled = true;
-        //rend[0].materials[0] = mat;
 
-        //rend.sharedMaterial = meshRender;//代表这个对象的共享材质资源（这个是替换材质球）
-        //                                 //MeshRenderer继承自Renderer所以上面定义成MeshRenderer也可以,
-        //                                 //GetComponent<MeshRenderer>().materials[0] = meshRender;//这个表示找到对应的材质但是不能替换材质球，
-        //                                 //GetComponent<MeshRenderer>().material.mainTexture = texture;//和上面的一样，可以替换材质的texture
-
-        //Debug.Log(GetComponent<Renderer>().material);
-        //Debug.Log(GetComponent<MeshRenderer>().material.mainTexture);
     }
 
+    /// <summary>
+    /// 材质球替换（换肤功能）
+    /// </summary>
+    /// <param name="gameObject"></param>
+    public static void ReplaceMaterialByPath(GameObject gameObject, string path)
+    {
+        Material mat= Resources.Load<Material>(path);
+
+        //不替换的
+        List<string> noReplace = new List<string>() {
+            "Tracks_R_Geom","Tracks_L_Geom",
+            "Tracks_FL_Geom","Tracks_RL_Geom","Tracks_FR_Geom","Tracks_RR_Geom",
+            "FX_Laser_Ray_Geom",
+            "RL_Track_Geom","RR_Track_Geom",
+            "FL_Track_Geom","FR_Track_Geom",
+            "FL_Wheel_Geom","FR_Wheel_Geom","RL_Wheel_Geom","RR_Wheel_Geom"
+        };
+        foreach (MeshRenderer item in gameObject.transform.GetComponentsInChildren<MeshRenderer>())
+        {
+
+            if (noReplace.Contains(item.gameObject.name) == false)
+            {
+                // rend.Add(item);
+                item.material = mat;
+            }
+        }
+
+
+        List<SkinnedMeshRenderer> skinrend = new List<SkinnedMeshRenderer>();
+        foreach (SkinnedMeshRenderer item in gameObject.transform.GetComponentsInChildren<SkinnedMeshRenderer>())
+        {
+            if (noReplace.Contains(item.gameObject.name) == false)
+            {
+                // skinrend.Add(item);
+                item.material = mat;
+            }
+        }
+
+    }
 
     /// <summary>
     /// 给物体添加Mesh特效

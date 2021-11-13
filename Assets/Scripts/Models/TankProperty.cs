@@ -13,6 +13,10 @@ public class TankProperty
     /// </summary>
     public string Code { get; set; }
     /// <summary>
+    /// 是否为组装坦克
+    /// </summary>
+    public bool IsSetup { get; set; } = false;
+    /// <summary>
     /// 坦克类型
     /// </summary>
     public string TankType { get; set; }
@@ -58,11 +62,11 @@ public class TankProperty
     /// <summary>
     /// 攻击技能
     /// </summary>
-    public SkillInfo AttackSkill { get; set; }
+    public AOT_SkillInfo AttackSkill { get; set; }
     /// <summary>
     /// 防御技能
     /// </summary>
-    public SkillInfo DefenseSkill { get; set; }
+    public AOT_SkillInfo DefenseSkill { get; set; }
 
     public TankProperty() {
     
