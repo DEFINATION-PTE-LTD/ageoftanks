@@ -36,7 +36,7 @@ public class SoloSelect : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
+       
     }
 
 
@@ -62,12 +62,12 @@ public class SoloSelect : MonoBehaviour
     }
     #endregion
 
- 
+
 
     /// <summary>
     /// 卡牌池初始化
     /// </summary>
-    void InitCardPool()
+    public void InitCardPool()
     {
         //坦克卡牌
         GameObject tankCard = ResourceCtrl.Instance.ResourceRoot.transform.Find("UI/UnSelectCard").gameObject;
@@ -113,10 +113,10 @@ public class SoloSelect : MonoBehaviour
         }
     }
 
-   
+
 
     //显示详情
-    void showDetail(TankProperty item)
+    public void showDetail(TankProperty item)
     {
         GameObject infoPanel = Root.transform.Find("DetailPanel").gameObject;
 

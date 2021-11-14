@@ -61,7 +61,12 @@ public class MountPanel : MonoBehaviour
                 AOT_SetupRecord record = ResourceCtrl.Instance.GetTankSetupRecord(Engine, Body, Head, Weapon);//获取组装记录
                 ResourceCtrl.Instance.MountTanks.Add(record);
                
-                StartCoroutine(CommonHelper.DelayToInvokeDo(()=> { GetTankTexure(record.Code); },1f));//获取截图
+                StartCoroutine(CommonHelper.DelayToInvokeDo(()=> { 
+                    GetTankTexure(record.Code);
+                    //加入坦克列表
+                    ResourceCtrl.Instance.InsertToTankList(record);
+                    transform.parent.SendMessage("InitCardPool");
+                },1f));//获取截图
                 ShowTankInfo(record);
                 //组装成功后更改状态
                 ResourceCtrl.Instance.PartsList.Find(u => u.Code == Engine.Code).Status = 2;
@@ -75,8 +80,7 @@ public class MountPanel : MonoBehaviour
                 RefreshSelected();
                 mountPanel.SetActive(false);
                 completePanel.SetActive(true);
-                //加入坦克列表
-                InsertToTankList(record);
+                
             }
         });
         mountPanel.transform.Find("btnClose").GetComponent<UnityEngine.UI.Button>().onClick.AddListener(() => {
@@ -97,40 +101,6 @@ public class MountPanel : MonoBehaviour
 
     }
 
-
-    public void TabClick(GameObject btnObj)
-    {
-       
-    }
-
-    /// <summary>
-    /// 添加到坦克列表
-    /// </summary>
-    /// <param name="record"></param>
-    public void InsertToTankList(AOT_SetupRecord record)
-    {
-        TankProperty tank = new TankProperty();
-        tank.Code = record.Code;
-        tank.IsSetup = true;
-        tank.Attack = (float)record.Attack;
-        tank.Blood = (float)record.Blood;
-        tank.CritRate = (float)record.Crit;
-        tank.Range = (float)record.Range;
-        tank.Weight = (float)record.Weight;
-        tank.Bearer = (float)record.Bearing;
-        tank.Speed = (float)record.Speed;
-        if (!string.IsNullOrEmpty(record.AttackSkillCode))
-        {
-            tank.AttackSkill = ResourceCtrl.Instance.SkillList.Find(u => u.Code == record.AttackSkillCode);
-        }
-        if (!string.IsNullOrEmpty(record.DefenseSkillCode))
-        {
-            tank.DefenseSkill = ResourceCtrl.Instance.SkillList.Find(u => u.Code == record.DefenseSkillCode);
-        }
-
-        ResourceCtrl.Instance.TankList.Insert(0, tank);
-
-    }
 
     /// <summary>
     /// 初始化tab选项

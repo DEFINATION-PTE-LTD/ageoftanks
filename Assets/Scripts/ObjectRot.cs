@@ -13,6 +13,7 @@ public class ObjectRot : MonoBehaviour
     public GameObject RoateBtn;
     public int RotaSpeed = 50; //旋转速度
     public GameObject top;
+    public bool AutoRotate = true;
     private bool isDown = false;
 
     /// <summary>
@@ -33,7 +34,10 @@ public class ObjectRot : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Rotateing();
+        if (AutoRotate)
+        {
+            Rotateing();
+        }
 
     }
 
@@ -49,7 +53,7 @@ public class ObjectRot : MonoBehaviour
                 //{
                 //    return;
                 //}
-                Debug.Log(Input.GetAxis("Mouse X"));
+                //Debug.Log(Input.GetAxis("Mouse X"));
                 //  Input.GetAxis("Mouse X")*RotaSpeed*Time.deltaTime
                 Target.transform.Rotate(new Vector3(0, -Input.GetAxis("Mouse X") * Time.deltaTime * RotaSpeed, 0));
 

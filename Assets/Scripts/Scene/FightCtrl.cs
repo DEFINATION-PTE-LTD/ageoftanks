@@ -47,7 +47,9 @@ public class FightCtrl : MonoBehaviour
 
     private bool LookAtSwitch = true;//坦克第三人称视角开关
     private bool FreeLookSwitch = false;//自由视角开关
-    
+    private bool Surrender = false; //头像
+
+
     List<FightItem> DuelList = new List<FightItem>(); //决斗中的坦克
 
     private void Awake()
@@ -81,6 +83,25 @@ public class FightCtrl : MonoBehaviour
             SceneManager.LoadSceneAsync("BattleMode");
             System.GC.Collect();
         });
+        UIPanel.transform.Find("btnSurrender").GetComponent<UnityEngine.UI.Button>().onClick.AddListener(() =>
+        {
+            UIPanel.transform.Find("SurrenderPanel").gameObject.SetActive(true);
+            UIPanel.transform.Find("SurrenderPanel").DOScale(new Vector3(1, 1, 1), 0.5f).From(new Vector3(0, 0, 0));
+            UIPanel.transform.Find("SurrenderPanel").SetAsLastSibling();
+
+
+        });
+        UIPanel.transform.Find("SurrenderPanel/btnSure").GetComponent<UnityEngine.UI.Button>().onClick.AddListener(() =>
+        {
+            UIPanel.transform.Find("SurrenderPanel").gameObject.SetActive(false);
+            Surrender = true;
+        });
+        UIPanel.transform.Find("SurrenderPanel/btnCancel").GetComponent<UnityEngine.UI.Button>().onClick.AddListener(() =>
+        {
+            UIPanel.transform.Find("SurrenderPanel").gameObject.SetActive(false);
+
+        });
+
         //5秒后开始
         InvokeRepeating("TimePlay", 1f, 1f);
 
@@ -101,6 +122,11 @@ public class FightCtrl : MonoBehaviour
 
         },6f));
 
+
+        //15秒后显示投降按钮
+        StartCoroutine(CommonHelper.DelayToInvokeDo(() => {
+            UIPanel.transform.Find("btnSurrender").gameObject.SetActive(true);
+        },15f));
 
         
     }
@@ -223,8 +249,9 @@ public class FightCtrl : MonoBehaviour
                 AOT_Parts Body = ResourceCtrl.Instance.PartsList.Find(u => u.Code == record.BodyCode);
                 AOT_Parts Head = ResourceCtrl.Instance.PartsList.Find(u => u.Code == record.HeadCode);
                 AOT_Parts Weapon = ResourceCtrl.Instance.PartsList.Find(u => u.Code == record.WeaponCode);
-
-                tank = ResourceCtrl.Instance.Mount(Engine, Body, Head, Weapon);
+                tank = new GameObject();
+                tank.name = item.Code;
+                ResourceCtrl.Instance.Mount(Engine, Body, Head, Weapon).transform.SetParent(tank.transform,false);
             }
             else
             {
@@ -1653,67 +1680,83 @@ public class FightCtrl : MonoBehaviour
     /// </summary>
     void CheckGameStatus(int index)
     {
-
-        //判断是否一方全部阵亡，若全部阵亡则不再执行攻击，否则继续。当一个回合结束后，开始下一轮
-        if (OrderList.FindAll(u => u.Player.Name == "玩家A" && u.Death == false).Count == 0 || OrderList.FindAll(u => u.Player.Name == "玩家B" && u.Death == false).Count == 0)
+        if (Surrender == true)
         {
             UIPanel.transform.Find("OverPanel").gameObject.SetActive(true);
             UIPanel.transform.Find("OverPanel").SetAsLastSibling();
             UIPanel.transform.Find("OverPanel").DOScale(new Vector3(1, 1, 1), 0.5f).From(new Vector3(1, 0, 0));
-           // UIPanel.transform.Find("txt_round_center").gameObject.SetActive(true);
-           // UIPanel.transform.Find("txt_round_center").SetAsLastSibling();
-
-            if (OrderList.FindAll(u => u.Player.Name == "玩家A" && u.Death == false).Count == 0)
-            {
-                Finish = true;
-                if (Looker != null) Looker.SetActive(false);
-                AudioManager.Instance.PlayAudio("Sound/defeat");
-                //UIPanel.transform.Find("txt_round_center").GetComponent<Text>().text = "Defeated";
-                UIPanel.transform.Find("defeat").gameObject.SetActive(true);
-                UIPanel.transform.Find("defeat").SetAsLastSibling();
-                UIPanel.transform.Find("defeat").DOLocalRotate(new Vector3(0, 0, 0), 1f).From(new Vector3(100, 100, 0));
-            }
-            else
-            {
-                Finish = true;
-                if (Looker != null) Looker.SetActive(false);
-                AudioManager.Instance.PlayAudio("Sound/victory");
-                //UIPanel.transform.Find("txt_round_center").GetComponent<Text>().text = "VICTORY";
-                UIPanel.transform.Find("victory").gameObject.SetActive(true);
-                UIPanel.transform.Find("victory").SetAsLastSibling();
-                UIPanel.transform.Find("victory").DOLocalRotate(new Vector3(0, 0, 0), 1f).From(new Vector3(100, 100, 0));
-            }
-
             UIPanel.transform.Find("btnBack").gameObject.SetActive(true);
-
+            Finish = true;
+            if (Looker != null) Looker.SetActive(false);
+            AudioManager.Instance.PlayAudio("Sound/defeat");
+            //UIPanel.transform.Find("txt_round_center").GetComponent<Text>().text = "Defeated";
+            UIPanel.transform.Find("defeat").gameObject.SetActive(true);
+            UIPanel.transform.Find("defeat").SetAsLastSibling();
+            UIPanel.transform.Find("defeat").DOLocalRotate(new Vector3(0, 0, 0), 1f).From(new Vector3(100, 100, 0));
         }
         else
         {
-            if (index >= OrderList.Count - 1)
+            //判断是否一方全部阵亡，若全部阵亡则不再执行攻击，否则继续。当一个回合结束后，开始下一轮
+            if (OrderList.FindAll(u => u.Player.Name == "玩家A" && u.Death == false).Count == 0 || OrderList.FindAll(u => u.Player.Name == "玩家B" && u.Death == false).Count == 0)
             {
-                Round++;
-                NextRound();
+                UIPanel.transform.Find("OverPanel").gameObject.SetActive(true);
+                UIPanel.transform.Find("OverPanel").SetAsLastSibling();
+                UIPanel.transform.Find("OverPanel").DOScale(new Vector3(1, 1, 1), 0.5f).From(new Vector3(1, 0, 0));
+                // UIPanel.transform.Find("txt_round_center").gameObject.SetActive(true);
+                // UIPanel.transform.Find("txt_round_center").SetAsLastSibling();
+
+                if (OrderList.FindAll(u => u.Player.Name == "玩家A" && u.Death == false).Count == 0)
+                {
+                    Finish = true;
+                    if (Looker != null) Looker.SetActive(false);
+                    AudioManager.Instance.PlayAudio("Sound/defeat");
+                    //UIPanel.transform.Find("txt_round_center").GetComponent<Text>().text = "Defeated";
+                    UIPanel.transform.Find("defeat").gameObject.SetActive(true);
+                    UIPanel.transform.Find("defeat").SetAsLastSibling();
+                    UIPanel.transform.Find("defeat").DOLocalRotate(new Vector3(0, 0, 0), 1f).From(new Vector3(100, 100, 0));
+                }
+                else
+                {
+                    Finish = true;
+                    if (Looker != null) Looker.SetActive(false);
+                    AudioManager.Instance.PlayAudio("Sound/victory");
+                    //UIPanel.transform.Find("txt_round_center").GetComponent<Text>().text = "VICTORY";
+                    UIPanel.transform.Find("victory").gameObject.SetActive(true);
+                    UIPanel.transform.Find("victory").SetAsLastSibling();
+                    UIPanel.transform.Find("victory").DOLocalRotate(new Vector3(0, 0, 0), 1f).From(new Vector3(100, 100, 0));
+                }
+
+                UIPanel.transform.Find("btnBack").gameObject.SetActive(true);
+
             }
             else
             {
-                
-
-                int nextindex = GetNextFightIndex();
-                if (nextindex == -1)
+                if (index >= OrderList.Count - 1)
                 {
                     Round++;
                     NextRound();
                 }
                 else
                 {
-                    StartCoroutine(CommonHelper.DelayToInvokeDo(() =>
+
+
+                    int nextindex = GetNextFightIndex();
+                    if (nextindex == -1)
                     {
-                        Fight(nextindex);
-                    }, 1.2f));
+                        Round++;
+                        NextRound();
+                    }
+                    else
+                    {
+                        StartCoroutine(CommonHelper.DelayToInvokeDo(() =>
+                        {
+                            Fight(nextindex);
+                        }, 1.2f));
+                    }
+
                 }
 
             }
-
         }
     }
 

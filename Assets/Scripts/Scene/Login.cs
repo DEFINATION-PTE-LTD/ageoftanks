@@ -20,7 +20,7 @@ public class Login : MonoBehaviour
          
                 string jsonstr = JSONhelper.ToJson(new { Account = account, Password = password });// JSONhelper.ToJson(jsonObj);
                 Debug.Log(jsonstr);
-                HttpTool.Instance.Post("aotuser/login", jsonstr, (string result)=> {
+                HttpTool.Instance.Post("aotuser/login/v2", jsonstr, (string result)=> {
                     Debug.Log(result);
                     APIResult res = JSONhelper.ToApiResult<AOT_User>(result);// JSONhelper.ConvertToObject<APIResult>(result);
    
