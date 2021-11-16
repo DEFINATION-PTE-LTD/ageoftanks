@@ -2131,7 +2131,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 100000, guid: 18981a06fb298f345ab489e86c560f5c, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: 18981a06fb298f345ab489e86c560f5c, type: 3}
       propertyPath: m_LocalPosition.x
@@ -4727,8 +4727,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 963194225}
-  m_LocalRotation: {x: 0.033682093, y: 0.9488402, z: -0.12917979, w: 0.2861478}
-  m_LocalPosition: {x: -2.1, y: 5.03, z: 4.66}
+  m_LocalRotation: {x: 0.020314906, y: 0.95780927, z: -0.070888646, w: 0.27778345}
+  m_LocalPosition: {x: -3.7451615, y: 5.5363817, z: 5.983173}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -4750,6 +4750,7 @@ MonoBehaviour:
   RoateBtn: {fileID: 0}
   RotaSpeed: 50
   top: {fileID: 0}
+  AutoRotate: 1
   Targets: []
 --- !u!4 &970684423 stripped
 Transform:
@@ -8693,7 +8694,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1888655215
 Transform:
   m_ObjectHideFlags: 0

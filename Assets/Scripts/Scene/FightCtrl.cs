@@ -1528,7 +1528,7 @@ public class FightCtrl : MonoBehaviour
                             }
                             break;
                         //协同开火
-                        case "cofire":
+                        case "co-fire":
                             Cofire cofire = fightitem.Tank.GetComponent<Cofire>();
                             if (cofire != null)
                             {
@@ -1941,7 +1941,7 @@ public class FightCtrl : MonoBehaviour
     {
         if (fromItem.AttackSkill != null)
         {
-            string skillname = fromItem.AttackSkill.Title;
+            string skillname = fromItem.AttackSkill.SkillName;
             if (!string.IsNullOrEmpty(skillname))
             {
                 switch (fromItem.AttackSkill.SkillName.ToLower())
@@ -2022,7 +2022,7 @@ public class FightCtrl : MonoBehaviour
                         forbidden.FromTank = fromItem.Tank;
                         break;
                     //协同开火
-                    case "cofire":
+                    case "co-fire":
                         Cofire cofire = fromItem.Tank.AddComponent<Cofire>();
                         cofire.Value = 3;
                         cofire.Effected = 0;
