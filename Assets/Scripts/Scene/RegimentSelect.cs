@@ -59,7 +59,8 @@ public class RegimentSelect : MonoBehaviour,IBeginDragHandler, IDragHandler, IEn
         {
             Root.transform.Find("MainPanel/RightPanel/txtTip").gameObject.SetActive(false);
             ResourceCtrl.Instance.SelectList = selects.ToList();
-            ResourceCtrl.Instance.SelectListB = ResourceCtrl.Instance.TankList.FindAll(u => selects.Contains(u) == false).GetRange(0, 7);
+            int start = CommonHelper.GetRandom(0, ResourceCtrl.Instance.TankListB.Count - 7);
+            ResourceCtrl.Instance.SelectListB = ResourceCtrl.Instance.TankListB.GetRange(start, 7);
             // SceneManager.LoadScene("FightScene2");
             SceneManager.LoadScene("Alienworld");
             System.GC.Collect();
@@ -113,7 +114,8 @@ public class RegimentSelect : MonoBehaviour,IBeginDragHandler, IDragHandler, IEn
             }
             else
             {
-                newCard.transform.Find("Panel/image").GetComponent<RawImage>().texture = CommonHelper.LoadTankImage(item.Code);
+                //newCard.transform.Find("Panel/image").GetComponent<RawImage>().texture = CommonHelper.LoadTankImage(item.Code);
+                newCard.transform.Find("Panel/image").GetComponent<RawImage>().texture = ResourceCtrl.Instance.TanksSprite[item.Code].texture;
             }
 
             newCard.transform.Find("Panel/txtNo").GetComponent<Text>().text = "#" + item.Code;
@@ -124,10 +126,25 @@ public class RegimentSelect : MonoBehaviour,IBeginDragHandler, IDragHandler, IEn
             newCard.transform.Find("Panel/iconCrit/txtVal").GetComponent<Text>().text = item.CritRate.ToString()+"%";
             newCard.transform.Find("Panel/iconSpeed/txtVal").GetComponent<Text>().text = item.Speed.ToString();
 
-            newCard.transform.Find("Panel/attackSkill/icon").GetComponent<RawImage>().texture = CommonHelper.LoadSkillImage(item.AttackSkill.SkillName);
-            newCard.transform.Find("Panel/defenseSkill/icon").GetComponent<RawImage>().texture = CommonHelper.LoadSkillImage(item.DefenseSkill.SkillName);
+            if (item.AttackSkill != null)
+            {
+                newCard.transform.Find("Panel/attackSkill/icon").GetComponent<RawImage>().texture = CommonHelper.LoadSkillImage(item.AttackSkill.SkillName);
+            }
+            else
+            {
+                newCard.transform.Find("Panel/attackSkill/icon").gameObject.SetActive(false);
+            }
+            if (item.DefenseSkill != null)
+            {
+                newCard.transform.Find("Panel/defenseSkill/icon").GetComponent<RawImage>().texture = CommonHelper.LoadSkillImage(item.DefenseSkill.SkillName);
+            }
+            else
+            {
+                newCard.transform.Find("Panel/defenseSkill/icon").gameObject.SetActive(false);
+            }
 
-         
+
+
             newCard.gameObject.AddComponent<UnityEngine.UI.Button>().onClick.AddListener(() => {
                 AudioManager.Instance.PlayBtnAudio();
                 Debug.Log("当前点击了" + newCard.name);
@@ -190,7 +207,8 @@ public class RegimentSelect : MonoBehaviour,IBeginDragHandler, IDragHandler, IEn
                     }
                     else
                     {
-                        newCard.transform.Find("Panel/image").GetComponent<RawImage>().texture = CommonHelper.LoadTankImage(item.Code);
+                        newCard.transform.Find("Panel/image").GetComponent<RawImage>().texture = ResourceCtrl.Instance.TanksSprite[item.Code].texture;
+                        //newCard.transform.Find("Panel/image").GetComponent<RawImage>().texture = CommonHelper.LoadTankImage(item.Code);
                     }
 
                     newCard.transform.Find("Panel/txtNo").GetComponent<Text>().text = "#" + item.Code;
@@ -198,8 +216,22 @@ public class RegimentSelect : MonoBehaviour,IBeginDragHandler, IDragHandler, IEn
                     newCard.transform.Find("Panel/iconDefense/txtVal").GetComponent<Text>().text = item.Blood.ToString();
                     newCard.transform.Find("Panel/iconCrit/txtVal").GetComponent<Text>().text = item.CritRate.ToString() + "%";
                     newCard.transform.Find("Panel/iconSpeed/txtVal").GetComponent<Text>().text = item.Speed.ToString();
-                    newCard.transform.Find("Panel/attackSkill/icon").GetComponent<RawImage>().texture =CommonHelper.LoadSkillImage(item.AttackSkill.SkillName); 
-                    newCard.transform.Find("Panel/defenseSkill/icon").GetComponent<RawImage>().texture = CommonHelper.LoadSkillImage(item.DefenseSkill.SkillName);
+                    if (item.AttackSkill != null)
+                    {
+                        newCard.transform.Find("Panel/attackSkill/icon").GetComponent<RawImage>().texture = CommonHelper.LoadSkillImage(item.AttackSkill.SkillName);
+                    }
+                    else
+                    {
+                        newCard.transform.Find("Panel/attackSkill/icon").gameObject.SetActive(false);
+                    }
+                    if (item.DefenseSkill != null)
+                    {
+                        newCard.transform.Find("Panel/defenseSkill/icon").GetComponent<RawImage>().texture = CommonHelper.LoadSkillImage(item.DefenseSkill.SkillName);
+                    }
+                    else
+                    {
+                        newCard.transform.Find("Panel/defenseSkill/icon").gameObject.SetActive(false);
+                    }
                    
 
                     newCard.gameObject.AddComponent<UnityEngine.UI.Button>().onClick.AddListener(() =>
@@ -257,7 +289,8 @@ public class RegimentSelect : MonoBehaviour,IBeginDragHandler, IDragHandler, IEn
         }
         else
         {
-            infoPanel.transform.Find("image").GetComponent<RawImage>().texture = CommonHelper.LoadTankImage(item.Code);
+            infoPanel.transform.Find("image").GetComponent<RawImage>().texture = ResourceCtrl.Instance.TanksSprite[item.Code].texture;
+            //infoPanel.transform.Find("image").GetComponent<RawImage>().texture = CommonHelper.LoadTankImage(item.Code);
         }
 
         //技能

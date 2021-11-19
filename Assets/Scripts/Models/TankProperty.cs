@@ -58,6 +58,19 @@ public class TankProperty
     ///// </summary>
     //public float HitRate { get; set; }
 
+    /// <summary>
+    /// 封面
+    /// </summary>
+    public string Cover { get; set; }
+    /// <summary>
+    /// 模型编号
+    /// </summary>
+    public string ModelCode { get; set; }
+    /// <summary>
+    /// 皮肤编号
+    /// </summary>
+    public string SkinCode { get; set; }
+
     public GameObject TankObject { get; set; }
     /// <summary>
     /// 攻击技能

@@ -361,7 +361,7 @@ public class Weapon : MonoBehaviour
                                     }
                                     bullet.transform.forward = item.transform.forward;
                                     bullet.transform.position = item.transform.position;
-                                    bullet.transform.GetComponent<Rigidbody>().AddForce(bullet.transform.forward * 60, ForceMode.Impulse);
+                                    //bullet.transform.GetComponent<Rigidbody>().AddForce(bullet.transform.forward * 60, ForceMode.Impulse);
                                     bullet.transform.DOMove(t_pos, 0.3f).OnUpdate(() => {
                                         bullet.transform.DOLookAt(t_pos, 0, AxisConstraint.Y);
                                     }).OnComplete(()=> {

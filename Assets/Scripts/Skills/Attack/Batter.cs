@@ -55,9 +55,9 @@ public class Batter : MonoBehaviour
       
         Effected++;
 
-        for (int i = 1; i <= hitcount - 1; i++)
+        for (int i = 0; i < hitcount-1; i++)
         {
-            float delay = i * 0.5f; //延迟时间
+            float delay = (i+1) * 0.5f; //延迟时间
             StartCoroutine(CommonHelper.DelayToInvokeDo(() => {
                 action();
                 //SimpleAttack(fromItem, targets, true); 

@@ -55,18 +55,32 @@ public class MountPanel : MonoBehaviour
 
         mountPanel.transform.Find("btnMount").GetComponent<UnityEngine.UI.Button>().onClick.AddListener(() => {
             MountTank mountTank = mountArea.GetComponent<MountTank>();
+            mountArea.SetActive(true);
+            mountArea.GetComponent<ObjectRot>().AutoRotate = false;
+            mountArea.transform.Find("NewTank").localRotation = new Quaternion(0, 0, 0,0);
             if (Engine != null && Body != null && Head != null && Weapon != null)
             {
-                mountTank.BeginMount(Engine,Body,Head,Weapon);
+                HideMessage();
+                //承载力判断
+                if (Engine.Bearing < Body.Weight + Head.Weight + Weapon.Weight)
+                {
+                    ShowMessage("Insufficient carrying capacity");
+                    return;
+                }
+
+
+                mountTank.BeginMount(Engine, Body, Head, Weapon);
                 AOT_SetupRecord record = ResourceCtrl.Instance.GetTankSetupRecord(Engine, Body, Head, Weapon);//获取组装记录
                 ResourceCtrl.Instance.MountTanks.Add(record);
                
-                StartCoroutine(CommonHelper.DelayToInvokeDo(()=> { 
+                StartCoroutine(CommonHelper.DelayToInvokeDo(() =>
+                {
                     GetTankTexure(record.Code);
                     //加入坦克列表
                     ResourceCtrl.Instance.InsertToTankList(record);
                     transform.parent.SendMessage("InitCardPool");
-                },1f));//获取截图
+                    mountArea.GetComponent<ObjectRot>().AutoRotate = true;
+                }, 1f));//获取截图
                 ShowTankInfo(record);
                 //组装成功后更改状态
                 ResourceCtrl.Instance.PartsList.Find(u => u.Code == Engine.Code).Status = 2;
@@ -80,14 +94,20 @@ public class MountPanel : MonoBehaviour
                 RefreshSelected();
                 mountPanel.SetActive(false);
                 completePanel.SetActive(true);
-                
+
+            }
+            else 
+            {
+                ShowMessage("Requires complete four parts to be assembled");
             }
         });
         mountPanel.transform.Find("btnClose").GetComponent<UnityEngine.UI.Button>().onClick.AddListener(() => {
             transform.gameObject.SetActive(false);
+            mountArea.SetActive(false);
         });
 
         completePanel.transform.Find("btnContinue").GetComponent<UnityEngine.UI.Button>().onClick.AddListener(() => {
+            mountArea.SetActive(false);
             mountPanel.SetActive(true);
             completePanel.SetActive(false);
             SwitchTab("btnEngine");
@@ -280,28 +300,40 @@ public class MountPanel : MonoBehaviour
             case "engine":
                 if (Engine != null) 
                 {
-                    listView.transform.Find("Viewport/Content/"+ Engine.Code+ "/checkStatus").GetComponent<Toggle>().isOn=false;
+                    if (listView.transform.Find("Viewport/Content/" + Engine.Code) != null)
+                    {
+                        listView.transform.Find("Viewport/Content/" + Engine.Code + "/checkStatus").GetComponent<Toggle>().isOn = false;
+                    }
                 }
                 Engine = (isOn==true?item:null);
                 break;
             case "head":
                 if (Head != null)
                 {
-                    listView.transform.Find("Viewport/Content/" + Head.Code + "/checkStatus").GetComponent<Toggle>().isOn = false;
+                    if (listView.transform.Find("Viewport/Content/" + Head.Code) != null)
+                    {
+                        listView.transform.Find("Viewport/Content/" + Head.Code + "/checkStatus").GetComponent<Toggle>().isOn = false;
+                    }
                 }
                 Head = (isOn == true ? item : null);
                 break;
             case "body":
                 if (Body != null)
                 {
-                    listView.transform.Find("Viewport/Content/" + Body.Code + "/checkStatus").GetComponent<Toggle>().isOn = false;
+                    if (listView.transform.Find("Viewport/Content/" + Body.Code) != null)
+                    {
+                        listView.transform.Find("Viewport/Content/" + Body.Code + "/checkStatus").GetComponent<Toggle>().isOn = false;
+                    }
                 }
                 Body = (isOn == true ? item : null);
                 break;
             case "weapon":
                 if (Weapon != null)
                 {
-                    listView.transform.Find("Viewport/Content/" + Weapon.Code + "/checkStatus").GetComponent<Toggle>().isOn = false;
+                    if (listView.transform.Find("Viewport/Content/" + Weapon.Code) != null)
+                    {
+                        listView.transform.Find("Viewport/Content/" + Weapon.Code + "/checkStatus").GetComponent<Toggle>().isOn = false;
+                    }
                 }
                 Weapon = (isOn == true ? item : null);
                 break;
@@ -454,5 +486,21 @@ public class MountPanel : MonoBehaviour
         attr.transform.Find("速度/txtVal").GetComponent<Text>().text = Convert.ToInt32(item.Speed).ToString();
         attr.transform.Find("暴击率/txtVal").GetComponent<Text>().text = Convert.ToInt32(item.Crit).ToString() + "%";
         //attr.transform.Find("命中率/txtVal").GetComponent<Text>().text = item.HitRate.ToString()+"%";
+    }
+
+    /// <summary>
+    /// 显示提示信息
+    /// </summary>
+    /// <param name="msg"></param>
+    public void ShowMessage(string message)
+    {
+        Text msg = mountPanel.transform.Find("txtMsg").GetComponent<Text>();
+        msg.gameObject.SetActive(true);
+        msg.transform.DOShakePosition(1f);
+        msg.text = message;
+    }
+    public void HideMessage()
+    {
+        mountPanel.transform.Find("txtMsg").gameObject.SetActive(false);
     }
 }

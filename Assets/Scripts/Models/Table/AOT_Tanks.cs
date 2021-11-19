@@ -91,12 +91,23 @@ using System.Data;
 		/// Durability
         /// </summary>		
 	
-        public int Durability{ get; set; }        
+        public int Durability{ get; set; }
 		/// <summary>
-		/// Sortnum
-        /// </summary>		
-	
-        public int Sortnum{ get; set; }        
+		/// Cover
+		/// </summary>		
+
+		public string Cover { get; set; }
+		/// <summary>
+		/// SkinCode
+		/// </summary>		
+
+		public string SkinCode { get; set; }
+
+	/// <summary>
+	/// Sortnum
+	/// </summary>		
+
+	public int Sortnum{ get; set; }        
 		/// <summary>
 		/// Creator
         /// </summary>		

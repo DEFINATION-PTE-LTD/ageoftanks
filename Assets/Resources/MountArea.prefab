@@ -63,7 +63,7 @@ MonoBehaviour:
   RoateBtn: {fileID: 0}
   RotaSpeed: 50
   top: {fileID: 0}
-  AutoRotate: 0
+  AutoRotate: 1
   Targets: []
 --- !u!1 &1021043211957769496
 GameObject:

@@ -55,7 +55,8 @@ public class SoloSelect : MonoBehaviour
             Root.transform.Find("MainPanel/RightPanel/txtTip").gameObject.SetActive(false);
             //默认选中1个
             ResourceCtrl.Instance.SelectListB.Clear();
-            ResourceCtrl.Instance.SelectListB.Add( ResourceCtrl.Instance.TankList.FindAll(u => ResourceCtrl.Instance.SelectList.Contains(u) == false)[CommonHelper.GetRandom(0,49)]);
+            int count = ResourceCtrl.Instance.TankListB.Count;
+            ResourceCtrl.Instance.SelectListB.Add( ResourceCtrl.Instance.TankListB[CommonHelper.GetRandom(0, count)]);
             SceneManager.LoadScene("AlienworldSolo");
             System.GC.Collect();
         }
@@ -92,7 +93,8 @@ public class SoloSelect : MonoBehaviour
             }
             else
             {
-                newCard.transform.Find("Panel/image").GetComponent<RawImage>().texture = CommonHelper.LoadTankImage(item.Code);
+                // newCard.transform.Find("Panel/image").GetComponent<RawImage>().texture = CommonHelper.LoadTankImage(item.Code);
+                newCard.transform.Find("Panel/image").GetComponent<RawImage>().texture = ResourceCtrl.Instance.TanksSprite[item.Code].texture;
             }
             newCard.transform.Find("Panel/txtNo").GetComponent<Text>().text = "#" + item.Code;
 
@@ -101,8 +103,22 @@ public class SoloSelect : MonoBehaviour
             newCard.transform.Find("Panel/iconCrit/txtVal").GetComponent<Text>().text = item.CritRate.ToString() + "%";
             newCard.transform.Find("Panel/iconSpeed/txtVal").GetComponent<Text>().text = item.Speed.ToString();
 
-            newCard.transform.Find("Panel/attackSkill/icon").GetComponent<RawImage>().texture = CommonHelper.LoadSkillImage(item.AttackSkill.SkillName);
-            newCard.transform.Find("Panel/defenseSkill/icon").GetComponent<RawImage>().texture = CommonHelper.LoadSkillImage(item.DefenseSkill.SkillName);
+            if (item.AttackSkill != null)
+            {
+                newCard.transform.Find("Panel/attackSkill/icon").GetComponent<RawImage>().texture = CommonHelper.LoadSkillImage(item.AttackSkill.SkillName);
+            }
+            else 
+            {
+                newCard.transform.Find("Panel/attackSkill/icon").gameObject.SetActive(false);
+            }
+            if (item.DefenseSkill != null)
+            {
+                newCard.transform.Find("Panel/defenseSkill/icon").GetComponent<RawImage>().texture = CommonHelper.LoadSkillImage(item.DefenseSkill.SkillName);
+            }
+            else
+            {
+                newCard.transform.Find("Panel/defenseSkill/icon").gameObject.SetActive(false);
+            }
 
           
             newCard.gameObject.AddComponent<UnityEngine.UI.Button>().onClick.AddListener(() => {
@@ -129,7 +145,9 @@ public class SoloSelect : MonoBehaviour
         }
         else
         {
-            infoPanel.transform.Find("image").GetComponent<RawImage>().texture = CommonHelper.LoadTankImage(item.Code);
+            //infoPanel.transform.Find("image").GetComponent<RawImage>().texture = CommonHelper.LoadTankImage(item.Code);
+            infoPanel.transform.Find("image").GetComponent<RawImage>().texture = ResourceCtrl.Instance.TanksSprite[item.Code].texture;
+
         }
 
         

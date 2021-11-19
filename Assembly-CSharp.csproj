@@ -206,6 +206,7 @@
     <Compile Include="Assets\Scripts\Common\CropPicture.cs" />
     <Compile Include="Assets\Scripts\Common\GLauncher.cs" />
     <Compile Include="Assets\Scripts\Common\HttpTool.cs" />
+    <Compile Include="Assets\Scripts\Common\JSMsgManager.cs" />
     <Compile Include="Assets\Scripts\Common\JSONhelper.cs" />
     <Compile Include="Assets\Scripts\Common\PosCtrl.cs" />
     <Compile Include="Assets\Scripts\Common\VolumeCtrl.cs" />
@@ -238,6 +239,7 @@
     <Compile Include="Assets\Scripts\Scene\BattleMode.cs" />
     <Compile Include="Assets\Scripts\Scene\FightCtrl.cs" />
     <Compile Include="Assets\Scripts\Scene\Login.cs" />
+    <Compile Include="Assets\Scripts\Scene\MountLinkEffect.cs" />
     <Compile Include="Assets\Scripts\Scene\MountPanel.cs" />
     <Compile Include="Assets\Scripts\Scene\MountTank.cs" />
     <Compile Include="Assets\Scripts\Scene\RegimentSelect.cs" />

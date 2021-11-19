@@ -203,135 +203,65 @@ public class FightCtrl : MonoBehaviour
             {
                 PlayerB_Pos.Add(child);
             }
-             
         }
     }
 
     //进入场景后随机匹配对战双方的坦克，后期通过数据拉取
     public void InitTank()
     {
-        //获取所有坦克的预制体
-        int tankcount = ResourceCtrl.Instance.ResourceRoot.transform.Find("Tanks").childCount;
-        List<GameObject> list = new List<GameObject>();
-        for (int i = 0; i < tankcount; i++)
-        {
-            Transform tr=  ResourceCtrl.Instance.ResourceRoot.transform.Find("Tanks").GetChild(i);
-            if (tr != null) 
-            {
-
-                list.Add(tr.gameObject);
-            }
-            
-        }
-
-        
-        //分给对战双方
-        //foreach (GameObject pos in PlayerA_Pos)
-        //{
-        //    //随机分配
-        //    int index = CommonHelper.GetRandom(0, list.Count);
-        //    GameObject tank = Instantiate(list[index]);
-        //    tank.AddComponent<Weapon>();
-        //    tank.SetActive(false);
-        //    tank.transform.SetParent(pos.transform.Find("Tank"), false);
-        //    PlayerA_Tanks.Add(tank);
-        //}
-
         //玩家A
         for (int i = 0; i < ResourceCtrl.Instance.SelectList.Count; i++)
         {
+
             TankProperty item = ResourceCtrl.Instance.SelectList[i];
-            GameObject tank =null;
-            if (item.IsSetup == true)
-            {
-                AOT_SetupRecord record = ResourceCtrl.Instance.MountTanks.Find(u => u.Code == item.Code);
-                AOT_Parts Engine = ResourceCtrl.Instance.PartsList.Find(u => u.Code == record.LegCode);
-                AOT_Parts Body = ResourceCtrl.Instance.PartsList.Find(u => u.Code == record.BodyCode);
-                AOT_Parts Head = ResourceCtrl.Instance.PartsList.Find(u => u.Code == record.HeadCode);
-                AOT_Parts Weapon = ResourceCtrl.Instance.PartsList.Find(u => u.Code == record.WeaponCode);
-                tank = new GameObject();
-                tank.name = item.Code;
-                ResourceCtrl.Instance.Mount(Engine, Body, Head, Weapon).transform.SetParent(tank.transform,false);
-            }
-            else
-            {
-                if (item.Code.CompareTo("00012") >= 0 && item.Code.CompareTo("00024") <= 0)
-                {
-                    tank = Instantiate(list.Find(u => u.name == item.Code));
-                    CommonHelper.ReplaceMaterial(tank, "black");
-                }
-                else if (item.Code.CompareTo("00025") >= 0 && item.Code.CompareTo("00036") <= 0)
-                {
-                    tank = Instantiate(list.Find(u => u.name == (Convert.ToInt32(item.Code) - 13).ToString().PadLeft(5, '0')));
-                    CommonHelper.ReplaceMaterial(tank, "blue");
-                }
-                else if (item.Code.CompareTo("00037") >= 0 && item.Code.CompareTo("00049") <= 0)
-                {
-                    tank = Instantiate(list.Find(u => u.name == (Convert.ToInt32(item.Code) - 25).ToString().PadLeft(5, '0')));
-                    CommonHelper.ReplaceMaterial(tank, "yellow");
-                }
-                else if (item.Code.CompareTo("00050") >= 0 && item.Code.CompareTo("00062") <= 0)
-                {
-                    tank = Instantiate(list.Find(u => u.name == (Convert.ToInt32(item.Code) - 38).ToString().PadLeft(5, '0')));
-                    CommonHelper.ReplaceMaterial(tank, "red");
-                }
-            }
-            tank.AddComponent<Weapon>();
+            GameObject tank = GetTankGameObj(item);
             tank.SetActive(false);
             tank.transform.SetParent(PlayerA_Pos[i].transform.Find("Tank"), false);
-
             item.TankObject = tank;
             PlayerA_Tanks.Add(tank);
+
         }
-
-
-        //玩家B随机分配
-        //foreach (GameObject pos in PlayerB_Pos)
-        //{
-        //    //随机分配
-        //    int index = CommonHelper.GetRandom(12, list.Count);
-        //    GameObject tank = Instantiate(list[index]);
-        //    tank.AddComponent<Weapon>();
-        //    tank.SetActive(false);
-        //    tank.transform.SetParent(pos.transform.Find("Tank"), false);
-        //    CommonHelper.ReplaceMaterial(tank,"black");
-        //    PlayerB_Tanks.Add(tank);
-        //}
-
+        //玩家B
         for (int i = 0; i < ResourceCtrl.Instance.SelectListB.Count; i++)
         {
+
             TankProperty item = ResourceCtrl.Instance.SelectListB[i];
-            GameObject tank = null;
-
-            if (item.Code.CompareTo("00012") >= 0 && item.Code.CompareTo("00024") <= 0)
-            {
-                tank = Instantiate(list.Find(u => u.name == item.Code));
-                CommonHelper.ReplaceMaterial(tank, "black");
-            }
-            else if (item.Code.CompareTo("00025") >= 0 && item.Code.CompareTo("00036") <= 0)
-            {
-                tank = Instantiate(list.Find(u => u.name == (Convert.ToInt32(item.Code) - 13).ToString().PadLeft(5, '0')));
-                CommonHelper.ReplaceMaterial(tank, "blue");
-            }
-            else if (item.Code.CompareTo("00037") >= 0 && item.Code.CompareTo("00049") <= 0)
-            {
-                tank = Instantiate(list.Find(u => u.name == (Convert.ToInt32(item.Code) - 25).ToString().PadLeft(5, '0')));
-                CommonHelper.ReplaceMaterial(tank, "yellow");
-            }
-            else if (item.Code.CompareTo("00050") >= 0 && item.Code.CompareTo("00062") <= 0)
-            {
-                tank = Instantiate(list.Find(u => u.name == (Convert.ToInt32(item.Code) - 38).ToString().PadLeft(5, '0')));
-                CommonHelper.ReplaceMaterial(tank, "red");
-            }
-
-            tank.AddComponent<Weapon>();
+            GameObject tank = GetTankGameObj(item);
             tank.SetActive(false);
             tank.transform.SetParent(PlayerB_Pos[i].transform.Find("Tank"), false);
-
             item.TankObject = tank;
             PlayerB_Tanks.Add(tank);
         }
 
+    }
+    
+    //获得坦克游戏物体
+    public GameObject GetTankGameObj(TankProperty item)
+    {
+        GameObject tank = null;
+        if (item.IsSetup == true)
+        {
+            AOT_SetupRecord record = ResourceCtrl.Instance.MountTanks.Find(u => u.Code == item.Code);
+            AOT_Parts Engine = ResourceCtrl.Instance.PartsList.Find(u => u.Code == record.LegCode);
+            AOT_Parts Body = ResourceCtrl.Instance.PartsList.Find(u => u.Code == record.BodyCode);
+            AOT_Parts Head = ResourceCtrl.Instance.PartsList.Find(u => u.Code == record.HeadCode);
+            AOT_Parts Weapon = ResourceCtrl.Instance.PartsList.Find(u => u.Code == record.WeaponCode);
+            tank = new GameObject();
+            tank.name = item.Code;
+            ResourceCtrl.Instance.Mount(Engine, Body, Head, Weapon).transform.SetParent(tank.transform, false);
+        }
+        else
+        {
+            AOT_Models tankModel = ResourceCtrl.Instance.ModelList.Find(u => u.Code == item.ModelCode);
+            GameObject tankPrefab = Resources.Load<GameObject>(tankModel.FilePath);
+            AOT_SkinInfo skin = ResourceCtrl.Instance.SkinList.Find(u => u.Code == item.SkinCode);
+            tank = new GameObject();
+            tank.name = item.Code;
+            Instantiate(tankPrefab, tank.transform, false);
+            CommonHelper.ReplaceMaterialByPath(tank, skin.MaterialPath);
+        }
+        tank.AddComponent<Weapon>();
+        return tank;
     }
 
     //开启传送阵
@@ -451,7 +381,8 @@ public class FightCtrl : MonoBehaviour
             }
             else
             {
-                newCard.transform.Find("Panel/image").GetComponent<RawImage>().texture = CommonHelper.LoadTankImage(item.Code);
+                newCard.transform.Find("Panel/image").GetComponent<RawImage>().texture = ResourceCtrl.Instance.TanksSprite[item.Code].texture;
+                //newCard.transform.Find("Panel/image").GetComponent<RawImage>().texture = CommonHelper.LoadTankImage(item.Code);
             }
 
             newCard.transform.Find("Panel/txtNo").GetComponent<Text>().text = "#" + item.Code;
@@ -462,8 +393,23 @@ public class FightCtrl : MonoBehaviour
             newCard.transform.Find("Panel/iconCrit/txtVal").GetComponent<Text>().text = item.CritRate.ToString() + "%";
             newCard.transform.Find("Panel/iconSpeed/txtVal").GetComponent<Text>().text = item.Speed.ToString();
 
-            newCard.transform.Find("Panel/attackSkill/icon").GetComponent<RawImage>().texture = CommonHelper.LoadSkillImage(item.AttackSkill.SkillName) ;
-            newCard.transform.Find("Panel/defenseSkill/icon").GetComponent<RawImage>().texture = CommonHelper.LoadSkillImage(item.DefenseSkill.SkillName);
+            if (item.AttackSkill != null)
+            {
+                newCard.transform.Find("Panel/attackSkill/icon").GetComponent<RawImage>().texture = CommonHelper.LoadSkillImage(item.AttackSkill.SkillName);
+            }
+            else
+            {
+                newCard.transform.Find("Panel/attackSkill/icon").gameObject.SetActive(false);
+            }
+
+            if (item.DefenseSkill != null)
+            {
+                newCard.transform.Find("Panel/defenseSkill/icon").GetComponent<RawImage>().texture = CommonHelper.LoadSkillImage(item.DefenseSkill.SkillName);
+            }
+            else
+            {
+                newCard.transform.Find("Panel/defenseSkill/icon").gameObject.SetActive(false);
+            }
         }
 
 
@@ -481,7 +427,8 @@ public class FightCtrl : MonoBehaviour
             }
             else
             {
-                newCard.transform.Find("Panel/image").GetComponent<RawImage>().texture = CommonHelper.LoadTankImage(item.Code);
+                newCard.transform.Find("Panel/image").GetComponent<RawImage>().texture = ResourceCtrl.Instance.TanksSprite[item.Code].texture;
+                //newCard.transform.Find("Panel/image").GetComponent<RawImage>().texture = CommonHelper.LoadTankImage(item.Code);
             }
 
             newCard.transform.Find("Panel/txtNo").GetComponent<Text>().text = "#" + item.Code;
@@ -492,8 +439,22 @@ public class FightCtrl : MonoBehaviour
             newCard.transform.Find("Panel/iconCrit/txtVal").GetComponent<Text>().text = item.CritRate.ToString() + "%";
             newCard.transform.Find("Panel/iconSpeed/txtVal").GetComponent<Text>().text = item.Speed.ToString();
 
-            newCard.transform.Find("Panel/attackSkill/icon").GetComponent<RawImage>().texture = CommonHelper.LoadSkillImage(item.AttackSkill.SkillName);
-            newCard.transform.Find("Panel/defenseSkill/icon").GetComponent<RawImage>().texture = CommonHelper.LoadSkillImage(item.DefenseSkill.SkillName);
+            if (item.AttackSkill != null)
+            {
+                newCard.transform.Find("Panel/attackSkill/icon").GetComponent<RawImage>().texture = CommonHelper.LoadSkillImage(item.AttackSkill.SkillName);
+            }
+            else
+            {
+                newCard.transform.Find("Panel/attackSkill/icon").gameObject.SetActive(false);
+            }
+            if (item.DefenseSkill != null)
+            {
+                newCard.transform.Find("Panel/defenseSkill/icon").GetComponent<RawImage>().texture = CommonHelper.LoadSkillImage(item.DefenseSkill.SkillName);
+            }
+            else
+            {
+                newCard.transform.Find("Panel/defenseSkill/icon").gameObject.SetActive(false);
+            }
         }
 
     }
@@ -1318,6 +1279,10 @@ public class FightCtrl : MonoBehaviour
                             if (batter != null)
                             {
                                 batter.TargetTank = target.Tank;
+                                target.Blood -= attack;
+                                ShowBlood(target.Tank, attack, 0, iscrit);
+                                RefreshBloodBar(target);
+
                                 if (batter.EffectAttack(() => { SimpleAttack(fightitem, target, true); }) == true)
                                 {
                                     CommonHelper.ShowSkillIcon(fightitem.Tank, fightitem.AttackSkill.SkillName, UIPanel);

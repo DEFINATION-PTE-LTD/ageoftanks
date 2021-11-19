@@ -1088,6 +1088,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: MountArea
       objectReference: {fileID: 0}
+    - target: {fileID: 1021043211340317840, guid: 219b9090878970442b3c9e87416daec9,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 1021043211340317846, guid: 219b9090878970442b3c9e87416daec9,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -1157,6 +1162,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalScale.z
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6285667570792832402, guid: 219b9090878970442b3c9e87416daec9,
+        type: 3}
+      propertyPath: AutoRotate
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 219b9090878970442b3c9e87416daec9, type: 3}

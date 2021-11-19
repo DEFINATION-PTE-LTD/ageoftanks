@@ -11,9 +11,10 @@ public class ObjectRot : MonoBehaviour
     //被控制的GameObject
     public GameObject Target;
     public GameObject RoateBtn;
-    public int RotaSpeed = 50; //旋转速度
+    public int AutoRotaSpeed = 30; //自动旋转速度
+    public int HandRotaSpeed = 50; //手动旋转速度
     public GameObject top;
-    public bool AutoRotate = true;
+    public bool AutoRotate = false;
     private bool isDown = false;
 
     /// <summary>
@@ -27,7 +28,7 @@ public class ObjectRot : MonoBehaviour
         //  transform.LookAt(Target.transform);
         if (isDown)
         {
-            Target.transform.Rotate(new Vector3(0, -Time.deltaTime * RotaSpeed, 0));
+            Target.transform.Rotate(new Vector3(0, -Time.deltaTime * HandRotaSpeed, 0));
         }
     }
 
@@ -46,21 +47,15 @@ public class ObjectRot : MonoBehaviour
         if (Target)
         {
             //鼠标左键按下
-            if (Input.GetMouseButton(0) && Math.Abs(Input.GetAxis("Mouse X")) > 0.1)
-            {
-                //Debug.Log(Input.mousePosition.y);
-                //if (Input.mousePosition.y < 700)
-                //{
-                //    return;
-                //}
-                //Debug.Log(Input.GetAxis("Mouse X"));
-                //  Input.GetAxis("Mouse X")*RotaSpeed*Time.deltaTime
-                Target.transform.Rotate(new Vector3(0, -Input.GetAxis("Mouse X") * Time.deltaTime * RotaSpeed, 0));
-
-
-
-
-            }
+            //if (Input.GetMouseButton(0) && Math.Abs(Input.GetAxis("Mouse X")) > 0.1)
+            //{
+            //    AutoRotate = false;
+            //    Target.transform.Rotate(new Vector3(0, -Input.GetAxis("Mouse X") * Time.deltaTime * HandRotaSpeed, 0));
+            //}
+            //if (Input.GetKeyUp(KeyCode.Mouse0)) 
+            //{
+            //    AutoRotate = true;
+            //}
             //单指触摸滑动
             //if (Input.touchCount == 1)
             //{
@@ -71,7 +66,7 @@ public class ObjectRot : MonoBehaviour
             //        {
             //            return;
             //        }
-            //        Target.transform.Rotate(new Vector3(0, -Input.GetAxis("Mouse X") * Time.deltaTime * RotaSpeed, 0));
+            //        Target.transform.Rotate(new Vector3(0, -Input.GetAxis("Mouse X") * Time.deltaTime * HandRotaSpeed, 0));
             //    }
 
             //}
@@ -90,12 +85,14 @@ public class ObjectRot : MonoBehaviour
     public void OnPointerDown(PointerEventData eventData)
     {
 
-        isDown = true;
+        isDown = true; 
+        AutoRotate = false;
     }
 
     public void OnPointerUp(PointerEventData eventData)
     {
-        isDown = false;
+        isDown = false; 
+        AutoRotate = true;
     }
 
     /// <summary>
@@ -103,10 +100,10 @@ public class ObjectRot : MonoBehaviour
     /// </summary>
     public void Rotateing()
     {
-        Target.transform.Rotate(new Vector3(0, Time.deltaTime * RotaSpeed, 0));
+        Target.transform.Rotate(new Vector3(0, Time.deltaTime * AutoRotaSpeed, 0));
         foreach (GameObject item in Targets)
         {
-            item.transform.Rotate(new Vector3(0, Time.deltaTime * RotaSpeed, 0));
+            item.transform.Rotate(new Vector3(0, Time.deltaTime * AutoRotaSpeed, 0));
         }
     }
     public void Scale()

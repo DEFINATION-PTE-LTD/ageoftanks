@@ -16,6 +16,7 @@ public class ResourceCtrl : MonoBehaviour
     public AOT_User UserInfo;
     public GameObject ResourceRoot;
     public List<TankProperty> TankList = new List<TankProperty>();
+    public List<TankProperty> TankListB = new List<TankProperty>();
     public List<TankProperty> SelectList = new List<TankProperty>();
     public List<TankProperty> SelectListB = new List<TankProperty>();
 
@@ -28,9 +29,10 @@ public class ResourceCtrl : MonoBehaviour
 
     public Dictionary<string, Sprite> PartsSprite = new Dictionary<string, Sprite>();//部件图片
     public Dictionary<string, Sprite> MountTanksSprite = new Dictionary<string, Sprite>();//组装坦克图片
+    public Dictionary<string, Sprite> TanksSprite = new Dictionary<string, Sprite>();//坦克图片
 
     public List<LevelInfo> Levels = new List<LevelInfo>();//等级名称
-
+    public string MaxTankCode = "";
 
     private static ResourceCtrl instance = null;
     public static ResourceCtrl Instance
@@ -85,6 +87,8 @@ public class ResourceCtrl : MonoBehaviour
             Debug.Log("用户信息获取失败");
         }
     }
+
+    #region----加载基础数据信息----
     /// <summary>
     /// 技能基础信息初始化
     /// </summary>
@@ -333,7 +337,6 @@ public class ResourceCtrl : MonoBehaviour
                 {
                     SkillList = (List<AOT_SkillInfo>)(res.data);
                     Debug.Log("技能信息获取完毕");
-                    InitTankList();
                 }
                 else
                 {
@@ -344,9 +347,6 @@ public class ResourceCtrl : MonoBehaviour
 
     }
 
-    //----获取基础信息----
-
-    
     //获取等级信息
     void GetLevelInfo()
     {
@@ -458,7 +458,6 @@ public class ResourceCtrl : MonoBehaviour
         
     }
 
-
     //获取坦克信息
     void GetTanks()
     {
@@ -472,6 +471,8 @@ public class ResourceCtrl : MonoBehaviour
                 if (res.success == true)
                 {
                     BaseTanks = (List<AOT_Tanks>)(res.data);
+                    InitTankList();
+                    LoadTankTexture();
                     Debug.Log("坦克信息获取完毕");
                 }
                 else
@@ -482,6 +483,23 @@ public class ResourceCtrl : MonoBehaviour
         }
     }
 
+    //加载远程图片
+    void LoadTankTexture()
+    {
+        if (BaseTanks.Count > 0)
+        {
+            foreach (AOT_Tanks item in BaseTanks)
+            {
+                StartCoroutine(HttpTool.Instance.LoadRemoteImg(item.Cover, 200, 200, (Sprite sp) => {
+                    TanksSprite.Add(item.Code, sp);
+                    Debug.Log(item.Code + "坦克图片加载完成");
+                }));
+            }
+        }
+
+    }
+
+    #endregion
 
     //初始化坦克列表
     void InitTankList()
@@ -490,19 +508,48 @@ public class ResourceCtrl : MonoBehaviour
         {
             ResourceCtrl.Instance.TankList.Clear();
         }
-        // TankList.Add();
-        for (int i = 0; i < 50; i++)
-        {
-            TankProperty tank = new TankProperty((12 + i).ToString().PadLeft(5, '0'), "蝎式坦克", null);
-            int atkCount = ResourceCtrl.Instance.SkillList.FindAll(u => u.SkillType == "Attack").Count;
-            int defCount = ResourceCtrl.Instance.SkillList.FindAll(u => u.SkillType == "Defense").Count;
-            tank.AttackSkill = ResourceCtrl.Instance.SkillList.FindAll(u => u.SkillType == "Attack")[CommonHelper.GetRandom(0, atkCount)];
-            tank.DefenseSkill = ResourceCtrl.Instance.SkillList.FindAll(u => u.SkillType == "Defense")[CommonHelper.GetRandom(0, defCount)];
 
-            //tank.AttackSkill = ResourceCtrl.Instance.SkillList.Find(u => u.Name == "Duel");
-            //tank.DefenseSkill = ResourceCtrl.Instance.SkillList.Find(u => u.Name == "Revenge");
-            ResourceCtrl.Instance.TankList.Add(tank);
+        foreach (AOT_Tanks item in BaseTanks)
+        {
+            TankProperty tank = new TankProperty() {
+             Code = item.Code,
+             Attack = (float)item.Attack,
+             Blood = (float)item.Blood,
+             Bearer = (float)item.Bearing,
+             Speed= (float)item.Speed,
+             Range= (float)item.Range,
+             CritRate= (float)item.Crit,
+             Weight= (float)item.Weight,
+             AttackSkill= string.IsNullOrEmpty(item.AttackSkillCode)?null:SkillList.Find(u=>u.Code==item.AttackSkillCode),
+             DefenseSkill= string.IsNullOrEmpty(item.AttackSkillCode) ? null : SkillList.Find(u => u.Code == item.DefenseSkillCode),
+             ModelCode = item.ModelPath,
+             SkinCode =item.SkinCode,
+             IsSetup =false
+            };
+            if (item.Remark == "A")
+            {
+                ResourceCtrl.Instance.TankList.Add(tank);
+            }
+            else
+            {
+                ResourceCtrl.Instance.TankListB.Add(tank);
+            }
         }
+
+        
+        // TankList.Add();
+        //for (int i = 0; i < 50; i++)
+        //{
+        //    TankProperty tank = new TankProperty((12 + i).ToString().PadLeft(5, '0'), "蝎式坦克", null);
+        //    int atkCount = ResourceCtrl.Instance.SkillList.FindAll(u => u.SkillType == "Attack").Count;
+        //    int defCount = ResourceCtrl.Instance.SkillList.FindAll(u => u.SkillType == "Defense").Count;
+        //    tank.AttackSkill = ResourceCtrl.Instance.SkillList.FindAll(u => u.SkillType == "Attack")[CommonHelper.GetRandom(0, atkCount)];
+        //    tank.DefenseSkill = ResourceCtrl.Instance.SkillList.FindAll(u => u.SkillType == "Defense")[CommonHelper.GetRandom(0, defCount)];
+
+        //    //tank.AttackSkill = ResourceCtrl.Instance.SkillList.Find(u => u.Name == "Duel");
+        //    //tank.DefenseSkill = ResourceCtrl.Instance.SkillList.Find(u => u.Name == "Revenge");
+        //    ResourceCtrl.Instance.TankList.Add(tank);
+        //}
 
     }
 
@@ -521,6 +568,9 @@ public class ResourceCtrl : MonoBehaviour
         Nodes parentNode;
         LinkNodeInfo parentLink;
 
+
+        //获取各个部件物体
+
         //引擎
         AOT_Models engineModel = rec.ModelList.Find(u => u.Code == Engine.ModelCode);
         AOT_SkinInfo engineSkin = rec.SkinList.Find(u => u.Code == Engine.SkinCode);
@@ -533,9 +583,7 @@ public class ResourceCtrl : MonoBehaviour
         //机身
         AOT_Models bodyModel = rec.ModelList.Find(u => u.Code == Body.ModelCode);
         AOT_SkinInfo bodySkin = rec.SkinList.Find(u => u.Code == Body.SkinCode);
-        parentNode = engineObj.GetComponent<Nodes>();
-        parentLink = parentNode.ChildNodes.Find(u => u.LinkType == LinkType.Body);
-        GameObject bodyObj = Instantiate(Resources.Load<GameObject>(bodyModel.FilePath), parentLink.LinkNode.transform, false);
+        GameObject bodyObj = Instantiate(Resources.Load<GameObject>(bodyModel.FilePath));
         bodyObj.name = bodyObj.name.Replace("(Clone)", "");
         bodyObj.transform.localPosition = new Vector3(0, 0, 0);
         CommonHelper.ReplaceMaterialByPath(bodyObj, bodySkin.MaterialPath);
@@ -544,9 +592,7 @@ public class ResourceCtrl : MonoBehaviour
         //机头
         AOT_Models headModel = rec.ModelList.Find(u => u.Code == Head.ModelCode);
         AOT_SkinInfo headSkin = rec.SkinList.Find(u => u.Code == Head.SkinCode);
-        parentNode = bodyObj.GetComponent<Nodes>();
-        parentLink = parentNode.ChildNodes.Find(u => u.LinkType == LinkType.Head);
-        GameObject headObj = Instantiate(Resources.Load<GameObject>(headModel.FilePath), parentLink.LinkNode.transform, false);
+        GameObject headObj = Instantiate(Resources.Load<GameObject>(headModel.FilePath));
         headObj.name = headObj.name.Replace("(Clone)", "");
         headObj.transform.localPosition = new Vector3(0, 0, 0);
         CommonHelper.ReplaceMaterialByPath(headObj, headSkin.MaterialPath);
@@ -555,22 +601,43 @@ public class ResourceCtrl : MonoBehaviour
         //武器
         AOT_Models weaponModel = rec.ModelList.Find(u => u.Code == Weapon.ModelCode);
         AOT_SkinInfo weaponSkin = rec.SkinList.Find(u => u.Code == Weapon.SkinCode);
-        parentNode = bodyObj.GetComponent<Nodes>();
-        LinkNodeInfo weapon_L_Link = parentNode.ChildNodes.Find(u => u.LinkType == LinkType.Weapon_L);
-        GameObject weaponObj_L = Instantiate(Resources.Load<GameObject>(weaponModel.FilePath), weapon_L_Link.LinkNode.transform, false);
+        //武器左
+        GameObject weaponObj_L = Instantiate(Resources.Load<GameObject>(weaponModel.FilePath));
         weaponObj_L.name = weaponObj_L.name.Replace("(Clone)", "");
         weaponObj_L.transform.localPosition = new Vector3(0, 0, 0);
         CommonHelper.ReplaceMaterialByPath(weaponObj_L, weaponSkin.MaterialPath);
         weaponObj_L.SetActive(true);
-
-        LinkNodeInfo weapon_R_Link = parentNode.ChildNodes.Find(u => u.LinkType == LinkType.Weapon_R);
-        GameObject weaponObj_R = Instantiate(Resources.Load<GameObject>(weaponModel.FilePath), weapon_R_Link.LinkNode.transform, false);
+        //武器右        
+        GameObject weaponObj_R = Instantiate(Resources.Load<GameObject>(weaponModel.FilePath));
         weaponObj_R.name = weaponObj_R.name.Replace("(Clone)", "");
         weaponObj_R.transform.localPosition = new Vector3(0, 0, 0);
         CommonHelper.ReplaceMaterialByPath(weaponObj_R, weaponSkin.MaterialPath);
         weaponObj_R.SetActive(true);
 
 
+
+        //机身以上组装
+        parentNode = bodyObj.GetComponent<Nodes>();
+        parentLink = parentNode.ChildNodes.Find(u => u.LinkType == LinkType.Head);
+        LinkNodeInfo weapon_L_Link = parentNode.ChildNodes.Find(u => u.LinkType == LinkType.Weapon_L);
+        LinkNodeInfo weapon_R_Link = parentNode.ChildNodes.Find(u => u.LinkType == LinkType.Weapon_R);
+
+        headObj.transform.SetParent(parentLink.transform, false);//机头定位
+        weaponObj_L.transform.SetParent(weapon_L_Link.transform, false);//左武器定位
+        weaponObj_R.transform.SetParent(weapon_R_Link.transform, false);//右武器定位
+
+        //机身与引擎组装
+        parentNode = engineObj.GetComponent<Nodes>();
+        if (parentNode.ChildNodes.Find(u => u.LinkType == LinkType.Body) != null)
+        {
+            bodyObj.transform.SetParent(parentNode.ChildNodes.Find(u => u.LinkType == LinkType.Body).transform, false);
+        }
+        else if (parentNode.ChildNodes.Find(u => u.LinkType == LinkType.Head) != null)
+        {
+            bodyObj.transform.SetParent(parentNode.ChildNodes.Find(u => u.LinkType == LinkType.Head).transform, false);
+        }
+
+        
         return engineObj;
     }
 
@@ -612,7 +679,12 @@ public class ResourceCtrl : MonoBehaviour
             }
             #endregion
 
-            string Code = (Convert.ToInt32(ResourceCtrl.Instance.TankList.Max(u => u.Code)) + 1).ToString().PadLeft(5, '0');
+            if (MaxTankCode == "") 
+            {
+                MaxTankCode = ResourceCtrl.Instance.TankList.Max(u => u.Code);
+            }
+            string Code = (Convert.ToInt32(MaxTankCode) + 1).ToString().PadLeft(5, '0');
+            MaxTankCode = Code;
 
             //添加组装信息
             AOT_SetupRecord record = new AOT_SetupRecord();
