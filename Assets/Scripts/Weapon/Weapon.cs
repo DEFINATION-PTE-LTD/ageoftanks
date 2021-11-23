@@ -347,7 +347,7 @@ public class Weapon : MonoBehaviour
                         Vector3 t_pos = t.transform.position + new Vector3(0, 3, 0);
                         //添加一个动画
                         quence.Append(
-                        transform.parent.DOLookAt(t.transform.position, 0.3f,AxisConstraint.Y).OnComplete(() =>
+                        transform.DOLookAt(t.transform.position, 0.3f,AxisConstraint.Y).OnComplete(() =>
                         {
                             for (int i = 0; i < 3; i++)
                             {

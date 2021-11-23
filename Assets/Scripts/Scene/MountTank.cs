@@ -3,11 +3,12 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.Playables;
 
 public class MountTank : MonoBehaviour
 {
 
-   
+    
     // Start is called before the first frame update
     void Start()
     {
@@ -21,11 +22,12 @@ public class MountTank : MonoBehaviour
     }
     private void Awake()
     {
-       // StartCoroutine(CommonHelper.DelayToInvokeDo(() => { BeginMount(); }, 3f));
+       
+        // StartCoroutine(CommonHelper.DelayToInvokeDo(() => { BeginMount(); }, 3f));
 
     }
 
-    public void BeginMount(AOT_Parts Engine, AOT_Parts Body, AOT_Parts Head, AOT_Parts Weapon) 
+    public GameObject BeginMount(AOT_Parts Engine, AOT_Parts Body, AOT_Parts Head, AOT_Parts Weapon) 
     {
         if (transform.Find("NewTank").childCount > 0)
         {
@@ -35,6 +37,9 @@ public class MountTank : MonoBehaviour
         GameObject tank =  ResourceCtrl.Instance.Mount(Engine, Body, Head, Weapon);
 
         tank.transform.SetParent(transform.Find("NewTank"), false);
+
+        return tank;
     }
-    
+
+
 }

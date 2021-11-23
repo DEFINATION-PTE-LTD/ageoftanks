@@ -83,13 +83,21 @@ public class AudioManager : MonoBehaviour
     /// <summary>
     /// 播放背景音乐
     /// </summary>
-    public void PlayBgm(string _audioName)
+    public void PlayBgm(string _audioName="")
     {
         AudioSource audioSource = transform.Find("Background").GetComponent<AudioSource>();
         audioSource.volume = MusicVol;
-        audioSource.clip = Resources.Load<AudioClip>(_audioName);
+        audioSource.clip = Resources.Load<AudioClip>(_audioName==""? "Sound/bg-sound":_audioName);
         audioSource.loop = true;
         audioSource.Play();
+    }
+    /// <summary>
+    /// 暂停播放背景
+    /// </summary>
+    public void PauseBgm()
+    {
+        AudioSource audioSource = transform.Find("Background").GetComponent<AudioSource>();
+        audioSource.Pause();
     }
 
     /// <summary>

@@ -200,6 +200,7 @@
     <Compile Include="Assets\RFX_Resources\Scripts\Destroy.cs" />
     <Compile Include="Assets\Scripts\AnimationBindEvent.cs" />
     <Compile Include="Assets\Scripts\CameraSwitch.cs" />
+    <Compile Include="Assets\Scripts\Common\AssemblyTimeline.cs" />
     <Compile Include="Assets\Scripts\Common\AudioManager.cs" />
     <Compile Include="Assets\Scripts\Common\CameraRot.cs" />
     <Compile Include="Assets\Scripts\Common\CommonHelper.cs" />
@@ -209,6 +210,8 @@
     <Compile Include="Assets\Scripts\Common\JSMsgManager.cs" />
     <Compile Include="Assets\Scripts\Common\JSONhelper.cs" />
     <Compile Include="Assets\Scripts\Common\PosCtrl.cs" />
+    <Compile Include="Assets\Scripts\Common\TimelineHelper.cs" />
+    <Compile Include="Assets\Scripts\Common\TimelineUnit.cs" />
     <Compile Include="Assets\Scripts\Common\VolumeCtrl.cs" />
     <Compile Include="Assets\Scripts\FightPointer.cs" />
     <Compile Include="Assets\Scripts\Looker.cs" />
@@ -377,6 +380,7 @@
     <None Include="Assets\Alien world\Image effects\Standard Assets\Effects\ImageEffects\Shaders\ContrastComposite.shader" />
     <None Include="Assets\JMO Assets\WarFX\Shaders\WFX_S Particle Multiply A8.shader" />
     <None Include="Assets\Resources\Language\Chinese.txt" />
+    <None Include="Assets\Resources\RenderTexture.shader" />
     <None Include="Assets\Alien world\Image effects\Standard Assets\Effects\ImageEffects\Shaders\Contrast Stretch\MinMaxReduction.shader" />
     <None Include="Assets\Alien world\Image effects\Standard Assets\Effects\ImageEffects\Shaders\BlurEffectConeTaps.shader" />
     <None Include="Assets\Alien world\Image effects\Standard Assets\Effects\ImageEffects\Shaders\_DepthOfField\Bokeh34.shader" />

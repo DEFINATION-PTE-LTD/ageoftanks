@@ -13,8 +13,8 @@ public class HttpTool : MonoBehaviour
 {
 
     private static HttpTool _instacne = null;
-    private string baseUrl = "http://game.ageoftanks.io/serverapi/";
-   // private string baseUrl = "http://localhost:16555/";
+    private string baseUrl = "https://game.ageoftanks.io/serverapi/";
+    //private string baseUrl = "http://localhost:16555/";
 
 
     public static HttpTool Instance

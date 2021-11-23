@@ -19,18 +19,24 @@ public class MountLinkEffect : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        gameObject.SetActive(false);
         beamStart = Instantiate(beamStartPre, new Vector3(0, 0, 0), Quaternion.identity) as GameObject;
         beamEnd = Instantiate(beamEndPre, new Vector3(0, 0, 0), Quaternion.identity) as GameObject;
         beam = Instantiate(beamPre, new Vector3(0, 0, 0), Quaternion.identity) as GameObject;
         line = beam.GetComponent<LineRenderer>();
+        beam.transform.SetParent(transform, false);
+        beamStart.transform.SetParent(transform, false);
+        beamEnd.transform.SetParent(transform, false);
 
+    }
+    private void Awake()
+    {
         
     }
-
     // Update is called once per frame
     void Update()
     {
-        ShootBeamInDir(transform.position, new Vector3(10 , 10, 10));
+        ShootBeamInDir(transform.position, new Vector3(0, 1, 0));
     }
 
     void ShootBeamInDir(Vector3 start, Vector3 dir)

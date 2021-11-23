@@ -4,11 +4,14 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.Playables;
 using UnityEngine.UI;
 
 public class MountPanel : MonoBehaviour
 {
     public GameObject mountArea;
+
+    public GameObject AssemblyTimeline;
     /// <summary>
     /// 面板root
     /// </summary>
@@ -28,7 +31,7 @@ public class MountPanel : MonoBehaviour
     /// <summary>
     /// 选中项
     /// </summary>
-    public string selectedTab = "btnEngine";
+    private string selectedTab = "btnNose";
 
     public AOT_Parts Head;
     public AOT_Parts Body;
@@ -48,10 +51,11 @@ public class MountPanel : MonoBehaviour
     }
     private void Awake()
     {
+
         InitTabs();
 
-        SwitchTab("btnEngine");
-        SwitchTabList("Engine");
+        SwitchTab("btnNose");
+        SwitchTabList("Head");
 
         mountPanel.transform.Find("btnMount").GetComponent<UnityEngine.UI.Button>().onClick.AddListener(() => {
             MountTank mountTank = mountArea.GetComponent<MountTank>();
@@ -67,9 +71,8 @@ public class MountPanel : MonoBehaviour
                     ShowMessage("Insufficient carrying capacity");
                     return;
                 }
-
-
-                mountTank.BeginMount(Engine, Body, Head, Weapon);
+                GameObject newTank = mountTank.BeginMount(Engine, Body, Head, Weapon);
+                PlayTimeline(newTank);
                 AOT_SetupRecord record = ResourceCtrl.Instance.GetTankSetupRecord(Engine, Body, Head, Weapon);//获取组装记录
                 ResourceCtrl.Instance.MountTanks.Add(record);
                
@@ -101,6 +104,7 @@ public class MountPanel : MonoBehaviour
                 ShowMessage("Requires complete four parts to be assembled");
             }
         });
+
         mountPanel.transform.Find("btnClose").GetComponent<UnityEngine.UI.Button>().onClick.AddListener(() => {
             transform.gameObject.SetActive(false);
             mountArea.SetActive(false);
@@ -110,17 +114,79 @@ public class MountPanel : MonoBehaviour
             mountArea.SetActive(false);
             mountPanel.SetActive(true);
             completePanel.SetActive(false);
-            SwitchTab("btnEngine");
-            SwitchTabList("Engine");
+            SwitchTab("btnNose");
+            SwitchTabList("Head");
         });
+
         completePanel.transform.Find("btnClose").GetComponent<UnityEngine.UI.Button>().onClick.AddListener(() => {
             transform.gameObject.SetActive(false);
             mountPanel.SetActive(true);
             completePanel.SetActive(false);
         });
 
+
+        AssemblyTimeline.GetComponent<PlayableDirector>().played += MountPanel_played;
+        AssemblyTimeline.GetComponent<PlayableDirector>().stopped += MountPanel_stopped;
     }
 
+
+    private void MountPanel_played(PlayableDirector obj)
+    {
+        AssemblyTimeline.SetActive(true);
+        AssemblyTimeline.transform.DOScale(new Vector3(1, 1, 1), 0.5f);
+
+        Debug.Log("开始播放");
+    }
+    private void MountPanel_stopped(PlayableDirector obj)
+    {
+
+        AssemblyTimeline.transform.DOScale(new Vector3(0, 0, 0), 0.5f).OnComplete(() => {
+            AssemblyTimeline.SetActive(false);
+            DestroyImmediate(AssemblyTimeline.GetComponent<AssemblyTimeline>().tank);
+        });
+
+    }
+
+    public void PlayTimeline(GameObject tank)
+    {
+        GameObject timelineTank = Instantiate(tank, AssemblyTimeline.transform.Find("TankBox"), false);
+        GameObject head = null, body = null, weaponL = null, weaponR = null, engine = null;
+
+        foreach (Nodes item in timelineTank.GetComponentsInChildren<Nodes>())
+        {
+            switch (item.NodeType)
+            {
+                case NodeType.Head:
+                    head = item.gameObject;
+                    break;
+                case NodeType.Body:
+                    body = item.gameObject;
+                    break;
+                case NodeType.Weapon:
+                    if (weaponL != null)
+                    {
+                        weaponR = item.gameObject;
+                    }
+                    else
+                    {
+                        weaponL = item.gameObject;
+                    }
+                    break;
+                case NodeType.Engine:
+                    engine = item.gameObject;
+                    break;
+            }
+        }
+       
+
+        AssemblyTimeline.SetActive(true);
+        StartCoroutine(CommonHelper.DelayToInvokeDo(() => {
+            AssemblyTimeline.GetComponent<AssemblyTimeline>().SetTracks(head, body, weaponL, weaponR, engine);
+            AssemblyTimeline.GetComponent<PlayableDirector>().Play();
+
+        }, 0.1f));
+
+    }
 
     /// <summary>
     /// 初始化tab选项
@@ -211,7 +277,9 @@ public class MountPanel : MonoBehaviour
         newCard.SetActive(true);
         
         newCard.transform.Find("partCover/image").GetComponent<RawImage>().texture = ResourceCtrl.Instance.PartsSprite[item.Code].texture ;
-        newCard.transform.Find("partCover/iconLvl" + item.Level).gameObject.SetActive(true);
+        newCard.transform.Find("partCover/iconLvl").GetComponent<RawImage>().texture = Resources.Load<Texture>("Texture/v" + item.Level);;
+        newCard.transform.Find("partCover/background").GetComponent<RawImage>().texture = Resources.Load<Texture>("Texture/bg_v" + item.Level); 
+
         GameObject iconSkill = newCard.transform.Find("partCover/iconSkill").gameObject;
         GameObject checkStatus = newCard.transform.Find("checkStatus").gameObject;
         checkStatus.GetComponent<Toggle>().onValueChanged.AddListener((bool isOn) => {
@@ -472,13 +540,8 @@ public class MountPanel : MonoBehaviour
         //属性
         GameObject attr = completePanel.transform.Find("Attributes").gameObject;
 
-        attr.transform.Find("iconLvl1").gameObject.SetActive(false);
-        attr.transform.Find("iconLvl2").gameObject.SetActive(false);
-        attr.transform.Find("iconLvl3").gameObject.SetActive(false);
-        attr.transform.Find("iconLvl4").gameObject.SetActive(false);
-        attr.transform.Find("iconLvl5").gameObject.SetActive(false);
-
-        attr.transform.Find("iconLvl" + item.Level).gameObject.SetActive(true);
+        attr.transform.Find("iconLvl").GetComponent<RawImage>().texture = Resources.Load<Texture>("Texture/v" + item.Level);
+        
         attr.transform.Find("血量/txtVal").GetComponent<Text>().text = Convert.ToInt32(item.Blood).ToString();
         attr.transform.Find("攻击力/txtVal").GetComponent<Text>().text = Convert.ToInt32(item.Attack).ToString();
         //attr.transform.Find("防御值/txtVal").GetComponent<Text>().text = item.Defense.ToString();
