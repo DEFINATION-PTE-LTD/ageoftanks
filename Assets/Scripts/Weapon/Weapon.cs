@@ -45,25 +45,27 @@ public class Weapon : MonoBehaviour
     void FindWeapons()
     {
         //获取武器位
+        //foreach (Nodes item in GetComponentsInChildren<Nodes>())
+        //{
+        //    if (item.NodeType == NodeType.Weapon && item.ChildNodes.Count > 0)
+        //    {
+        //        weapons.Add(new WeaponObjectClass
+        //        {
+        //            WeaponObj = item.gameObject,
+        //            Barrels = new List<GameObject>(),
+        //            BulletPath = "",
+        //            BulletPerfab = null,
+        //            FirePath = "",
+        //            FirePerfab = null
+        //        });
+        //    }
+
+        //}
+
+
+        //获取武器位
         foreach (Transform item in GetComponentsInChildren<Transform>())
         {
-            //if (item.name.ToLower().IndexOf("mount_weapon_l") > -1 || item.name.ToLower().IndexOf("mount_weapon_r") > -1 || item.name.ToLower().IndexOf("mount_weapon_top") > -1)
-            //{
-            //    if (item.childCount > 0)
-            //    {
-            //       // Weapon_L.Add(item.GetChild(0).gameObject);
-            //        weapons.Add(new WeaponObjectClass 
-            //        {
-            //            WeaponObj = item.GetChild(0).gameObject,
-            //            Barrels = new List<GameObject>(),
-            //            BulletPath="",
-            //            BulletPerfab=null,
-            //            FirePath="",
-            //            FirePerfab=null
-            //        });
-            //    }
-            //}
-
             switch (item.name)
             {
                 case "Weapon_DoubleGun_lvl1":
@@ -114,6 +116,14 @@ public class Weapon : MonoBehaviour
             foreach (WeaponObjectClass weapon in weapons)
             {
                 //获取武器拥有的枪管
+                //foreach (LinkNodeInfo item in weapon.WeaponObj.transform.GetComponent<Nodes>().ChildNodes)
+                //{
+                //    if (item.LinkType == LinkType.Barrel)
+                //    {
+                //        weapon.Barrels.Add(item.LinkNode);
+                //    }
+                //}
+                //获取武器拥有的枪管
                 foreach (Transform item in weapon.WeaponObj.transform.GetComponentsInChildren<Transform>())
                 {
                     if (item.name.ToLower().IndexOf("barrel_end") > -1)
@@ -121,7 +131,7 @@ public class Weapon : MonoBehaviour
                         weapon.Barrels.Add(item.gameObject);
                     }
                 }
-                //GetBulletPath(weapon);
+                GetBulletPath(weapon);
                 GetBulletPerfab(weapon);
             }
 
@@ -347,34 +357,37 @@ public class Weapon : MonoBehaviour
                         Vector3 t_pos = t.transform.position + new Vector3(0, 3, 0);
                         //添加一个动画
                         quence.Append(
-                        transform.DOLookAt(t.transform.position, 0.3f,AxisConstraint.Y).OnComplete(() =>
-                        {
-                            for (int i = 0; i < 3; i++)
-                            {
-                                
-                                StartCoroutine(CommonHelper.DelayToInvokeDo(() =>
-                                {
-                                    GameObject bullet = Instantiate(w.BulletPerfab);
-                                    if (parent != null) 
-                                    {
-                                        bullet.transform.SetParent(parent.transform, false);
-                                    }
-                                    bullet.transform.forward = item.transform.forward;
-                                    bullet.transform.position = item.transform.position;
-                                    //bullet.transform.GetComponent<Rigidbody>().AddForce(bullet.transform.forward * 60, ForceMode.Impulse);
-                                    bullet.transform.DOMove(t_pos, 0.3f).OnUpdate(() => {
-                                        bullet.transform.DOLookAt(t_pos, 0, AxisConstraint.Y);
-                                    }).OnComplete(()=> {
-                                        DestroyImmediate(bullet);
-                                    });
-                                  
+                         transform.DOLookAt(t.transform.position, 0.3f, AxisConstraint.Y).OnComplete(() =>
+                         {
+                             for (int i = 0; i < 3; i++)
+                             {
 
-                                    //bulletBehavior.target = t;
-                                    PlayFireAni(w.WeaponObj, item, w.FirePerfab);
-                                }, i* 0.1f));
-                            }
-                          
-                        }));
+                                 StartCoroutine(CommonHelper.DelayToInvokeDo(() =>
+                                 {
+                                     GameObject bullet = Instantiate(w.BulletPerfab);
+                                     if (parent != null)
+                                     {
+                                         bullet.transform.SetParent(parent.transform, false);
+                                     }
+                                     bullet.transform.forward = item.transform.forward;
+                                     bullet.transform.position = item.transform.position;
+                                     //bullet.transform.LookAt(t_pos);
+                                     //bullet.transform.GetComponent<Rigidbody>().AddForce(bullet.transform.forward * 100, ForceMode.Impulse);
+                                     bullet.transform.DOMove(t_pos, 0.5f).OnUpdate(() =>
+                                      {
+                                          bullet.transform.DOLookAt(t_pos, 0, AxisConstraint.Y);
+                                      }).OnComplete(() =>
+                                      {
+                                          DestroyImmediate(bullet);
+                                      });
+
+
+                                     //bulletBehavior.target = t;
+                                     PlayFireAni(w.WeaponObj, item, w.FirePerfab);
+                                 }, i * 0.12f));
+                             }
+
+                         }));
                         //延迟0.2秒
                         quence.AppendInterval(0.3f);
                     }
@@ -423,33 +436,33 @@ public class Weapon : MonoBehaviour
 
                 if (wc.WeaponObj.name.IndexOf("Weapon_DoubleGun") > -1)
                 {
-                    AudioManager.Instance.PlayAudio("Sound/weapon_gatling_006");
+                    AudioMgr.Instance.PlayAudio("Sound/weapon_gatling_006");
                     //shootSound.clip = Resources.Load<AudioClip>("Sound/weapon_gatling_006");
                 }
                 else if (wc.WeaponObj.name.IndexOf("Weapon_GLauncher") > -1)
                 {
-                    AudioManager.Instance.PlayAudio("Sound/thump");
+                    AudioMgr.Instance.PlayAudio("Sound/thump");
                     //shootSound.clip = Resources.Load<AudioClip>("Sound/thump");
                 }
                 else if (wc.WeaponObj.name.IndexOf("Weapon_Shock_Rifle") > -1)
                 {
-                    AudioManager.Instance.PlayAudio("Sound/laser");
+                    AudioMgr.Instance.PlayAudio("Sound/laser");
                     //shootSound.clip = Resources.Load<AudioClip>("Sound/laser");
                 }
                 else if (wc.WeaponObj.name.IndexOf("Weapon_Shocker") > -1)
                 {
-                    AudioManager.Instance.PlayAudio("Sound/combustion");
+                    AudioMgr.Instance.PlayAudio("Sound/combustion");
                    // shootSound.clip = Resources.Load<AudioClip>("Sound/combustion");
                 }
                 else if (wc.WeaponObj.name.IndexOf("Weapon_Sniper") > -1)
                 {
-                    AudioManager.Instance.PlayAudio("Sound/bullet");
+                    AudioMgr.Instance.PlayAudio("Sound/bullet");
                     //shootSound.clip = Resources.Load<AudioClip>("Sound/bullet");
                 }
 
    
                 
-            }, m * 0.1f));
+            }, m * 0.12f));
         }
         //  SoundMgr.Instance.SkillSound(gameObject, skillname, true);
     }

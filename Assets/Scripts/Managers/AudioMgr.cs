@@ -2,21 +2,21 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class AudioManager : MonoBehaviour
+public class AudioMgr : MonoBehaviour
 {
-    static public AudioManager _instacne=null;
+    static public AudioMgr _instacne=null;
 
     public float MusicVol = 1f; //背景音乐
     public float EffectVol = 1f;//音效
 
 
-    public static AudioManager Instance
+    public static AudioMgr Instance
     {
         get
         {
             if (_instacne == null)
             {
-                Debug.LogError("Awake error");
+                Debug.LogError("AudioMgr Awake error");
             }
             return _instacne;
         }
@@ -27,7 +27,7 @@ public class AudioManager : MonoBehaviour
         if (_instacne == null)
         {
             DontDestroyOnLoad(gameObject);
-            AudioManager._instacne = gameObject.GetComponent<AudioManager>();
+            AudioMgr._instacne = gameObject.GetComponent<AudioMgr>();
         }
 
         if (PlayerPrefs.HasKey("MusicVol"))

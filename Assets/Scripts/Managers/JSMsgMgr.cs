@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,18 +10,18 @@ using UnityEngine;
 /// <summary>
 /// js通信管理器
 /// </summary>
-public class JSMsgManager:MonoBehaviour
+public class JSMsgMgr: MonoBehaviour
 {
 
-    static public JSMsgManager _instacne = null;
+    static public JSMsgMgr _instacne = null;
 
-    public static JSMsgManager Instance
+    public static JSMsgMgr Instance
     {
         get
         {
             if (_instacne == null)
             {
-                Debug.LogError("JSMsgManager Awake error");
+                Debug.LogError("JSMsgMgr Awake error");
             }
             return _instacne;
         }
@@ -30,7 +32,7 @@ public class JSMsgManager:MonoBehaviour
         if (_instacne == null)
         {
             DontDestroyOnLoad(gameObject);
-            JSMsgManager._instacne = gameObject.GetComponent<JSMsgManager>();
+            JSMsgMgr._instacne = gameObject.GetComponent<JSMsgMgr>();
         }
         SendMessage("{\"action\":\"awake\",\"data\":\"success\"}");
     }
@@ -42,10 +44,21 @@ public class JSMsgManager:MonoBehaviour
     public void MessageFromJS(string jsonStr)
     {
         Debug.Log(jsonStr);
-        string action = "";
+        JObject jsonObj =(JObject)JsonConvert.DeserializeObject(jsonStr);
+        string action = jsonObj["action"].ToString();
         switch (action)
         {
-            case "":
+            case "setplatform":
+                if (jsonObj["data"].ToString().ToLower() == "true")
+                {
+                    ResourceCtrl.Instance.IsPC = true;
+                    ResourceCtrl.Instance.QualityVal = 4;
+                }
+                else
+                {
+                    ResourceCtrl.Instance.IsPC = false;
+                    ResourceCtrl.Instance.QualityVal =1;
+                }
                 break;
             default:
                 break;

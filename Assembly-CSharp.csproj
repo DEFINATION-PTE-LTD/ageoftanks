@@ -201,13 +201,11 @@
     <Compile Include="Assets\Scripts\AnimationBindEvent.cs" />
     <Compile Include="Assets\Scripts\CameraSwitch.cs" />
     <Compile Include="Assets\Scripts\Common\AssemblyTimeline.cs" />
-    <Compile Include="Assets\Scripts\Common\AudioManager.cs" />
     <Compile Include="Assets\Scripts\Common\CameraRot.cs" />
     <Compile Include="Assets\Scripts\Common\CommonHelper.cs" />
     <Compile Include="Assets\Scripts\Common\CropPicture.cs" />
     <Compile Include="Assets\Scripts\Common\GLauncher.cs" />
     <Compile Include="Assets\Scripts\Common\HttpTool.cs" />
-    <Compile Include="Assets\Scripts\Common\JSMsgManager.cs" />
     <Compile Include="Assets\Scripts\Common\JSONhelper.cs" />
     <Compile Include="Assets\Scripts\Common\PosCtrl.cs" />
     <Compile Include="Assets\Scripts\Common\TimelineHelper.cs" />
@@ -215,6 +213,10 @@
     <Compile Include="Assets\Scripts\Common\VolumeCtrl.cs" />
     <Compile Include="Assets\Scripts\FightPointer.cs" />
     <Compile Include="Assets\Scripts\Looker.cs" />
+    <Compile Include="Assets\Scripts\Managers\AssemblyMgr.cs" />
+    <Compile Include="Assets\Scripts\Managers\AudioMgr.cs" />
+    <Compile Include="Assets\Scripts\Managers\JSMsgMgr.cs" />
+    <Compile Include="Assets\Scripts\Managers\SkinMgr.cs" />
     <Compile Include="Assets\Scripts\Models\APIResult.cs" />
     <Compile Include="Assets\Scripts\Models\Actor.cs" />
     <Compile Include="Assets\Scripts\Models\BaseBuff.cs" />
@@ -240,6 +242,7 @@
     <Compile Include="Assets\Scripts\Scene\AOTButton.cs" />
     <Compile Include="Assets\Scripts\Scene\BackTo.cs" />
     <Compile Include="Assets\Scripts\Scene\BattleMode.cs" />
+    <Compile Include="Assets\Scripts\Scene\DestoryScene.cs" />
     <Compile Include="Assets\Scripts\Scene\FightCtrl.cs" />
     <Compile Include="Assets\Scripts\Scene\Login.cs" />
     <Compile Include="Assets\Scripts\Scene\MountLinkEffect.cs" />
@@ -286,6 +289,13 @@
     <Compile Include="Assets\StylizedProjectilePack1\scripts\destroyMe.cs" />
     <Compile Include="Assets\StylizedProjectilePack1\scripts\instantiateEffectCaller.cs" />
     <Compile Include="Assets\StylizedProjectilePack1\scripts\particleColorChanger.cs" />
+    <Compile Include="Assets\WebGLSupport\WebGLInput\Detail\RebuildChecker.cs" />
+    <Compile Include="Assets\WebGLSupport\WebGLInput\Mobile\WebGLInputMobile.cs" />
+    <Compile Include="Assets\WebGLSupport\WebGLInput\WebGLInput.cs" />
+    <Compile Include="Assets\WebGLSupport\WebGLInput\Wrapper\IInputField.cs" />
+    <Compile Include="Assets\WebGLSupport\WebGLInput\Wrapper\WrappedInputField.cs" />
+    <Compile Include="Assets\WebGLSupport\WebGLInput\Wrapper\WrappedTMPInputField.cs" />
+    <Compile Include="Assets\WebGLSupport\WebGLWindow\WebGLWindow.cs" />
     <None Include="Assets\Alien world\Image effects\Standard Assets\Effects\ImageEffects\Shaders\Tonemapper.shader" />
     <None Include="Assets\Game\Shaders\Mask Add.shader" />
     <None Include="Assets\Allsky\allsky_readme.txt" />
@@ -1039,6 +1049,9 @@
     </Reference>
     <Reference Include="Unity.CollabProxy.Editor">
       <HintPath>E:/Projects/TankGame/Code/AgeOfTanks/Library/ScriptAssemblies/Unity.CollabProxy.Editor.dll</HintPath>
+    </Reference>
+    <Reference Include="Unity.AssetBundleBrowser.Editor">
+      <HintPath>E:/Projects/TankGame/Code/AgeOfTanks/Library/ScriptAssemblies/Unity.AssetBundleBrowser.Editor.dll</HintPath>
     </Reference>
     <Reference Include="Unity.Rider.Editor">
       <HintPath>E:/Projects/TankGame/Code/AgeOfTanks/Library/ScriptAssemblies/Unity.Rider.Editor.dll</HintPath>

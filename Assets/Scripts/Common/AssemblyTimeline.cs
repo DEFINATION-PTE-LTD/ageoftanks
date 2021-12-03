@@ -21,11 +21,11 @@ public class AssemblyTimeline : MonoBehaviour
     // Start is called before the first frame update
     void Awake()
     {
-        AudioManager.Instance.PauseBgm();
+        AudioMgr.Instance.PauseBgm();
         btnSkip.GetComponent<UnityEngine.UI.Button>().onClick.AddListener(() => {
             gameObject.SetActive(false);
             DestroyImmediate(tank);
-            AudioManager.Instance.PlayBgm();
+            AudioMgr.Instance.PlayBgm();
         });
 
         playableDirector = GetComponent<PlayableDirector>();

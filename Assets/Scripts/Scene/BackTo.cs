@@ -20,7 +20,7 @@ public class BackTo : MonoBehaviour
     private void Awake()
     {
         transform.GetComponent<UnityEngine.UI.Button>().onClick.AddListener(() => {
-            AudioManager.Instance.PlayBtnAudio();
+            AudioMgr.Instance.PlayBtnAudio();
             if (!string.IsNullOrEmpty(BackScene))
             {
                 SceneManager.LoadScene(BackScene);

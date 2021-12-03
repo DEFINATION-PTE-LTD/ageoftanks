@@ -33,12 +33,16 @@ public class ResourceCtrl : MonoBehaviour
 
     public List<LevelInfo> Levels = new List<LevelInfo>();//等级名称
     public string MaxTankCode = "";
+    public int QualityVal = 0;//画质设置
+    public bool IsPC = true; //是否为pc端运行
 
     private static ResourceCtrl instance = null;
     public static ResourceCtrl Instance
     {
         get { return instance; }
     }
+
+    [Obsolete]
     private void Awake()
     {
         if (instance == null)
@@ -58,13 +62,45 @@ public class ResourceCtrl : MonoBehaviour
         GetLevelInfo();
         
 
-        System.GC.Collect();
+       
         StartCoroutine(CommonHelper.DelayToInvokeDo(() => {
-           SceneManager.LoadScene("BattleMode");
+            System.GC.Collect();
+            SceneManager.LoadScene("BattleMode");
         }, 5f));
-        
+
+        //通知发送平台信息
+        JSMsgMgr.Instance.SendMessage(JSONhelper.ToJson(new { action="getplatform", data="" }));
     }
 
+    private void Update()
+    {
+        Colortransform(QualityVal);
+    }
+
+    public void Colortransform(int value)
+    {
+        switch (value)
+        {
+            case 0:
+                QualitySettings.SetQualityLevel(0, true);
+                break;
+            case 1:
+                QualitySettings.SetQualityLevel(1, true);
+                break;
+            case 2:
+                QualitySettings.SetQualityLevel(2, true);
+                break;
+            case 3:
+                QualitySettings.SetQualityLevel(3, true);
+                break;
+            case 4:
+                QualitySettings.SetQualityLevel(4, true);
+                break;
+            case 5:
+                QualitySettings.SetQualityLevel(5, true);
+                break;
+        }
+    }
 
     /// <summary>
     /// 获取用户信息
@@ -637,7 +673,7 @@ public class ResourceCtrl : MonoBehaviour
             bodyObj.transform.SetParent(parentNode.ChildNodes.Find(u => u.LinkType == LinkType.Head).transform, false);
         }
 
-        
+        GC.Collect();
         return engineObj;
     }
 

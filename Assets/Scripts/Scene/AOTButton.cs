@@ -15,7 +15,7 @@ public class AOTButton :MonoBehaviour,IPointerEnterHandler,IPointerExitHandler,I
     //点击
     public void OnPointerClick(PointerEventData eventData)
     {
-        AudioManager.Instance.PlayBtnAudio();
+        AudioMgr.Instance.PlayBtnAudio();
     }
     //进入
     public void OnPointerEnter(PointerEventData eventData)

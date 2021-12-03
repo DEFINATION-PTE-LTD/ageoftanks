@@ -3291,6 +3291,8 @@ MonoBehaviour:
   Tank: {fileID: 1115086481}
   ResourceRoot: {fileID: 0}
   MaxTankCode: 
+  QualityVal: 0
+  IsPC: 1
 --- !u!4 &7361815933023228926 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6444461526925735999, guid: 58f82ec2529d6d447b2cf249d7a51518,

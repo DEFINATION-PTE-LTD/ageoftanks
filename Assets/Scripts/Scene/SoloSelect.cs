@@ -44,7 +44,7 @@ public class SoloSelect : MonoBehaviour
     //开始试玩按钮
     private void StartAction()
     {
-        AudioManager.Instance.PlayBtnAudio();
+        AudioMgr.Instance.PlayBtnAudio();
         if (ResourceCtrl.Instance.SelectList.Count == 0)
         {
             Root.transform.Find("MainPanel/RightPanel/txtTip").gameObject.SetActive(true);
@@ -122,7 +122,7 @@ public class SoloSelect : MonoBehaviour
 
           
             newCard.gameObject.AddComponent<UnityEngine.UI.Button>().onClick.AddListener(() => {
-                AudioManager.Instance.PlayBtnAudio();
+                AudioMgr.Instance.PlayBtnAudio();
                 Debug.Log("当前点击了" + newCard.name);
                 showDetail(item);
             });
@@ -204,7 +204,7 @@ public class SoloSelect : MonoBehaviour
             infoPanel.transform.Find("BtnSelect").gameObject.SetActive(true);
             btnSelect.onClick.AddListener(() =>
             {
-                AudioManager.Instance.PlayBtnAudio();
+                AudioMgr.Instance.PlayBtnAudio();
                 //标记状态切换
 
                 Root.transform.Find("MainPanel/RightPanel/CardPool/Viewport/Content/TankCard" + item.Code + "/Panel/CheckStatus").gameObject.SetActive(false);
@@ -224,7 +224,7 @@ public class SoloSelect : MonoBehaviour
 
             btnSelect.onClick.AddListener(() =>
             {
-                AudioManager.Instance.PlayBtnAudio();
+                AudioMgr.Instance.PlayBtnAudio();
                 if (ResourceCtrl.Instance.SelectList.Count > 0)
                 {
                     Root.transform.Find("MainPanel/RightPanel/CardPool/Viewport/Content/TankCard" + ResourceCtrl.Instance.SelectList[0].Code + "/Panel/CheckStatus").gameObject.SetActive(false);
@@ -245,7 +245,7 @@ public class SoloSelect : MonoBehaviour
         UnityEngine.UI.Button btnClose = infoPanel.transform.Find("BtnClose").GetComponent<UnityEngine.UI.Button>();
         btnClose.onClick.RemoveAllListeners();
         btnClose.onClick.AddListener(() => {
-            AudioManager.Instance.PlayBtnAudio();
+            AudioMgr.Instance.PlayBtnAudio();
             infoPanel.transform.DOScale(new Vector3(0, 0, 0), 0.2f).SetEase(Ease.OutExpo).OnComplete(() =>
             {
                 infoPanel.SetActive(false);

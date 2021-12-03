@@ -63,11 +63,11 @@ public class FightCtrl : MonoBehaviour
         //    UIPanel.transform.Find("victory").DOLocalRotate(new Vector3(0,0, 0), 1f).From(new Vector3(100,100,0));// .DOShakeScale(1f);
         //}, 2f));
 
-        //1v1自动关闭lookat视角
-        if (FightType == 1) { LookAtSwitch = false; }
+        //1v1自动关闭lookat视角，非pc端也自动关闭
+        if (FightType == 1 || ResourceCtrl.Instance.IsPC==false) { LookAtSwitch = false; }
 
 
-        AudioManager.Instance.PlayBgm("Sound/bg-fight");
+        AudioMgr.Instance.PlayBgm("Sound/bg-fight");
 
         InitPlatform();
         InitTank();
@@ -78,8 +78,8 @@ public class FightCtrl : MonoBehaviour
         UIPanel.transform.Find("btnBack").SetAsLastSibling();
         UIPanel.transform.Find("btnBack").GetComponent<UnityEngine.UI.Button>().onClick.AddListener(() =>
         {
-            AudioManager.Instance.PlayBtnAudio();
-            AudioManager.Instance.PlayBgm("Sound/bg-sound");
+            AudioMgr.Instance.PlayBtnAudio();
+            AudioMgr.Instance.PlayBgm("Sound/bg-sound");
             SceneManager.LoadSceneAsync("BattleMode");
             System.GC.Collect();
         });
@@ -1131,6 +1131,10 @@ public class FightCtrl : MonoBehaviour
     {
         if (fightitem.Death == false)
         {
+            if (target == null) 
+            {
+                return;
+            }
             Weapon w = fightitem.Tank.GetComponent<Weapon>();
             w.target = new List<GameObject>() { target.Tank };
             w.Shoot(fightitem.Tank);
@@ -1518,7 +1522,7 @@ public class FightCtrl : MonoBehaviour
                                     for (int i = 0; i < atklist.Count; i++)
                                     {
                                         FightItem item = atklist[i];
-                                        StartCoroutine(CommonHelper.DelayToInvokeDo(() => { SimpleAttack(item, SetTarget(item)[0], true); }, (i + 1) * 0.3f));
+                                        StartCoroutine(CommonHelper.DelayToInvokeDo(() => { SimpleAttack(item, SetTarget(item).FirstOrDefault(), true); }, (i + 1) * 0.3f));
                                     }
                                     
                                 }
@@ -1653,7 +1657,7 @@ public class FightCtrl : MonoBehaviour
             UIPanel.transform.Find("btnBack").gameObject.SetActive(true);
             Finish = true;
             if (Looker != null) Looker.SetActive(false);
-            AudioManager.Instance.PlayAudio("Sound/defeat");
+            AudioMgr.Instance.PlayAudio("Sound/defeat");
             //UIPanel.transform.Find("txt_round_center").GetComponent<Text>().text = "Defeated";
             UIPanel.transform.Find("defeat").gameObject.SetActive(true);
             UIPanel.transform.Find("defeat").SetAsLastSibling();
@@ -1674,7 +1678,7 @@ public class FightCtrl : MonoBehaviour
                 {
                     Finish = true;
                     if (Looker != null) Looker.SetActive(false);
-                    AudioManager.Instance.PlayAudio("Sound/defeat");
+                    AudioMgr.Instance.PlayAudio("Sound/defeat");
                     //UIPanel.transform.Find("txt_round_center").GetComponent<Text>().text = "Defeated";
                     UIPanel.transform.Find("defeat").gameObject.SetActive(true);
                     UIPanel.transform.Find("defeat").SetAsLastSibling();
@@ -1684,7 +1688,7 @@ public class FightCtrl : MonoBehaviour
                 {
                     Finish = true;
                     if (Looker != null) Looker.SetActive(false);
-                    AudioManager.Instance.PlayAudio("Sound/victory");
+                    AudioMgr.Instance.PlayAudio("Sound/victory");
                     //UIPanel.transform.Find("txt_round_center").GetComponent<Text>().text = "VICTORY";
                     UIPanel.transform.Find("victory").gameObject.SetActive(true);
                     UIPanel.transform.Find("victory").SetAsLastSibling();

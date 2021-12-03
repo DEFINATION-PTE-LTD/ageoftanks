@@ -2297,7 +2297,7 @@ MonoBehaviour:
     m_EaseInDuration: 0
     m_EaseOutDuration: 0
     m_BlendInDuration: -1
-    m_BlendOutDuration: 1.1999999999999993
+    m_BlendOutDuration: 1.216666666666666
     m_MixInCurve:
       serializedVersion: 2
       m_Curve:
@@ -2357,37 +2357,19 @@ MonoBehaviour:
     m_PreExtrapolationTime: 0
     m_DisplayName: "\u79D1\u5E7B\u80CC\u666F\u7535\u5B50\u5408\u6210\u97F3\u6548"
   - m_Version: 1
-    m_Start: 7.816666666666666
-    m_ClipIn: 7.7500000000000036
+    m_Start: 7.8
+    m_ClipIn: 9.600000254313155
     m_Asset: {fileID: -8758105215163352167}
-    m_Duration: 9.569183673469386
+    m_Duration: 7.719183419156234
     m_TimeScale: 1
     m_ParentTrack: {fileID: 785865162767604436}
     m_EaseInDuration: 0
     m_EaseOutDuration: 0
-    m_BlendInDuration: 1.1999999999999993
+    m_BlendInDuration: 1.216666666666666
     m_BlendOutDuration: -1
     m_MixInCurve:
       serializedVersion: 2
-      m_Curve:
-      - serializedVersion: 3
-        time: 0
-        value: 0
-        inSlope: 0
-        outSlope: 0
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: 0
-        outWeight: 0
-      - serializedVersion: 3
-        time: 1
-        value: 1
-        inSlope: 0
-        outSlope: 0
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: 0
-        outWeight: 0
+      m_Curve: []
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
