@@ -35,21 +35,38 @@ public class JSMsgMgr: MonoBehaviour
             JSMsgMgr._instacne = gameObject.GetComponent<JSMsgMgr>();
         }
         SendMessage("{\"action\":\"awake\",\"data\":\"success\"}");
+
+        //注册通知--获取地址(点击进入试玩时)
+        EventCenter.AddListener(eEventType.RequestWalletAddress, GetAddressFromJS);
+       
     }
 
-    //统一消息格式
-    //{action:"",data:"",time:""}
 
-    //接收消息
+    //向JS发送获取地址的通知
+    public void GetAddressFromJS()
+    {
+        SendMessage("{\"action\":\"getAddress\",\"data\":\"\"}");
+    }
+
+    private void Start()
+    {
+       
+    }
+
+    /// <summary>
+    /// 与js通信统一接收方法
+    /// </summary>
+    /// <param name="jsonStr">消息体：{"action":"","data":""}</param>
     public void MessageFromJS(string jsonStr)
     {
         Debug.Log(jsonStr);
         JObject jsonObj =(JObject)JsonConvert.DeserializeObject(jsonStr);
         string action = jsonObj["action"].ToString();
+        string body = jsonObj["data"].ToString();
         switch (action)
         {
             case "setplatform":
-                if (jsonObj["data"].ToString().ToLower() == "true")
+                if (body.ToLower() == "true")
                 {
                     ResourceCtrl.Instance.IsPC = true;
                     ResourceCtrl.Instance.QualityVal = 4;
@@ -60,13 +77,24 @@ public class JSMsgMgr: MonoBehaviour
                     ResourceCtrl.Instance.QualityVal =1;
                 }
                 break;
+                //接收到js发送的地址
+            case "setAddress":
+                if (string.IsNullOrEmpty(body) ==false)
+                {
+                    //广播地址给登录页
+                    EventCenter.Broadcast<string>(eEventType.ReciveWalletAddress, jsonObj["data"].ToString());
+                }
+                break;
             default:
                 break;
         }
     }
 
 
-    //发送消息
+    /// <summary>
+    /// 与js通信统一发送方法
+    /// </summary>
+    /// <param name="jsonStr">消息体：{"action":"","data":""}</param>
     [Obsolete]
     public void SendMessage(string jsonStr)
     {

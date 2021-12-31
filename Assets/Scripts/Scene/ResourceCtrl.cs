@@ -363,9 +363,11 @@ public class ResourceCtrl : MonoBehaviour
         
         if (UserInfo != null)
         {
-            string jsonstr = JSONhelper.ToJson(new { UserID = UserInfo.UUID });
+
+            Dictionary<string, string> pars = new Dictionary<string, string>();
+            pars.Add("UserID", UserInfo.UUID);
            
-            HttpTool.Instance.Post("aotuser/skillinfo", jsonstr, (string result) =>
+            HttpTool.Instance.Post("aotuser/skillinfo", pars, (string result) =>
             {
                 APIResult res = JSONhelper.ToApiResult<AOT_SkillInfo>(result);// JSONhelper.ConvertToObject<APIResult>(result);
 
@@ -411,8 +413,9 @@ public class ResourceCtrl : MonoBehaviour
     {
         if (UserInfo != null)
         {
-            string jsonstr = JSONhelper.ToJson(new { UserID = UserInfo.UUID });
-            HttpTool.Instance.Post("aotuser/skininfo", jsonstr, (string result) =>
+            Dictionary<string, string> pars = new Dictionary<string, string>();
+            pars.Add("UserID", UserInfo.UUID);
+            HttpTool.Instance.Post("aotuser/skininfo", pars, (string result) =>
             {
                 APIResult res = JSONhelper.ToApiResult<AOT_SkinInfo>(result);// JSONhelper.ConvertToObject<APIResult>(result);
 
@@ -435,8 +438,9 @@ public class ResourceCtrl : MonoBehaviour
     {
         if (UserInfo != null)
         {
-            string jsonstr = JSONhelper.ToJson(new { UserID = UserInfo.UUID });
-            HttpTool.Instance.Post("aotuser/model", jsonstr, (string result) =>
+            Dictionary<string, string> pars = new Dictionary<string, string>();
+            pars.Add("UserID", UserInfo.UUID);
+            HttpTool.Instance.Post("aotuser/model", pars, (string result) =>
             {
                 APIResult res = JSONhelper.ToApiResult<AOT_Models>(result);// JSONhelper.ConvertToObject<APIResult>(result);
 
@@ -459,8 +463,9 @@ public class ResourceCtrl : MonoBehaviour
     {
         if (UserInfo != null)
         {
-            string jsonstr = JSONhelper.ToJson(new { UserID = UserInfo.UUID });
-            HttpTool.Instance.Post("aotuser/parts", jsonstr, (string result) =>
+            Dictionary<string, string> pars = new Dictionary<string, string>();
+            pars.Add("UserID", UserInfo.UUID);
+            HttpTool.Instance.Post("aotuser/parts", pars, (string result) =>
             {
                 APIResult res = JSONhelper.ToApiResult<AOT_Parts>(result);// JSONhelper.ConvertToObject<APIResult>(result);
 
@@ -499,8 +504,9 @@ public class ResourceCtrl : MonoBehaviour
     {
         if (UserInfo != null)
         {
-            string jsonstr = JSONhelper.ToJson(new { UserID = UserInfo.UUID });
-            HttpTool.Instance.Post("aotuser/tanks", jsonstr, (string result) =>
+            Dictionary<string, string> pars = new Dictionary<string, string>();
+            pars.Add("UserID", UserInfo.UUID);
+            HttpTool.Instance.Post("aotuser/tanks", pars, (string result) =>
             {
                 APIResult res = JSONhelper.ToApiResult<AOT_Tanks>(result);// JSONhelper.ConvertToObject<APIResult>(result);
 

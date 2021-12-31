@@ -5,6 +5,8 @@ using System;
 using UnityEngine.Networking;
 using System.Text;
 using System.IO;
+using System.Security.Cryptography;
+using System.Linq;
 
 /// <summary>
 /// Http Request SDK 
@@ -14,8 +16,11 @@ public class HttpTool : MonoBehaviour
 
     private static HttpTool _instacne = null;
     //private string baseUrl = "https://game.ageoftanks.io/serverapi/";
-    private string baseUrl = "http://192.168.0.141:85/";
+    //private string baseUrl = "http://192.168.0.141:85/";
+    private string baseUrl = "https://game-beta.ageoftank.com/serverapi/";
 
+    private string AppID = "uZZ9GDmdhzfchNLnb150Rx6y";
+    private string AppSecert = "AzAgwujSHwAsbTdNakFHTxkgZWHguE";
 
     public static HttpTool Instance
     {
@@ -78,17 +83,44 @@ public class HttpTool : MonoBehaviour
     }
 
     //jsonString 为json字符串，post提交的数据包为json
-    public void Post(string methodName, string jsonString, Action<string> callback)
+    public void Post(string methodName, Dictionary<string,string> pars, Action<string> callback)
     {
-        StartCoroutine(PostRequest(methodName, jsonString, callback));
+        StartCoroutine(PostRequest(methodName, pars, callback));
     }
-    public IEnumerator PostRequest(string methodName, string jsonString, Action<string> callback)
+    public IEnumerator PostRequest(string methodName, Dictionary<string,string> pars, Action<string> callback)
     {
         string url = baseUrl + methodName;
         // Debug.Log(string.Format("url:{0} postData:{1}",url,jsonString));
         Dictionary<string, string> requestHeader = new Dictionary<string, string>();  //  header
         //http header 的内容
         requestHeader.Add("Content-Type", "application/json");
+
+        //签名
+
+        string timestamp = ((DateTime.UtcNow.ToUniversalTime().Ticks - 621355968000000000) / 10000).ToString();
+        pars.Add("timestamp", timestamp.ToString());
+        pars.Add("appid", AppID);
+        pars.Add("nonce", System.Guid.NewGuid().ToString());
+        //参数进行字典排序
+        pars = pars.OrderBy(u => u.Key.ToLower()).ToDictionary(p => p.Key, o => o.Value);
+
+        //参数拼接
+        List<string> keys = pars.Keys.ToList<string>();
+        string postData = "";
+        for (int i = 0; i < pars.Keys.Count; i++)
+        {
+            string par_key = keys[i];
+            if (par_key != "sign")
+            {
+                postData += (postData == "" ? "" : "&") + par_key + "=" + pars[par_key];
+            }
+        }
+        //签名
+        string sign = HMACSHA256(postData, AppSecert);
+        pars.Add("sign",sign);
+
+        string jsonString = JSONhelper.ToJson(pars);
+
         using (UnityWebRequest webRequest = new UnityWebRequest(url, "POST"))
         {
             byte[] bodyRaw = Encoding.UTF8.GetBytes(jsonString);
@@ -118,6 +150,27 @@ public class HttpTool : MonoBehaviour
             }
         }
     }
+
+
+
+    public string HMACSHA256(string message, string secret)
+    {
+        secret = secret ?? "";
+        var encoding = new System.Text.UTF8Encoding();
+        byte[] keyByte = encoding.GetBytes(secret);
+        byte[] messageBytes = encoding.GetBytes(message);
+        using (var hmacsha256 = new HMACSHA256(keyByte))
+        {
+            byte[] hashmessage = hmacsha256.ComputeHash(messageBytes);
+            StringBuilder builder = new StringBuilder();
+            for (int i = 0; i < hashmessage.Length; i++)
+            {
+                builder.Append(hashmessage[i].ToString("x2"));
+            }
+            return builder.ToString();
+        }
+    }
+
 
 
     /// <summary>
